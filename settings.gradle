@@ -1,2 +1,1 @@
-include 'RoboRIO', 'Pathgen'
-rootProject.name = '449-central-repo'
+rootProject.name = 'OblargLog'

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="449-central-repo.main" target="11" />
+      <module name="449-central-repo.test" target="11" />
+      <module name="OblargLog.main" target="11" />
+      <module name="OblargLog.test" target="11" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
