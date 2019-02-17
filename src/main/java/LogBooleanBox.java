@@ -21,7 +21,7 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface BooleanBox {
+public @interface LogBooleanBox {
     //The name of the value on Shuffleboard; defaults to field or method name.
     String name() default "NO_NAME";
 
