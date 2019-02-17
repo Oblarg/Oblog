@@ -30,4 +30,19 @@ import java.lang.annotation.RetentionPolicy;
 public @interface LogAccelerometer {
     //The name of the value on Shuffleboard; defaults to field or method name.
     String name() default "NO_NAME";
+
+    //The minimum acceleration value to display.
+    double min() default -1;
+
+    //The maximum acceleration value to display.
+    double max() default 1;
+
+    //Whether to show or hide the acceleration values.
+    boolean showText() default true;
+
+    //How many digits to display after the decimal point.
+    int precision() default 2;
+
+    //Whether to show the tick marks on the number bars.
+    boolean showTicks() default false;
 }
