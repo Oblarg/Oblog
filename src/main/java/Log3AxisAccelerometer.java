@@ -1,22 +1,22 @@
+import edu.wpi.first.wpilibj.interfaces.Accelerometer;
+
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Displays an accelerometer with a number bar displaying the magnitude of the acceleration and
- * text displaying the exact value.
+ * Displays a 3-axis accelerometer with a number bar for each axis' accleration.
  * <br>Supported types:
  * <ul>
- * <li>{@link edu.wpi.first.wpilibj.AnalogAccelerometer}</li>
+ * <li>{@link edu.wpi.first.wpilibj.ADXL345_I2C}</li>
+ * <li>{@link edu.wpi.first.wpilibj.ADXL345_SPI}</li>
+ * <li>{@link edu.wpi.first.wpilibj.ADXL362}</li>
  * </ul>
  * <br>Custom properties:
  * <table>
  * <tr><th>Name</th><th>Type</th><th>Default Value</th><th>Notes</th></tr>
- * <tr><td>Min</td><td>Number</td><td>-1</td>
- * <td>The minimum acceleration value to display</td></tr>
- * <tr><td>Max</td><td>Number</td><td>1</td>
- * <td>The maximum acceleration value to display</td></tr>
- * <tr><td>Show text</td><td>Boolean</td><td>true</td>
+ * <tr><td>Range</td><td>{@link Accelerometer.Range}</td><td>k16G</td><td>The accelerometer range</td></tr>
+ * <tr><td>Show value</td><td>Boolean</td><td>true</td>
  * <td>Show or hide the acceleration values</td></tr>
  * <tr><td>Precision</td><td>Number</td><td>2</td>
  * <td>How many numbers to display after the decimal point</td></tr>
@@ -27,15 +27,12 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface LogAccelerometer {
+public @interface Log3AxisAccelerometer {
     //The name of the value on Shuffleboard; defaults to field or method name.
     String name() default "NO_NAME";
 
-    //The minimum acceleration value to display.
-    double min() default -1;
-
-    //The maximum acceleration value to display.
-    double max() default 1;
+    //The range of the accelerometer.
+    Accelerometer.Range range() default Accelerometer.Range.k16G;
 
     //Whether to show or hide the acceleration values.
     boolean showValue() default true;
