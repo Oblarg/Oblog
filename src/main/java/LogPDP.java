@@ -22,4 +22,7 @@ import java.lang.annotation.Target;
 public @interface LogPDP {
     //The name of the value on Shuffleboard; defaults to field or method name.
     String name() default "NO_NAME";
+
+    //Whether to show the voltage and current values.
+    boolean showVoltageAndCurrent() default true;
 }
