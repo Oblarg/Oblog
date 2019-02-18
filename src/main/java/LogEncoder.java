@@ -1,6 +1,7 @@
-import java.lang.annotation.Inherited;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Displays an {@link edu.wpi.first.wpilibj.Encoder} displaying its speed, total travelled
@@ -13,7 +14,7 @@ import java.lang.annotation.RetentionPolicy;
  */
 
 @Retention(RetentionPolicy.RUNTIME)
-@Inherited
+@Target({ElementType.FIELD, ElementType.METHOD})
 public @interface LogEncoder {
     //The name of the value on Shuffleboard; defaults to field or method name.
     String name() default "NO_NAME";

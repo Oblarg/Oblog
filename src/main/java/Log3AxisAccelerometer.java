@@ -1,8 +1,9 @@
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 
-import java.lang.annotation.Inherited;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Displays a 3-axis accelerometer with a number bar for each axis' accleration.
@@ -26,7 +27,7 @@ import java.lang.annotation.RetentionPolicy;
  */
 
 @Retention(RetentionPolicy.RUNTIME)
-@Inherited
+@Target({ElementType.FIELD, ElementType.METHOD})
 public @interface Log3AxisAccelerometer {
     //The name of the value on Shuffleboard; defaults to field or method name.
     String name() default "NO_NAME";

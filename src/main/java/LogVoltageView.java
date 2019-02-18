@@ -1,6 +1,7 @@
-import java.lang.annotation.Inherited;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Displays an analog input or a raw number with a number bar.
@@ -23,7 +24,7 @@ import java.lang.annotation.RetentionPolicy;
  */
 
 @Retention(RetentionPolicy.RUNTIME)
-@Inherited
+@Target({ElementType.FIELD, ElementType.METHOD})
 public @interface LogVoltageView {
     //The name of the value on Shuffleboard; defaults to field or method name.
     String name() default "NO_NAME";
