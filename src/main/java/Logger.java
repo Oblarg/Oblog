@@ -342,6 +342,7 @@ public class Logger {
 
         for (Field field : rootContainer.getClass().getDeclaredFields()) {
             if (field.getType().isAssignableFrom(Loggable.class)) {
+                field.setAccessible(true);
                 try {
                     Loggable toLog = (Loggable) field.get(rootContainer);
                     loggedObjects.add(toLog);
