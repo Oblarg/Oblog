@@ -1,18 +1,16 @@
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
-import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
 
 import static java.util.Map.entry;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class Logger {
@@ -99,7 +97,7 @@ public class Logger {
                         bin.add(params.name(), supplier.get())
                                 .withWidget(BuiltInWidgets.kPowerDistributionPanel.getWidgetName())
                                 .withProperties(Map.of(
-                                                "showVoltageAndCurrentValues", params.showVoltageAndCurrent()));
+                                        "showVoltageAndCurrentValues", params.showVoltageAndCurrent()));
                     }),
             entry(LogEncoder.class,
                     (supplier, rawParams, bin) -> {
@@ -198,11 +196,73 @@ public class Logger {
     );
 
 
-    private static void registerFieldsAndMethods(Class loggable,
+    private static void registerFieldsAndMethods(Loggable loggable,
+                                                 Class loggableClass,
+                                                 ShuffleboardContainer bin,
                                                  Set<Field> registeredFields,
                                                  Set<Method> registeredMethods) {
-        Set<Field> fields = Set.of(loggable.getDeclaredFields());
-        Set<Method> methods = Set.of(loggable.getDeclaredMethods());
+
+        Set<Field> fields = Set.of(loggableClass.getDeclaredFields());
+        Set<Method> methods = Set.of(loggableClass.getDeclaredMethods());
+
+        for (Field field : fields) {
+            field.setAccessible(true);
+            if (!registeredFields.contains(field)) {
+                registeredFields.add(field);
+                for (Annotation annotation : field.getAnnotations()) {
+                    WidgetProcessor process = widgetHandler.get(annotation.annotationType());
+                    if (process != null) {
+                        process.processWidget(
+                                () -> {
+                                    try {
+                                        return field.get(loggable);
+                                    } catch (IllegalAccessException e) {
+                                        return null;
+                                    }
+                                },
+                                annotation,
+                                bin);
+                    }
+                }
+            }
+        }
+
+        for (Method method : methods) {
+            if (!method.getReturnType().equals(Void.TYPE) && method.getParameterTypes().length == 0) {
+                method.setAccessible(true);
+                if (!registeredMethods.contains(method)) {
+                    registeredMethods.add(method);
+                    for (Annotation annotation : method.getAnnotations()) {
+                        WidgetProcessor process = widgetHandler.get(annotation.annotationType());
+                        if (process != null) {
+                            process.processWidget(
+                                    () -> {
+                                        try {
+                                            return method.invoke(loggable);
+                                        } catch (IllegalAccessException e) {
+                                            return null;
+                                        } catch (InvocationTargetException e) {
+                                            return null;
+                                        }
+                                    },
+                                    annotation,
+                                    bin);
+                        }
+                    }
+                }
+            }
+        }
+
+        //recurse on superclass
+
+        if (Loggable.class.isAssignableFrom(loggableClass.getSuperclass())){
+            registerFieldsAndMethods(loggable,
+                    loggableClass.getSuperclass(),
+                    bin,
+                    registeredFields,
+                    registeredMethods);
+        }
+
     }
 
     /**
