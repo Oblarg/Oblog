@@ -8,9 +8,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Supplier;
 
 public class Logger {
@@ -25,14 +23,14 @@ public class Logger {
                     (supplier, rawParams, bin, name) -> {
                         LogDefault params = (LogDefault) rawParams;
                         Logger.registerEntry(
-                                bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get()).getEntry(),
+                                bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get()).getEntry(),
                                 supplier);
                     }),
             entry(LogNumberBar.class,
                     (supplier, rawParams, bin, name) -> {
                         LogNumberBar params = (LogNumberBar) rawParams;
                         Logger.registerEntry(
-                                bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
+                                bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
                                         .withWidget(BuiltInWidgets.kNumberBar.getWidgetName())
                                         .withProperties(Map.of(
                                                 "min", params.min(),
@@ -45,7 +43,7 @@ public class Logger {
                     (supplier, rawParams, bin, name) -> {
                         LogDial params = (LogDial) rawParams;
                         Logger.registerEntry(
-                                bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
+                                bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
                                         .withWidget(BuiltInWidgets.kDial.getWidgetName())
                                         .withProperties(Map.of(
                                                 "min", params.min(),
@@ -58,7 +56,7 @@ public class Logger {
                     (supplier, rawParams, bin, name) -> {
                         LogGraph params = (LogGraph) rawParams;
                         Logger.registerEntry(
-                                bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
+                                bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
                                         .withWidget(BuiltInWidgets.kGraph.getWidgetName())
                                         .withProperties(Map.of(
                                                 "Visible time", params.visibleTime()))
@@ -69,7 +67,7 @@ public class Logger {
                     (supplier, rawParams, bin, name) -> {
                         LogBooleanBox params = (LogBooleanBox) rawParams;
                         Logger.registerEntry(
-                                bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
+                                bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
                                         .withWidget(BuiltInWidgets.kBooleanBox.getWidgetName())
                                         .withProperties(Map.of(
                                                 "colorWhenTrue", params.colorWhenTrue(),
@@ -81,7 +79,7 @@ public class Logger {
                     (supplier, rawParams, bin, name) -> {
                         LogVoltageView params = (LogVoltageView) rawParams;
                         Logger.registerEntry(
-                                bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
+                                bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
                                         .withWidget(BuiltInWidgets.kVoltageView.getWidgetName())
                                         .withProperties(Map.of(
                                                 "min", params.min(),
@@ -95,7 +93,7 @@ public class Logger {
             entry(LogPDP.class,
                     (supplier, rawParams, bin, name) -> {
                         LogPDP params = (LogPDP) rawParams;
-                        bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
                                 .withWidget(BuiltInWidgets.kPowerDistributionPanel.getWidgetName())
                                 .withProperties(Map.of(
                                         "showVoltageAndCurrentValues", params.showVoltageAndCurrent()));
@@ -103,13 +101,13 @@ public class Logger {
             entry(LogEncoder.class,
                     (supplier, rawParams, bin, name) -> {
                         LogEncoder params = (LogEncoder) rawParams;
-                        bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
                                 .withWidget(BuiltInWidgets.kEncoder.getWidgetName());
                     }),
             entry(LogSpeedController.class,
                     (supplier, rawParams, bin, name) -> {
                         LogSpeedController params = (LogSpeedController) rawParams;
-                        bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
                                 .withWidget(BuiltInWidgets.kSpeedController.getWidgetName())
                                 .withProperties(Map.of(
                                         "orientation", params.orientation()));
@@ -117,25 +115,25 @@ public class Logger {
             entry(LogCommand.class,
                     (supplier, rawParams, bin, name) -> {
                         LogCommand params = (LogCommand) rawParams;
-                        bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
                                 .withWidget(BuiltInWidgets.kCommand.getWidgetName());
                     }),
             entry(LogPIDCommand.class,
                     (supplier, rawParams, bin, name) -> {
                         LogPIDCommand params = (LogPIDCommand) rawParams;
-                        bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
                                 .withWidget(BuiltInWidgets.kPIDCommand.getWidgetName());
                     }),
             entry(LogPIDController.class,
                     (supplier, rawParams, bin, name) -> {
                         LogPIDController params = (LogPIDController) rawParams;
-                        bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
                                 .withWidget(BuiltInWidgets.kPIDController.getWidgetName());
                     }),
             entry(LogAccelerometer.class,
                     (supplier, rawParams, bin, name) -> {
                         LogAccelerometer params = (LogAccelerometer) rawParams;
-                        bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
                                 .withWidget(BuiltInWidgets.kAccelerometer.getWidgetName())
                                 .withProperties(Map.of(
                                         "min", params.min(),
@@ -147,7 +145,7 @@ public class Logger {
             entry(Log3AxisAccelerometer.class,
                     (supplier, rawParams, bin, name) -> {
                         Log3AxisAccelerometer params = (Log3AxisAccelerometer) rawParams;
-                        bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
                                 .withWidget(BuiltInWidgets.k3AxisAccelerometer.getWidgetName())
                                 .withProperties(Map.of(
                                         "range", params.range(),
@@ -158,7 +156,7 @@ public class Logger {
             entry(LogGyro.class,
                     (supplier, rawParams, bin, name) -> {
                         LogGyro params = (LogGyro) rawParams;
-                        bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
                                 .withWidget(BuiltInWidgets.kGyro.getWidgetName())
                                 .withProperties(Map.of(
                                         "majorTickSpacing", params.majorTickSpacing(),
@@ -168,7 +166,7 @@ public class Logger {
             entry(LogDifferentialDrive.class,
                     (supplier, rawParams, bin, name) -> {
                         LogDifferentialDrive params = (LogDifferentialDrive) rawParams;
-                        bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
                                 .withWidget(BuiltInWidgets.kDifferentialDrive.getWidgetName())
                                 .withProperties(Map.of(
                                         "numberOfWheels", params.numWheels(),
@@ -178,7 +176,7 @@ public class Logger {
             entry(LogMecanumDrive.class,
                     (supplier, rawParams, bin, name) -> {
                         LogMecanumDrive params = (LogMecanumDrive) rawParams;
-                        bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
                                 .withWidget(BuiltInWidgets.kMecanumDrive.getWidgetName())
                                 .withProperties(Map.of(
                                         "showVelocityVectors", params.showVel()));
@@ -186,7 +184,7 @@ public class Logger {
             entry(LogCameraStream.class,
                     (supplier, rawParams, bin, name) -> {
                         LogCameraStream params = (LogCameraStream) rawParams;
-                        bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
                                 .withWidget(BuiltInWidgets.kCameraStream.getWidgetName())
                                 .withProperties(Map.of(
                                         "showCrosshair", params.showCrosshairs(),
@@ -258,7 +256,7 @@ public class Logger {
 
         //recurse on superclass
 
-        if (Loggable.class.isAssignableFrom(loggableClass.getSuperclass())){
+        if (Loggable.class.isAssignableFrom(loggableClass.getSuperclass())) {
             registerFieldsAndMethods(loggable,
                     loggableClass.getSuperclass(),
                     bin,
@@ -267,6 +265,98 @@ public class Logger {
                     widgetHandler);
         }
 
+    }
+
+    private static void logLoggable(Map<Class<? extends Annotation>, WidgetProcessor> widgetHandler,
+                                    Loggable loggable,
+                                    Class loggableClass,
+                                    Set<Field> loggedFields,
+                                    Set<Object> loggedObjects,
+                                    ShuffleboardWrapper shuffleboard,
+                                    ShuffleboardContainer parent) {
+        ShuffleboardContainer bin;
+        if (parent == null) {
+            bin = shuffleboard.getTab(loggable.configureLogName());
+        } else {
+            bin = parent.getLayout(loggable.configureLogName(), loggable.configureLayoutType())
+                    .withProperties(loggable.configureLayoutProperties());
+        }
+
+        registerFieldsAndMethods(loggable,
+                loggable.getClass(),
+                bin,
+                new HashSet<>(),
+                new HashSet<>(),
+                widgetHandler);
+
+        //recurse on Loggable fields
+
+        for (Field field : loggable.getClass().getDeclaredFields()) {
+            if (Loggable.class.isAssignableFrom(field.getType())) {
+                field.setAccessible(true);
+                if (!loggedFields.contains(field)) {
+                    loggedFields.add(field);
+                    Loggable toLog;
+                    try {
+                        toLog = (Loggable) field.get(loggable);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                        toLog = null;
+                    }
+                    if (!loggedObjects.contains(toLog) ||
+                            ((toLog.getClass().getAnnotation(AllowRepeat.class) != null)
+                                    && field.getAnnotation(ForbidRepeat.class) == null)) {
+                        loggedObjects.add(toLog);
+                        logLoggable(widgetHandler,
+                                toLog,
+                                toLog.getClass(),
+                                new HashSet<>(),
+                                loggedObjects,
+                                shuffleboard,
+                                bin
+                        );
+                    }
+                }
+            }
+        }
+
+        //recurse on superclass
+
+        if (Loggable.class.isAssignableFrom(loggableClass.getSuperclass())) {
+            logLoggable(widgetHandler,
+                    loggable,
+                    loggableClass.getSuperclass(),
+                    loggedFields,
+                    loggedObjects,
+                    shuffleboard,
+                    parent);
+        }
+    }
+
+
+    private static void configureLogging(Map<Class<? extends Annotation>, WidgetProcessor> widgetHandler,
+                                         Object rootContainer,
+                                         ShuffleboardWrapper shuffleboard) {
+
+        Set<Object> loggedObjects = new HashSet<>();
+
+        for (Field field : rootContainer.getClass().getDeclaredFields()) {
+            if (field.getType().isAssignableFrom(Loggable.class)) {
+                try {
+                    Loggable toLog = (Loggable) field.get(rootContainer);
+                    loggedObjects.add(toLog);
+                    logLoggable(widgetHandler,
+                            toLog,
+                            toLog.getClass(),
+                            new HashSet<>(),
+                            loggedObjects,
+                            shuffleboard,
+                            null);
+                } catch(IllegalAccessException e){
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     /**
