@@ -201,7 +201,8 @@ public class Logger {
                                                  Class loggableClass,
                                                  ShuffleboardContainer bin,
                                                  Set<Field> registeredFields,
-                                                 Set<Method> registeredMethods) {
+                                                 Set<Method> registeredMethods,
+                                                 Map<Class<? extends Annotation>, WidgetProcessor> widgetHandler) {
 
         Set<Field> fields = Set.of(loggableClass.getDeclaredFields());
         Set<Method> methods = Set.of(loggableClass.getDeclaredMethods());
@@ -262,7 +263,8 @@ public class Logger {
                     loggableClass.getSuperclass(),
                     bin,
                     registeredFields,
-                    registeredMethods);
+                    registeredMethods,
+                    widgetHandler);
         }
 
     }
