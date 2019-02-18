@@ -239,9 +239,8 @@ public class Logger {
                                     () -> {
                                         try {
                                             return method.invoke(loggable);
-                                        } catch (IllegalAccessException e) {
-                                            return null;
-                                        } catch (InvocationTargetException e) {
+                                        } catch (IllegalAccessException | InvocationTargetException e) {
+                                            e.printStackTrace();
                                             return null;
                                         }
                                     },
