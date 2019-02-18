@@ -17,21 +17,22 @@ public class Logger {
 
     @FunctionalInterface
     private interface WidgetProcessor {
-        void processWidget(Supplier<Object> supplier, Annotation params, ShuffleboardContainer bin);
+        void processWidget(Supplier<Object> supplier, Annotation params, ShuffleboardContainer bin, String name);
     }
 
     private static Map<Class<? extends Annotation>, WidgetProcessor> widgetHandler = Map.ofEntries(
             entry(LogDefault.class,
-                    (supplier, rawParams, bin) -> {
+                    (supplier, rawParams, bin, name) -> {
+                        LogDefault params = (LogDefault) rawParams;
                         Logger.registerEntry(
-                                bin.add(((LogDefault) rawParams).name(), supplier.get()).getEntry(),
+                                bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get()).getEntry(),
                                 supplier);
                     }),
             entry(LogNumberBar.class,
-                    (supplier, rawParams, bin) -> {
+                    (supplier, rawParams, bin, name) -> {
                         LogNumberBar params = (LogNumberBar) rawParams;
                         Logger.registerEntry(
-                                bin.add(params.name(), supplier.get())
+                                bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
                                         .withWidget(BuiltInWidgets.kNumberBar.getWidgetName())
                                         .withProperties(Map.of(
                                                 "min", params.min(),
@@ -41,10 +42,10 @@ public class Logger {
                                 supplier);
                     }),
             entry(LogDial.class,
-                    (supplier, rawParams, bin) -> {
+                    (supplier, rawParams, bin, name) -> {
                         LogDial params = (LogDial) rawParams;
                         Logger.registerEntry(
-                                bin.add(params.name(), supplier.get())
+                                bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
                                         .withWidget(BuiltInWidgets.kDial.getWidgetName())
                                         .withProperties(Map.of(
                                                 "min", params.min(),
@@ -54,10 +55,10 @@ public class Logger {
                                 supplier);
                     }),
             entry(LogGraph.class,
-                    (supplier, rawParams, bin) -> {
+                    (supplier, rawParams, bin, name) -> {
                         LogGraph params = (LogGraph) rawParams;
                         Logger.registerEntry(
-                                bin.add(params.name(), supplier.get())
+                                bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
                                         .withWidget(BuiltInWidgets.kGraph.getWidgetName())
                                         .withProperties(Map.of(
                                                 "Visible time", params.visibleTime()))
@@ -65,10 +66,10 @@ public class Logger {
                                 supplier);
                     }),
             entry(LogBooleanBox.class,
-                    (supplier, rawParams, bin) -> {
+                    (supplier, rawParams, bin, name) -> {
                         LogBooleanBox params = (LogBooleanBox) rawParams;
                         Logger.registerEntry(
-                                bin.add(params.name(), supplier.get())
+                                bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
                                         .withWidget(BuiltInWidgets.kBooleanBox.getWidgetName())
                                         .withProperties(Map.of(
                                                 "colorWhenTrue", params.colorWhenTrue(),
@@ -77,10 +78,10 @@ public class Logger {
                                 supplier);
                     }),
             entry(LogVoltageView.class,
-                    (supplier, rawParams, bin) -> {
+                    (supplier, rawParams, bin, name) -> {
                         LogVoltageView params = (LogVoltageView) rawParams;
                         Logger.registerEntry(
-                                bin.add(params.name(), supplier.get())
+                                bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
                                         .withWidget(BuiltInWidgets.kVoltageView.getWidgetName())
                                         .withProperties(Map.of(
                                                 "min", params.min(),
@@ -92,49 +93,49 @@ public class Logger {
                                 supplier);
                     }),
             entry(LogPDP.class,
-                    (supplier, rawParams, bin) -> {
+                    (supplier, rawParams, bin, name) -> {
                         LogPDP params = (LogPDP) rawParams;
-                        bin.add(params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
                                 .withWidget(BuiltInWidgets.kPowerDistributionPanel.getWidgetName())
                                 .withProperties(Map.of(
                                         "showVoltageAndCurrentValues", params.showVoltageAndCurrent()));
                     }),
             entry(LogEncoder.class,
-                    (supplier, rawParams, bin) -> {
+                    (supplier, rawParams, bin, name) -> {
                         LogEncoder params = (LogEncoder) rawParams;
-                        bin.add(params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
                                 .withWidget(BuiltInWidgets.kEncoder.getWidgetName());
                     }),
             entry(LogSpeedController.class,
-                    (supplier, rawParams, bin) -> {
+                    (supplier, rawParams, bin, name) -> {
                         LogSpeedController params = (LogSpeedController) rawParams;
-                        bin.add(params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
                                 .withWidget(BuiltInWidgets.kSpeedController.getWidgetName())
                                 .withProperties(Map.of(
                                         "orientation", params.orientation()));
                     }),
             entry(LogCommand.class,
-                    (supplier, rawParams, bin) -> {
+                    (supplier, rawParams, bin, name) -> {
                         LogCommand params = (LogCommand) rawParams;
-                        bin.add(params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
                                 .withWidget(BuiltInWidgets.kCommand.getWidgetName());
                     }),
             entry(LogPIDCommand.class,
-                    (supplier, rawParams, bin) -> {
+                    (supplier, rawParams, bin, name) -> {
                         LogPIDCommand params = (LogPIDCommand) rawParams;
-                        bin.add(params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
                                 .withWidget(BuiltInWidgets.kPIDCommand.getWidgetName());
                     }),
             entry(LogPIDController.class,
-                    (supplier, rawParams, bin) -> {
+                    (supplier, rawParams, bin, name) -> {
                         LogPIDController params = (LogPIDController) rawParams;
-                        bin.add(params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
                                 .withWidget(BuiltInWidgets.kPIDController.getWidgetName());
                     }),
             entry(LogAccelerometer.class,
-                    (supplier, rawParams, bin) -> {
+                    (supplier, rawParams, bin, name) -> {
                         LogAccelerometer params = (LogAccelerometer) rawParams;
-                        bin.add(params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
                                 .withWidget(BuiltInWidgets.kAccelerometer.getWidgetName())
                                 .withProperties(Map.of(
                                         "min", params.min(),
@@ -144,9 +145,9 @@ public class Logger {
                                         "showTickMarks", params.showTicks()));
                     }),
             entry(Log3AxisAccelerometer.class,
-                    (supplier, rawParams, bin) -> {
+                    (supplier, rawParams, bin, name) -> {
                         Log3AxisAccelerometer params = (Log3AxisAccelerometer) rawParams;
-                        bin.add(params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
                                 .withWidget(BuiltInWidgets.k3AxisAccelerometer.getWidgetName())
                                 .withProperties(Map.of(
                                         "range", params.range(),
@@ -155,9 +156,9 @@ public class Logger {
                                         "showTickMarks", params.showTicks()));
                     }),
             entry(LogGyro.class,
-                    (supplier, rawParams, bin) -> {
+                    (supplier, rawParams, bin, name) -> {
                         LogGyro params = (LogGyro) rawParams;
-                        bin.add(params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
                                 .withWidget(BuiltInWidgets.kGyro.getWidgetName())
                                 .withProperties(Map.of(
                                         "majorTickSpacing", params.majorTickSpacing(),
@@ -165,9 +166,9 @@ public class Logger {
                                         "showTickMarkRing", params.showTicks()));
                     }),
             entry(LogDifferentialDrive.class,
-                    (supplier, rawParams, bin) -> {
+                    (supplier, rawParams, bin, name) -> {
                         LogDifferentialDrive params = (LogDifferentialDrive) rawParams;
-                        bin.add(params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
                                 .withWidget(BuiltInWidgets.kDifferentialDrive.getWidgetName())
                                 .withProperties(Map.of(
                                         "numberOfWheels", params.numWheels(),
@@ -175,17 +176,17 @@ public class Logger {
                                         "showVelocityVectors", params.showVel()));
                     }),
             entry(LogMecanumDrive.class,
-                    (supplier, rawParams, bin) -> {
+                    (supplier, rawParams, bin, name) -> {
                         LogMecanumDrive params = (LogMecanumDrive) rawParams;
-                        bin.add(params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
                                 .withWidget(BuiltInWidgets.kMecanumDrive.getWidgetName())
                                 .withProperties(Map.of(
                                         "showVelocityVectors", params.showVel()));
                     }),
             entry(LogCameraStream.class,
-                    (supplier, rawParams, bin) -> {
+                    (supplier, rawParams, bin, name) -> {
                         LogCameraStream params = (LogCameraStream) rawParams;
-                        bin.add(params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME"))? name : params.name(), supplier.get())
                                 .withWidget(BuiltInWidgets.kCameraStream.getWidgetName())
                                 .withProperties(Map.of(
                                         "showCrosshair", params.showCrosshairs(),
@@ -221,7 +222,8 @@ public class Logger {
                                     }
                                 },
                                 annotation,
-                                bin);
+                                bin,
+                                field.getName());
                     }
                 }
             }
@@ -245,7 +247,8 @@ public class Logger {
                                         }
                                     },
                                     annotation,
-                                    bin);
+                                    bin,
+                                    method.getName());
                         }
                     }
                 }
