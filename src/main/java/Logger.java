@@ -43,6 +43,30 @@ public class Logger {
                                         .getEntry(),
                                 supplier);
                     }),
+            entry(LogDial.class,
+                    (supplier, rawParams, bin) -> {
+                        LogDial params = (LogDial)rawParams;
+                        Logger.registerEntry(
+                                bin.add(params.name(),supplier.get())
+                                        .withWidget(BuiltInWidgets.kDial.getWidgetName())
+                                        .withProperties(Map.of(
+                                                "Min", params.min(),
+                                                "Max", params.max(),
+                                                "Show value", params.showValue()))
+                                        .getEntry(),
+                                supplier);
+                    }),
+            entry(LogGraph.class,
+                    (supplier, rawParams, bin) -> {
+                        LogGraph params = (LogGraph)rawParams;
+                        Logger.registerEntry(
+                                bin.add(params.name(),supplier.get())
+                                        .withWidget(BuiltInWidgets.kGraph.getWidgetName())
+                                        .withProperties(Map.of(
+                                                "Visible time", params.visibleTime()))
+                                        .getEntry(),
+                                supplier);
+                    })
     );
 
 
