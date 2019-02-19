@@ -1,7 +1,5 @@
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
-
 import static java.util.Map.entry;
 
 import java.lang.annotation.Annotation;
@@ -15,7 +13,7 @@ public class Logger {
 
     @FunctionalInterface
     private interface WidgetProcessor {
-        void processWidget(Supplier<Object> supplier, Annotation params, ShuffleboardContainer bin, String name);
+        void processWidget(Supplier<Object> supplier, Annotation params, ShuffleboardContainerWrapper bin, String name);
     }
 
     private static Map<Class<? extends Annotation>, WidgetProcessor> widgetHandler = Map.ofEntries(
@@ -197,7 +195,7 @@ public class Logger {
 
     private static void registerFieldsAndMethods(Loggable loggable,
                                                  Class loggableClass,
-                                                 ShuffleboardContainer bin,
+                                                 ShuffleboardContainerWrapper bin,
                                                  Set<Field> registeredFields,
                                                  Set<Method> registeredMethods,
                                                  Map<Class<? extends Annotation>, WidgetProcessor> widgetHandler) {
@@ -273,10 +271,10 @@ public class Logger {
                                     Set<Field> loggedFields,
                                     Set<Object> loggedObjects,
                                     ShuffleboardWrapper shuffleboard,
-                                    ShuffleboardContainer parent) {
-        ShuffleboardContainer bin;
+                                    ShuffleboardContainerWrapper parent) {
+        ShuffleboardContainerWrapper bin;
         if (parent == null) {
-            bin = shuffleboard.getTab(loggable.configureLogName());
+            bin = new WrappedShuffleboardContainer(shuffleboard.getTab(loggable.configureLogName()));
         } else {
             bin = parent.getLayout(loggable.configureLogName(), loggable.configureLayoutType())
                     .withProperties(loggable.configureLayoutProperties());
