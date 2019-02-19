@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface LogDefault {
+public @interface Log {
     //The name of the value on Shuffleboard; defaults to field or method name.
     String name() default "NO_NAME";
 }

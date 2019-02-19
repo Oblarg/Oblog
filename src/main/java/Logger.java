@@ -19,9 +19,9 @@ public class Logger {
     }
 
     private static Map<Class<? extends Annotation>, WidgetProcessor> widgetHandler = Map.ofEntries(
-            entry(LogDefault.class,
+            entry(Log.class,
                     (supplier, rawParams, bin, name) -> {
-                        LogDefault params = (LogDefault) rawParams;
+                        Log params = (Log) rawParams;
                         Logger.registerEntry(
                                 bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get()).getEntry(),
                                 supplier);

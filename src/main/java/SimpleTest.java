@@ -1,6 +1,5 @@
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,10 +79,10 @@ class TestLoggableBasic implements Loggable{
         return "TestLoggableBasic" + a;
     }
 
-    @LogDefault
+    @Log
     int a;
 
-    @LogDefault
+    @Log
     private int getB(){
         return 2;
     }
@@ -99,14 +98,15 @@ class TestRecursionBase {
 
 class TestRecursionSuper extends TestRecursionBase implements Loggable{
 
-    @LogDefault
+    @Log
     int b = 10;
 
     int c = 3;
 }
 
 class TestRecursionSub extends TestRecursionSuper {
-    @LogDefault int d = 4;
+    @Log
+    int d = 4;
 }
 
 class TestRootContainer {

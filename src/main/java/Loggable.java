@@ -37,7 +37,7 @@ public interface Loggable {
     }
 
     /**
-     * Override to add custom logging not supported through the standard {@link LogDefault} options.  Called by the logger
+     * Override to add custom logging not supported through the standard {@link Log} options.  Called by the logger
      * on each Loggable after the handling of annotated fields and methods.
      */
     default void addCustomLogging(){}
