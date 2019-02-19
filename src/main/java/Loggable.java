@@ -1,6 +1,7 @@
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.LayoutType;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public interface Loggable {
@@ -32,7 +33,7 @@ public interface Loggable {
      * @return A map of property keys and values.  Defaults to null (will yield default Shuffleboard properties).
      */
     default Map<String, Object> configureLayoutProperties(){
-        return null;
+        return new HashMap<>();
     }
 
     /**

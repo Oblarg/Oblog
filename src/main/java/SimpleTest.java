@@ -1,4 +1,5 @@
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
 
 import java.util.ArrayList;
@@ -37,13 +38,13 @@ public class SimpleTest {
 
         Logger.configureLoggingTest(rootContainer, mockedShuffleboard);
 
-        verify(mockedShuffleboard, atLeastOnce()).getTab("TestRecursionSub");
+        verify(mockedShuffleboard).getTab("TestLoggableChildren");
+        verify(mockedShuffleboardContainer).getLayout("TestLoggableBasic1", BuiltInLayouts.kList);
+        verify(mockedShuffleboardContainer).getLayout("TestLoggableBasic2", BuiltInLayouts.kList);
 
-        verify(mockedShuffleboardContainer, never()).add("a", 1);
-        verify(mockedShuffleboardContainer, never()).add("b", 2);
-        verify(mockedShuffleboardContainer).add("b", 10);
-        verify(mockedShuffleboardContainer, never()).add("c", 3);
-        verify(mockedShuffleboardContainer).add("d", 4);
+        verify(mockedShuffleboardLayout).add("a", 1);
+        verify(mockedShuffleboardLayout).add("a", 2);
+
 
         Logger.updateEntries();
 
@@ -55,10 +56,20 @@ public class SimpleTest {
     }
 }
 
+class TestLoggableChildren implements Loggable {
+    TestLoggableBasic firstChild = new TestLoggableBasic(1);
+    TestLoggableBasic secondChild = new TestLoggableBasic(2);
+}
+
 class TestLoggableBasic implements Loggable{
 
     TestLoggableBasic(int a){
         this.a = a;
+    }
+
+    @Override
+    public String configureLogName(){
+        return "TestLoggableBasic" + a;
     }
 
     @LogDefault
@@ -92,5 +103,5 @@ class TestRecursionSub extends TestRecursionSuper {
 
 class TestRootContainer {
 
-    TestRecursionSub test = new TestRecursionSub();
+    TestLoggableChildren test = new TestLoggableChildren();
 }
