@@ -308,9 +308,8 @@ public class Logger {
                         e.printStackTrace();
                         toLog = null;
                     }
-                    if (!loggedObjects.contains(toLog) ||
-                            ((toLog.getClass().getAnnotation(AllowRepeat.class) != null)
-                                    && field.getAnnotation(ForbidRepeat.class) == null)) {
+                    if ((!loggedObjects.contains(toLog) || (toLog.getClass().getAnnotation(AllowRepeat.class) != null))
+                            && field.getAnnotation(LogExclude.class) == null) {
                         loggedObjects.add(toLog);
                         logLoggable(widgetHandler,
                                 toLog,

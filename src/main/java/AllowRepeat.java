@@ -5,8 +5,8 @@ import java.lang.annotation.Target;
 
 /**
  * Mark a class as repeatable.  This will allow it to be sent to the dashboard repeatably, e.g. if it
- * is a field of more than one class.  If you further want to disallow repetition, mark non-repeated occurrences with
- * {@link ForbidRepeat}.
+ * is a field of more than one class.  If you further want to disallow repetition of specific occurrences, mark with
+ * {@link LogExclude}.
  */
 
 @Retention(RetentionPolicy.RUNTIME)
