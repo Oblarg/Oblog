@@ -1,9 +1,20 @@
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.mockito.Mockito.*;
 
 public class SimpleTest {
+
+    private static List<NetworkTableEntry> mockedEntries = new ArrayList<>();
+
+    private static NetworkTableEntry newMockEntry() {
+        NetworkTableEntry entry = mock(NetworkTableEntry.class);
+        mockedEntries.add(entry);
+        return entry;
+    }
 
     public static void main(String[] args) {
         TestRootContainer rootContainer = new TestRootContainer();
@@ -12,7 +23,6 @@ public class SimpleTest {
         ShuffleboardContainerWrapper mockedShuffleboardContainer = mock(WrappedShuffleboardContainer.class);
         ShuffleboardLayoutWrapper mockedShuffleboardLayout = mock(WrappedShuffleboardLayout.class);
         ShuffleboardWidgetWrapper mockedShuffleboardWidget = mock(WrappedShuffleboardWidget.class);
-        NetworkTableEntry mockedEntry = mock(NetworkTableEntry.class);
 
 
         when(mockedShuffleboard.getTab(any())).thenReturn(mockedShuffleboardContainer);
@@ -23,12 +33,23 @@ public class SimpleTest {
         when(mockedShuffleboardLayout.withProperties(any())).thenReturn(mockedShuffleboardLayout);
         when(mockedShuffleboardWidget.withProperties(any())).thenReturn(mockedShuffleboardWidget);
         when(mockedShuffleboardWidget.withWidget(any())).thenReturn(mockedShuffleboardWidget);
-        when(mockedShuffleboardWidget.getEntry()).thenReturn(mockedEntry);
+        when(mockedShuffleboardWidget.getEntry()).thenReturn(newMockEntry());
 
         Logger.configureLoggingTest(rootContainer, mockedShuffleboard);
 
-        verify(mockedShuffleboard).getTab("TestLoggableBasic");
-        verify(mockedShuffleboardContainer).add("a", 1);
+        verify(mockedShuffleboard, atLeastOnce()).getTab("TestRecursionSub");
+
+        verify(mockedShuffleboardContainer, never()).add("a", 1);
+        verify(mockedShuffleboardContainer, never()).add("b", 2);
+        verify(mockedShuffleboardContainer).add("b", 10);
+        verify(mockedShuffleboardContainer, never()).add("c", 3);
+        verify(mockedShuffleboardContainer).add("d", 4);
+
+        Logger.updateEntries();
+
+        for (NetworkTableEntry entry: mockedEntries) {
+            verify(entry).setValue(any());
+        }
 
         System.out.println("Success!");
     }
@@ -42,9 +63,34 @@ class TestLoggableBasic implements Loggable{
 
     @LogDefault
     int a;
+
+    @LogDefault
+    private int getB(){
+        return 2;
+    }
+}
+
+class TestRecursionBase {
+
+    int a = 1;
+
+    int b = 2;
+
+}
+
+class TestRecursionSuper extends TestRecursionBase implements Loggable{
+
+    @LogDefault
+    int b = 10;
+
+    int c = 3;
+}
+
+class TestRecursionSub extends TestRecursionSuper {
+    @LogDefault int d = 4;
 }
 
 class TestRootContainer {
 
-    TestLoggableBasic test1 = new TestLoggableBasic(1);
+    TestRecursionSub test = new TestRecursionSub();
 }

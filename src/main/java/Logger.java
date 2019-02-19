@@ -257,14 +257,14 @@ public class Logger {
 
         //recurse on superclass
 
-        if (Loggable.class.isAssignableFrom(loggableClass.getSuperclass())) {
+        /*if (Loggable.class.isAssignableFrom(loggableClass.getSuperclass())) {
             registerFieldsAndMethods(loggable,
                     loggableClass.getSuperclass(),
                     bin,
                     registeredFields,
                     registeredMethods,
                     widgetHandler);
-        }
+        }*/
 
     }
 
@@ -273,6 +273,8 @@ public class Logger {
                                     Class loggableClass,
                                     Set<Field> loggedFields,
                                     Set<Object> loggedObjects,
+                                    Set<Field> registeredFields,
+                                    Set<Method> registeredMethods,
                                     ShuffleboardWrapper shuffleboard,
                                     ShuffleboardContainerWrapper parent) {
 
@@ -286,10 +288,10 @@ public class Logger {
         }
 
         registerFieldsAndMethods(loggable,
-                loggable.getClass(),
+                loggableClass,
                 bin,
-                new HashSet<>(),
-                new HashSet<>(),
+                registeredFields,
+                registeredMethods,
                 widgetHandler);
 
         //recurse on Loggable fields
@@ -315,6 +317,8 @@ public class Logger {
                                 toLog.getClass(),
                                 new HashSet<>(),
                                 loggedObjects,
+                                new HashSet<>(),
+                                new HashSet<>(),
                                 shuffleboard,
                                 bin
                         );
@@ -331,6 +335,8 @@ public class Logger {
                     loggableClass.getSuperclass(),
                     loggedFields,
                     loggedObjects,
+                    registeredFields,
+                    registeredMethods,
                     shuffleboard,
                     parent);
         }
@@ -354,6 +360,8 @@ public class Logger {
                             toLog.getClass(),
                             new HashSet<>(),
                             loggedObjects,
+                            new HashSet<>(),
+                            new HashSet<>(),
                             shuffleboard,
                             null);
                 } catch (IllegalAccessException e) {
