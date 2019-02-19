@@ -9,6 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class Logger {
@@ -306,6 +307,16 @@ public class Logger {
                 field.setAccessible(true);
                 if (!loggedFields.contains(field)) {
                     loggedFields.add(field);
+                    Consumer<Loggable> log = (toLog) ->logLoggable(widgetHandler,
+                            toLog,
+                            toLog.getClass(),
+                            new HashSet<>(),
+                            loggedObjects,
+                            new HashSet<>(),
+                            new HashSet<>(),
+                            shuffleboard,
+                            bin
+                    );
                     if (field.getType().isArray()) {
                         Loggable[] toLogs;
                         try {
@@ -318,16 +329,7 @@ public class Logger {
                             if ((!loggedObjects.contains(toLog) || (toLog.getClass().getAnnotation(AllowRepeat.class) != null))
                                     && field.getAnnotation(LogExclude.class) == null) {
                                 loggedObjects.add(toLog);
-                                logLoggable(widgetHandler,
-                                        toLog,
-                                        toLog.getClass(),
-                                        new HashSet<>(),
-                                        loggedObjects,
-                                        new HashSet<>(),
-                                        new HashSet<>(),
-                                        shuffleboard,
-                                        bin
-                                );
+                                log.accept(toLog);
                             }
                         }
                     } else if (Collection.class.isAssignableFrom(field.getType())) {
@@ -342,16 +344,7 @@ public class Logger {
                             if ((!loggedObjects.contains(toLog) || (toLog.getClass().getAnnotation(AllowRepeat.class) != null))
                                     && field.getAnnotation(LogExclude.class) == null) {
                                 loggedObjects.add(toLog);
-                                logLoggable(widgetHandler,
-                                        toLog,
-                                        toLog.getClass(),
-                                        new HashSet<>(),
-                                        loggedObjects,
-                                        new HashSet<>(),
-                                        new HashSet<>(),
-                                        shuffleboard,
-                                        bin
-                                );
+                                log.accept(toLog);
                             }
                         }
                     } else {
@@ -365,32 +358,9 @@ public class Logger {
                         if ((!loggedObjects.contains(toLog) || (toLog.getClass().getAnnotation(AllowRepeat.class) != null))
                                 && field.getAnnotation(LogExclude.class) == null) {
                             loggedObjects.add(toLog);
-                            logLoggable(widgetHandler,
-                                    toLog,
-                                    toLog.getClass(),
-                                    new HashSet<>(),
-                                    loggedObjects,
-                                    new HashSet<>(),
-                                    new HashSet<>(),
-                                    shuffleboard,
-                                    bin
-                            );
+                            log.accept(toLog);
                         }
                     }
-                }
-            }
-
-            if (field.getType().isArray()) {
-                if (Loggable.class.isAssignableFrom(field.getType().getComponentType())) {
-                    field.setAccessible(true);
-                    Loggable[] toLogs;
-                    try {
-                        toLogs = (Loggable[]) field.get(loggable);
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                        toLogs = new Loggable[0];
-                    }
-
                 }
             }
         }
