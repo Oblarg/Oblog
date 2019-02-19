@@ -1,5 +1,6 @@
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+
 import static java.util.Map.entry;
 
 import java.lang.annotation.Annotation;
@@ -200,6 +201,8 @@ public class Logger {
                                                  Set<Method> registeredMethods,
                                                  Map<Class<? extends Annotation>, WidgetProcessor> widgetHandler) {
 
+        System.out.println("Registering Fields!");
+
         Set<Field> fields = Set.of(loggableClass.getDeclaredFields());
         Set<Method> methods = Set.of(loggableClass.getDeclaredMethods());
 
@@ -272,9 +275,11 @@ public class Logger {
                                     Set<Object> loggedObjects,
                                     ShuffleboardWrapper shuffleboard,
                                     ShuffleboardContainerWrapper parent) {
+
         ShuffleboardContainerWrapper bin;
+
         if (parent == null) {
-            bin = new WrappedShuffleboardContainer(shuffleboard.getTab(loggable.configureLogName()));
+            bin = shuffleboard.getTab(loggable.configureLogName());
         } else {
             bin = parent.getLayout(loggable.configureLogName(), loggable.configureLayoutType())
                     .withProperties(loggable.configureLayoutProperties());
@@ -339,7 +344,7 @@ public class Logger {
         Set<Object> loggedObjects = new HashSet<>();
 
         for (Field field : rootContainer.getClass().getDeclaredFields()) {
-            if (field.getType().isAssignableFrom(Loggable.class)) {
+            if (Loggable.class.isAssignableFrom(field.getType())) {
                 field.setAccessible(true);
                 try {
                     Loggable toLog = (Loggable) field.get(rootContainer);
@@ -351,11 +356,17 @@ public class Logger {
                             loggedObjects,
                             shuffleboard,
                             null);
-                } catch(IllegalAccessException e){
+                } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
             }
         }
+    }
+
+    public static void configureLoggingTest(Object rootContainer, ShuffleboardWrapper shuffleboard) {
+        configureLogging(widgetHandler,
+                rootContainer,
+                shuffleboard);
     }
 
     /**

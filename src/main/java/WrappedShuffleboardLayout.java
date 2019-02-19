@@ -3,11 +3,11 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 
 import java.util.Map;
 
-class WrappedShuffleboardLayout implements ShuffleboardLayoutWrapper {
+public class WrappedShuffleboardLayout implements ShuffleboardLayoutWrapper {
 
     private ShuffleboardLayout layout;
 
-    WrappedShuffleboardLayout (ShuffleboardLayout layout){
+    public WrappedShuffleboardLayout (ShuffleboardLayout layout){
         this.layout = layout;
     }
 

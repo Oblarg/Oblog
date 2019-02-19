@@ -4,13 +4,14 @@ import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 
 import java.util.Map;
 
-class WrappedShuffleboardWidget implements ShuffleboardWidgetWrapper {
+public class WrappedShuffleboardWidget implements ShuffleboardWidgetWrapper {
 
     private SimpleWidget widget;
 
-    WrappedShuffleboardWidget(SimpleWidget component){
+    public WrappedShuffleboardWidget(SimpleWidget component) {
         this.widget = component;
     }
+
     @Override
     public NetworkTableEntry getEntry() {
         return widget.getEntry();
