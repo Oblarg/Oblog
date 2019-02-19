@@ -296,27 +296,24 @@ public class Logger {
                 registeredMethods,
                 widgetHandler);
 
+        Consumer<Loggable> log = (toLog) -> logLoggable(widgetHandler,
+                toLog,
+                toLog.getClass(),
+                new HashSet<>(),
+                loggedObjects,
+                new HashSet<>(),
+                new HashSet<>(),
+                shuffleboard,
+                bin
+        );
+
         //recurse on Loggable fields
 
         for (Field field : loggable.getClass().getDeclaredFields()) {
-            if (Loggable.class.isAssignableFrom(field.getType()) ||
-                    (field.getType().isArray() && Loggable.class.isAssignableFrom(field.getType().getComponentType())) ||
-                    (Collection.class.isAssignableFrom(field.getType()) &&
-                            Loggable.class.isAssignableFrom(
-                                    (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]))) {
+            if (isLoggableClassOrArrayOrCollection(field)) {
                 field.setAccessible(true);
                 if (!loggedFields.contains(field)) {
                     loggedFields.add(field);
-                    Consumer<Loggable> log = (toLog) ->logLoggable(widgetHandler,
-                            toLog,
-                            toLog.getClass(),
-                            new HashSet<>(),
-                            loggedObjects,
-                            new HashSet<>(),
-                            new HashSet<>(),
-                            shuffleboard,
-                            bin
-                    );
                     if (field.getType().isArray()) {
                         Loggable[] toLogs;
                         try {
@@ -336,7 +333,7 @@ public class Logger {
                         Collection<Loggable> toLogs;
                         try {
                             toLogs = (Collection) field.get(loggable);
-                        } catch (IllegalAccessException e){
+                        } catch (IllegalAccessException e) {
                             e.printStackTrace();
                             toLogs = new HashSet<>();
                         }
@@ -380,6 +377,13 @@ public class Logger {
         }
     }
 
+    private static boolean isLoggableClassOrArrayOrCollection(Field field){
+        return Loggable.class.isAssignableFrom(field.getType()) ||
+                (field.getType().isArray() && Loggable.class.isAssignableFrom(field.getType().getComponentType())) ||
+                (Collection.class.isAssignableFrom(field.getType()) &&
+                        Loggable.class.isAssignableFrom(
+                                (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]));
+    }
 
     private static void configureLogging(Map<Class<? extends Annotation>, WidgetProcessor> widgetHandler,
                                          Object rootContainer,
