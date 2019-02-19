@@ -38,7 +38,7 @@ public class SimpleTest {
 
         Logger.configureLoggingTest(rootContainer, mockedShuffleboard);
 
-        verify(mockedShuffleboard).getTab("TestLoggableChildren");
+        verify(mockedShuffleboard).getTab("TestLoggableList");
         verify(mockedShuffleboardContainer).getLayout("TestLoggableBasic1", BuiltInLayouts.kList);
         verify(mockedShuffleboardContainer).getLayout("TestLoggableBasic2", BuiltInLayouts.kList);
 
@@ -59,6 +59,14 @@ public class SimpleTest {
 class TestLoggableChildren implements Loggable {
     TestLoggableBasic firstChild = new TestLoggableBasic(1);
     TestLoggableBasic secondChild = new TestLoggableBasic(2);
+}
+
+class TestLoggableArray implements Loggable {
+    TestLoggableBasic[] loggables = {new TestLoggableBasic(1), new TestLoggableBasic(2)};
+}
+
+class TestLoggableList implements  Loggable{
+    List<TestLoggableBasic> loggables = List.of(new TestLoggableBasic(1), new TestLoggableBasic(2));
 }
 
 class TestLoggableBasic implements Loggable{
@@ -103,5 +111,5 @@ class TestRecursionSub extends TestRecursionSuper {
 
 class TestRootContainer {
 
-    TestLoggableChildren test = new TestLoggableChildren();
+    TestLoggableList test = new TestLoggableList();
 }

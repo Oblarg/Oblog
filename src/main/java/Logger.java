@@ -7,6 +7,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -297,31 +298,99 @@ public class Logger {
         //recurse on Loggable fields
 
         for (Field field : loggable.getClass().getDeclaredFields()) {
-            if (Loggable.class.isAssignableFrom(field.getType())) {
+            if (Loggable.class.isAssignableFrom(field.getType()) ||
+                    (field.getType().isArray() && Loggable.class.isAssignableFrom(field.getType().getComponentType())) ||
+                    (Collection.class.isAssignableFrom(field.getType()) &&
+                            Loggable.class.isAssignableFrom(
+                                    (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]))) {
                 field.setAccessible(true);
                 if (!loggedFields.contains(field)) {
                     loggedFields.add(field);
-                    Loggable toLog;
+                    if (field.getType().isArray()) {
+                        Loggable[] toLogs;
+                        try {
+                            toLogs = (Loggable[]) field.get(loggable);
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                            toLogs = new Loggable[0];
+                        }
+                        for (Loggable toLog : toLogs) {
+                            if ((!loggedObjects.contains(toLog) || (toLog.getClass().getAnnotation(AllowRepeat.class) != null))
+                                    && field.getAnnotation(LogExclude.class) == null) {
+                                loggedObjects.add(toLog);
+                                logLoggable(widgetHandler,
+                                        toLog,
+                                        toLog.getClass(),
+                                        new HashSet<>(),
+                                        loggedObjects,
+                                        new HashSet<>(),
+                                        new HashSet<>(),
+                                        shuffleboard,
+                                        bin
+                                );
+                            }
+                        }
+                    } else if (Collection.class.isAssignableFrom(field.getType())) {
+                        Collection<Loggable> toLogs;
+                        try {
+                            toLogs = (Collection) field.get(loggable);
+                        } catch (IllegalAccessException e){
+                            e.printStackTrace();
+                            toLogs = new HashSet<>();
+                        }
+                        for (Loggable toLog : toLogs) {
+                            if ((!loggedObjects.contains(toLog) || (toLog.getClass().getAnnotation(AllowRepeat.class) != null))
+                                    && field.getAnnotation(LogExclude.class) == null) {
+                                loggedObjects.add(toLog);
+                                logLoggable(widgetHandler,
+                                        toLog,
+                                        toLog.getClass(),
+                                        new HashSet<>(),
+                                        loggedObjects,
+                                        new HashSet<>(),
+                                        new HashSet<>(),
+                                        shuffleboard,
+                                        bin
+                                );
+                            }
+                        }
+                    } else {
+                        Loggable toLog;
+                        try {
+                            toLog = (Loggable) field.get(loggable);
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                            toLog = null;
+                        }
+                        if ((!loggedObjects.contains(toLog) || (toLog.getClass().getAnnotation(AllowRepeat.class) != null))
+                                && field.getAnnotation(LogExclude.class) == null) {
+                            loggedObjects.add(toLog);
+                            logLoggable(widgetHandler,
+                                    toLog,
+                                    toLog.getClass(),
+                                    new HashSet<>(),
+                                    loggedObjects,
+                                    new HashSet<>(),
+                                    new HashSet<>(),
+                                    shuffleboard,
+                                    bin
+                            );
+                        }
+                    }
+                }
+            }
+
+            if (field.getType().isArray()) {
+                if (Loggable.class.isAssignableFrom(field.getType().getComponentType())) {
+                    field.setAccessible(true);
+                    Loggable[] toLogs;
                     try {
-                        toLog = (Loggable) field.get(loggable);
+                        toLogs = (Loggable[]) field.get(loggable);
                     } catch (IllegalAccessException e) {
                         e.printStackTrace();
-                        toLog = null;
+                        toLogs = new Loggable[0];
                     }
-                    if ((!loggedObjects.contains(toLog) || (toLog.getClass().getAnnotation(AllowRepeat.class) != null))
-                            && field.getAnnotation(LogExclude.class) == null) {
-                        loggedObjects.add(toLog);
-                        logLoggable(widgetHandler,
-                                toLog,
-                                toLog.getClass(),
-                                new HashSet<>(),
-                                loggedObjects,
-                                new HashSet<>(),
-                                new HashSet<>(),
-                                shuffleboard,
-                                bin
-                        );
-                    }
+
                 }
             }
         }
