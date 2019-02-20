@@ -35,14 +35,9 @@ public class SimpleTest {
         when(mockedShuffleboardWidget.withWidget(any())).thenReturn(mockedShuffleboardWidget);
         when(mockedShuffleboardWidget.getEntry()).thenReturn(newMockEntry());
 
-        Logger.configureLoggingTest(rootContainer, mockedShuffleboard);
+        Logger.configureLoggingStaticTest(TestRobot.class, mockedShuffleboard);
 
-        verify(mockedShuffleboard).getTab("TestLoggableList");
-        verify(mockedShuffleboardContainer).getLayout("TestLoggableBasic1", BuiltInLayouts.kList);
-        verify(mockedShuffleboardContainer).getLayout("TestLoggableBasic2", BuiltInLayouts.kList);
-
-        verify(mockedShuffleboardLayout).add("a", 1);
-        verify(mockedShuffleboardLayout).add("a", 2);
+        verify(mockedShuffleboard).getTab("TestLoggableBasic1");
 
 
         Logger.updateEntries();
@@ -66,6 +61,9 @@ class TestLoggableArray implements Loggable {
 
 class TestLoggableList implements  Loggable{
     List<TestLoggableBasic> loggables = List.of(new TestLoggableBasic(1), new TestLoggableBasic(2));
+
+    @LogExclude
+    TestLoggableBasic excluded = new TestLoggableBasic(5);
 }
 
 class TestLoggableBasic implements Loggable{

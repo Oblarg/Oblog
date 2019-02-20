@@ -4,10 +4,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import static java.util.Map.entry;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -296,6 +293,12 @@ public class Logger {
                 registeredMethods,
                 widgetHandler);
 
+        //only call on the actual class, to avoid multiple calls if overridden
+
+        if (loggableClass == loggable.getClass()){
+            loggable.addCustomLogging();
+        }
+
         Consumer<Loggable> log = (toLog) -> logLoggable(widgetHandler,
                 toLog,
                 toLog.getClass(),
@@ -304,8 +307,7 @@ public class Logger {
                 new HashSet<>(),
                 new HashSet<>(),
                 shuffleboard,
-                bin
-        );
+                bin);
 
         //recurse on Loggable fields
 
@@ -377,7 +379,7 @@ public class Logger {
         }
     }
 
-    private static boolean isLoggableClassOrArrayOrCollection(Field field){
+    private static boolean isLoggableClassOrArrayOrCollection(Field field) {
         return Loggable.class.isAssignableFrom(field.getType()) ||
                 (field.getType().isArray() && Loggable.class.isAssignableFrom(field.getType().getComponentType())) ||
                 (Collection.class.isAssignableFrom(field.getType()) &&
@@ -413,8 +415,44 @@ public class Logger {
         }
     }
 
+    private static void configureLoggingStatic(Map<Class<? extends Annotation>, WidgetProcessor> widgetHandler,
+                                               Class rootContainer,
+                                               ShuffleboardWrapper shuffleboard) {
+
+        Set<Object> loggedObjects = new HashSet<>();
+
+        for (Field field : rootContainer.getDeclaredFields()) {
+            if (Modifier.isStatic(field.getModifiers())) {
+                if (Loggable.class.isAssignableFrom(field.getType())) {
+                    field.setAccessible(true);
+                    try {
+                        Loggable toLog = (Loggable) field.get(null);
+                        loggedObjects.add(toLog);
+                        logLoggable(widgetHandler,
+                                toLog,
+                                toLog.getClass(),
+                                new HashSet<>(),
+                                loggedObjects,
+                                new HashSet<>(),
+                                new HashSet<>(),
+                                shuffleboard,
+                                null);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
     public static void configureLoggingTest(Object rootContainer, ShuffleboardWrapper shuffleboard) {
         configureLogging(widgetHandler,
+                rootContainer,
+                shuffleboard);
+    }
+
+    public static void configureLoggingStaticTest(Class rootContainer, ShuffleboardWrapper shuffleboard) {
+        configureLoggingStatic(widgetHandler,
                 rootContainer,
                 shuffleboard);
     }
