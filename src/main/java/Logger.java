@@ -436,6 +436,9 @@ public class Logger {
     /**
      * Registers a new entry.  To be called during initial logging configuration for any value that will
      * change during runtime.
+     *
+     * @param entry The entry to be updated.
+     * @param supplier The supplier with which to update the entry.
      */
     public static void registerEntry(NetworkTableEntry entry, Supplier<Object> supplier) {
         entrySupplierMap.put(entry, supplier);

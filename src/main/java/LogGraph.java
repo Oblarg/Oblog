@@ -14,6 +14,7 @@ import java.lang.annotation.Target;
  * </ul>
  * <br>Custom properties:
  * <table>
+ * <caption></caption>
  * <tr><th>Name</th><th>Type</th><th>Default Value</th><th>Notes</th></tr>
  * <tr><td>Visible time</td><td>Number</td><td>30</td>
  * <td>How long, in seconds, should past data be visible for</td></tr>

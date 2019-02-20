@@ -18,6 +18,6 @@ class WrappedShuffleboardContainer implements ShuffleboardContainerWrapper {
 
     @Override
     public ShuffleboardWidgetWrapper add(String title, Object defaultValue) {
-        return null;
+        return new WrappedShuffleboardWidget (container.add(title, defaultValue));
     }
 }

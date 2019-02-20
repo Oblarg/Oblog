@@ -11,6 +11,7 @@ import java.lang.annotation.Target;
  * </ul>
  * <br>Custom properties:
  * <table>
+ * <caption></caption>
  * <tr><th>Name</th><th>Type</th><th>Default Value</th><th>Notes</th></tr>
  * <tr><td>Show crosshair</td><td>Boolean</td><td>true</td>
  * <td>Show or hide a crosshair on the image</td></tr>

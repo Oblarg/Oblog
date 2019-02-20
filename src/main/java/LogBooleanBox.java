@@ -11,6 +11,7 @@ import java.lang.annotation.Target;
  * </ul>
  * <br>Custom properties:
  * <table>
+ * <caption></caption>
  * <tr><th>Name</th><th>Type</th><th>Default Value</th><th>Notes</th></tr>
  * <tr><td>Color when true</td><td>Color</td><td>"green"</td>
  * <td>Can be specified as a string ({@code "#00FF00"}) or a rgba integer ({@code 0x00FF0000})

@@ -12,6 +12,7 @@ import java.lang.annotation.Target;
  * </ul>
  * <br>Custom properties:
  * <table>
+ * <caption></caption>
  * <tr><th>Name</th><th>Type</th><th>Default Value</th><th>Notes</th></tr>
  * <tr><td>Min</td><td>Number</td><td>-1</td>
  * <td>The minimum acceleration value to display</td></tr>

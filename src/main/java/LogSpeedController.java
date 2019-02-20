@@ -23,6 +23,7 @@ import java.lang.annotation.Target;
  * </ul>
  * <br>Custom properties:
  * <table>
+ * <caption></caption>
  * <tr><th>Name</th><th>Type</th><th>Default Value</th><th>Notes</th></tr>
  * <tr><td>Orientation</td><td>String</td><td>"HORIZONTAL"</td>
  * <td>One of {@code ["HORIZONTAL", "VERTICAL"]}</td></tr>

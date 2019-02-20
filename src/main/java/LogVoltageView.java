@@ -12,6 +12,7 @@ import java.lang.annotation.Target;
  * </ul>
  * <br>Custom properties:
  * <table>
+ * <caption></caption>
  * <tr><th>Name</th><th>Type</th><th>Default Value</th><th>Notes</th></tr>
  * <tr><td>Min</td><td>Number</td><td>0</td><td>The minimum value of the bar</td></tr>
  * <tr><td>Max</td><td>Number</td><td>5</td><td>The maximum value of the bar</td></tr>

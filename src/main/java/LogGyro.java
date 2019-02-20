@@ -13,6 +13,7 @@ import java.lang.annotation.Target;
  * </ul>
  * <br>Custom properties:
  * <table>
+ * <caption></caption>
  * <tr><th>Name</th><th>Type</th><th>Default Value</th><th>Notes</th></tr>
  * <tr><td>Major tick spacing</td><td>Number</td><td>45</td><td>Degrees</td></tr>
  * <tr><td>Starting angle</td><td>Number</td><td>180</td>

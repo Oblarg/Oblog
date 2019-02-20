@@ -15,6 +15,7 @@ import java.lang.annotation.Target;
  * </ul>
  * <br>Custom properties:
  * <table>
+ * <caption></caption>
  * <tr><th>Name</th><th>Type</th><th>Default Value</th><th>Notes</th></tr>
  * <tr><td>Range</td><td>{@link Accelerometer.Range}</td><td>k16G</td><td>The accelerometer range</td></tr>
  * <tr><td>Show value</td><td>Boolean</td><td>true</td>
