@@ -14,6 +14,93 @@ import java.util.function.Supplier;
 
 public class Logger {
 
+    /**
+     * Configure shuffleboard logging for the robot.  Should be called after all loggable objects have been
+     * instantiated, e.g. at the end of RobotInit.
+     *
+     * @param rootContainer The root of the tree of loggable objects - for most teams, this is Robot.java.
+     *                      To send an instance of Robot.java to this method from robotInit, call "configureLogging(this)"
+     *                      logger.Loggable fields of this object will have their own shuffleboard tabs.
+     */
+
+    public static void configureLogging(Object rootContainer){
+        configureLogging(widgetHandler,
+                rootContainer,
+                new WrappedShuffleboard());
+    }
+
+    /**
+     * Configures logging to send values over NetworkTables, but not to add widgets to Shuffleboard.  Use is the same
+     * as {@link Logger#configureLogging(Object)}.
+     *
+     * @param rootContainer The root of the tree of loggable objects - for most teams, this is Robot.java.
+     *                      To send an instance of Robot.java to this method from robotInit, call "configureLogging(this)"
+     *
+     * @param rootName Name of the root NetworkTable.  logger.Loggable fields of rootContainer will be subtables.
+     */
+    public static void configureLoggingNTOnly(Object rootContainer, String rootName){
+        configureLogging(widgetHandler,
+                rootContainer,
+                new NTShuffleboard(rootName));
+    }
+
+    private static void configureLogging(Map<Class<? extends Annotation>, WidgetProcessor> widgetHandler,
+                                         Object rootContainer,
+                                         ShuffleboardWrapper shuffleboard) {
+
+        Set<Object> loggedObjects = new HashSet<>();
+
+        for (Field field : rootContainer.getClass().getDeclaredFields()) {
+            if (Loggable.class.isAssignableFrom(field.getType())) {
+                field.setAccessible(true);
+                try {
+                    Loggable toLog = (Loggable) field.get(rootContainer);
+                    loggedObjects.add(toLog);
+                    logLoggable(widgetHandler,
+                            toLog,
+                            toLog.getClass(),
+                            new HashSet<>(),
+                            loggedObjects,
+                            new HashSet<>(),
+                            new HashSet<>(),
+                            shuffleboard,
+                            null);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    static void configureLoggingTest(Object rootContainer, ShuffleboardWrapper shuffleboard) {
+        configureLogging(widgetHandler,
+                rootContainer,
+                shuffleboard);
+    }
+
+    /**
+     * A map of the suppliers that are used to update each entry.
+     */
+    private static final Map<NetworkTableEntry, Supplier<Object>> entrySupplierMap = new HashMap<>();
+
+    /**
+     * Updates all entries.  Must be called periodically from the main robot loop.
+     */
+    public static void updateEntries() {
+        entrySupplierMap.forEach((entry, supplier) -> entry.setValue(supplier.get()));
+    }
+
+    /**
+     * Registers a new entry.  To be called during initial logging configuration for any value that will
+     * change during runtime.
+     *
+     * @param entry The entry to be updated.
+     * @param supplier The supplier with which to update the entry.
+     */
+    public static void registerEntry(NetworkTableEntry entry, Supplier<Object> supplier) {
+        entrySupplierMap.put(entry, supplier);
+    }
+
     @FunctionalInterface
     private interface WidgetProcessor {
         void processWidget(Supplier<Object> supplier, Annotation params, ShuffleboardContainerWrapper bin, String name);
@@ -377,91 +464,6 @@ public class Logger {
                                 (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]));
     }
 
-    private static void configureLogging(Map<Class<? extends Annotation>, WidgetProcessor> widgetHandler,
-                                         Object rootContainer,
-                                         ShuffleboardWrapper shuffleboard) {
 
-        Set<Object> loggedObjects = new HashSet<>();
-
-        for (Field field : rootContainer.getClass().getDeclaredFields()) {
-            if (Loggable.class.isAssignableFrom(field.getType())) {
-                field.setAccessible(true);
-                try {
-                    Loggable toLog = (Loggable) field.get(rootContainer);
-                    loggedObjects.add(toLog);
-                    logLoggable(widgetHandler,
-                            toLog,
-                            toLog.getClass(),
-                            new HashSet<>(),
-                            loggedObjects,
-                            new HashSet<>(),
-                            new HashSet<>(),
-                            shuffleboard,
-                            null);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    static void configureLoggingTest(Object rootContainer, ShuffleboardWrapper shuffleboard) {
-        configureLogging(widgetHandler,
-                rootContainer,
-                shuffleboard);
-    }
-
-    /**
-     * Configure shuffleboard logging for the robot.  Should be called after all loggable objects have been
-     * instantiated, e.g. at the end of RobotInit.
-     *
-     * @param rootContainer The root of the tree of loggable objects - for most teams, this is Robot.java.
-     *                      To send an instance of Robot.java to this method from robotInit, call "configureLogging(this)"
-     *                      logger.Loggable fields of this object will have their own shuffleboard tabs.
-     */
-
-    public static void configureLogging(Object rootContainer){
-        configureLogging(widgetHandler,
-                rootContainer,
-                new WrappedShuffleboard());
-    }
-
-    /**
-     * Configures logging to send values over NetworkTables, but not to add widgets to Shuffleboard.  Use is the same
-     * as {@link Logger#configureLogging(Object)}.
-     *
-     * @param rootContainer The root of the tree of loggable objects - for most teams, this is Robot.java.
-     *                      To send an instance of Robot.java to this method from robotInit, call "configureLogging(this)"
-     *
-     * @param rootName Name of the root NetworkTable.  logger.Loggable fields of rootContainer will be subtables.
-     */
-    public static void configureLoggingNTOnly(Object rootContainer, String rootName){
-        configureLogging(widgetHandler,
-                rootContainer,
-                new NTShuffleboard(rootName));
-    }
-
-    /**
-     * A map of the suppliers that are used to update each entry.
-     */
-    private static final Map<NetworkTableEntry, Supplier<Object>> entrySupplierMap = new HashMap<>();
-
-    /**
-     * Updates all entries.  Must be called periodically from the main robot loop.
-     */
-    public static void updateEntries() {
-        entrySupplierMap.forEach((entry, supplier) -> entry.setValue(supplier.get()));
-    }
-
-    /**
-     * Registers a new entry.  To be called during initial logging configuration for any value that will
-     * change during runtime.
-     *
-     * @param entry The entry to be updated.
-     * @param supplier The supplier with which to update the entry.
-     */
-    public static void registerEntry(NetworkTableEntry entry, Supplier<Object> supplier) {
-        entrySupplierMap.put(entry, supplier);
-    }
 
 }
