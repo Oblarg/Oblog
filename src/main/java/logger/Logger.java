@@ -448,7 +448,14 @@ public class Logger {
 
     private static boolean isAncestor(Field field, Object loggable, Set<Object> ancestors) {
         try {
-            return ancestors.contains(field.get(loggable));
+            boolean b = ancestors.contains(field.get(loggable));
+            if(b){
+                System.out.println("CAUTION: Cyclic reference of loggables detected!  Recursion terminated after one cycle.");
+                System.out.println(field.getName() + " in " + loggable.getClass().getName() +
+                        " is itself an ancestor of " + loggable.getClass().getName());
+                System.out.println("Please verify that this is intended.");
+            }
+            return b;
         } catch (IllegalAccessException e) {
             e.printStackTrace();
             return true;
