@@ -3,6 +3,7 @@ package logger;
 import annotations.Log;
 import annotations.LogExclude;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,8 +21,6 @@ public class SimpleTest {
     }
 
     public static void main(String[] args) {
-        TestRootContainer rootContainer = new TestRootContainer();
-
         ShuffleboardWrapper mockedShuffleboard = mock(WrappedShuffleboard.class);
         ShuffleboardContainerWrapper mockedShuffleboardContainer = mock(WrappedShuffleboardContainer.class);
         ShuffleboardLayoutWrapper mockedShuffleboardLayout = mock(WrappedShuffleboardLayout.class);
@@ -39,7 +38,16 @@ public class SimpleTest {
         when(mockedShuffleboardWidget.getEntry()).thenReturn(newMockEntry());
 
 
+        TestRootContainer rootContainer = new TestRootContainer();
+        rootContainer.init();
+
         Logger.configureLoggingTest(rootContainer, mockedShuffleboard);
+
+        verify(mockedShuffleboard).getTab("TestCycleOuter");
+        verify(mockedShuffleboardContainer).getLayout("TestCycleInner", BuiltInLayouts.kList);
+        verify(mockedShuffleboardContainer).add("s", "outer");
+        verify(mockedShuffleboardLayout).add("s", "inner");
+
 
         Logger.updateEntries();
 
@@ -51,64 +59,14 @@ public class SimpleTest {
     }
 }
 
-class TestLoggableChildren implements Loggable {
-    TestLoggableBasic firstChild = new TestLoggableBasic(1);
-    TestLoggableBasic secondChild = new TestLoggableBasic(2);
-}
-
-class TestLoggableArray implements Loggable {
-    TestLoggableBasic[] loggables = {new TestLoggableBasic(1), new TestLoggableBasic(2)};
-}
-
-class TestLoggableList implements Loggable {
-    List<TestLoggableBasic> loggables = List.of(new TestLoggableBasic(1), new TestLoggableBasic(2));
-
-    @LogExclude
-    TestLoggableBasic excluded = new TestLoggableBasic(5);
-}
-
-class TestLoggableBasic implements Loggable {
-
-    TestLoggableBasic(int a){
-        this.a = a;
-    }
-
-    @Override
-    public String configureLogName(){
-        return "logger.TestLoggableBasic" + a;
-    }
-
-    @Log
-    int a;
-
-    @Log
-    private int getB(){
-        return 2;
-    }
-}
-
-class TestRecursionBase {
-
-    int a = 1;
-
-    int b = 2;
-
-}
-
-class TestRecursionSuper extends TestRecursionBase implements Loggable {
-
-    @Log
-    int b = 10;
-
-    int c = 3;
-}
-
-class TestRecursionSub extends TestRecursionSuper {
-    @Log
-    int d = 4;
-}
-
 class TestRootContainer {
 
-    TestLoggableList test = new TestLoggableList();
+    TestCycleOuter outer = new TestCycleOuter();
+
+    void init(){
+        TestCycleInner inner = new TestCycleInner();
+        inner.setOuter(outer);
+        outer.setInner(inner);
+    }
+
 }

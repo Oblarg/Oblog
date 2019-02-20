@@ -386,7 +386,7 @@ public class Logger {
                 bin,
                 new HashSet<>(ancestors));
 
-        //recurse on logger.Loggable fields
+        //recurse on Loggable fields
 
         for (Field field : loggable.getClass().getDeclaredFields()) {
             if (isLoggableClassOrArrayOrCollection(field) && field.getAnnotation(LogExclude.class) == null) {
