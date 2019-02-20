@@ -10,14 +10,14 @@ class TestLoggableBasic implements Loggable {
 
     @Override
     public String configureLogName(){
-        return "logger.TestLoggableBasic" + a;
+        return "TestLoggableBasic" + a;
     }
 
     @Log
     int a;
 
     @Log
-    private int getB(){
-        return 2;
+    private int getA(){
+        return a;
     }
 }

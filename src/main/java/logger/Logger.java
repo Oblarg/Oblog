@@ -388,7 +388,7 @@ public class Logger {
 
         //recurse on Loggable fields
 
-        for (Field field : loggable.getClass().getDeclaredFields()) {
+        for (Field field : loggableClass.getDeclaredFields()) {
             if (isLoggableClassOrArrayOrCollection(field) && field.getAnnotation(LogExclude.class) == null) {
                 field.setAccessible(true);
                 if (!loggedFields.contains(field) && !isAncestor(field, loggable, ancestors)) {
@@ -450,7 +450,7 @@ public class Logger {
         try {
             boolean b = ancestors.contains(field.get(loggable));
             if(b){
-                System.out.println("CAUTION: Cyclic reference of loggables detected!  Recursion terminated after one cycle.");
+                System.out.println("CAUTION: Cyclic reference of Loggables detected!  Recursion terminated after one cycle.");
                 System.out.println(field.getName() + " in " + loggable.getClass().getName() +
                         " is itself an ancestor of " + loggable.getClass().getName());
                 System.out.println("Please verify that this is intended.");
