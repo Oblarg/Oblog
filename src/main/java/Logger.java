@@ -415,44 +415,8 @@ public class Logger {
         }
     }
 
-    private static void configureLoggingStatic(Map<Class<? extends Annotation>, WidgetProcessor> widgetHandler,
-                                               Class rootContainer,
-                                               ShuffleboardWrapper shuffleboard) {
-
-        Set<Object> loggedObjects = new HashSet<>();
-
-        for (Field field : rootContainer.getDeclaredFields()) {
-            if (Modifier.isStatic(field.getModifiers())) {
-                if (Loggable.class.isAssignableFrom(field.getType())) {
-                    field.setAccessible(true);
-                    try {
-                        Loggable toLog = (Loggable) field.get(null);
-                        loggedObjects.add(toLog);
-                        logLoggable(widgetHandler,
-                                toLog,
-                                toLog.getClass(),
-                                new HashSet<>(),
-                                loggedObjects,
-                                new HashSet<>(),
-                                new HashSet<>(),
-                                shuffleboard,
-                                null);
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-    }
-
     public static void configureLoggingTest(Object rootContainer, ShuffleboardWrapper shuffleboard) {
         configureLogging(widgetHandler,
-                rootContainer,
-                shuffleboard);
-    }
-
-    public static void configureLoggingStaticTest(Class rootContainer, ShuffleboardWrapper shuffleboard) {
-        configureLoggingStatic(widgetHandler,
                 rootContainer,
                 shuffleboard);
     }

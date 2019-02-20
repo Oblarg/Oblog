@@ -35,10 +35,8 @@ public class SimpleTest {
         when(mockedShuffleboardWidget.withWidget(any())).thenReturn(mockedShuffleboardWidget);
         when(mockedShuffleboardWidget.getEntry()).thenReturn(newMockEntry());
 
-        Logger.configureLoggingStaticTest(TestRobot.class, mockedShuffleboard);
 
-        verify(mockedShuffleboard).getTab("TestLoggableBasic1");
-
+        Logger.configureLoggingTest(rootContainer, mockedShuffleboard);
 
         Logger.updateEntries();
 
