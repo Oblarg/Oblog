@@ -1,11 +1,13 @@
+package Logger;
+
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
-public class NTShuffleboard implements ShuffleboardWrapper {
+class NTShuffleboard implements ShuffleboardWrapper {
 
     private NetworkTable table;
 
-    public NTShuffleboard(String rootName){
+    NTShuffleboard(String rootName){
         table = NetworkTableInstance.getDefault().getTable(rootName);
     }
 

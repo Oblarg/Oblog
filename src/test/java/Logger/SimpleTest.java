@@ -1,3 +1,5 @@
+package Logger;
+
 import Annotations.Log;
 import Annotations.LogExclude;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -58,14 +60,14 @@ class TestLoggableArray implements Loggable {
     TestLoggableBasic[] loggables = {new TestLoggableBasic(1), new TestLoggableBasic(2)};
 }
 
-class TestLoggableList implements  Loggable{
+class TestLoggableList implements Loggable {
     List<TestLoggableBasic> loggables = List.of(new TestLoggableBasic(1), new TestLoggableBasic(2));
 
     @LogExclude
     TestLoggableBasic excluded = new TestLoggableBasic(5);
 }
 
-class TestLoggableBasic implements Loggable{
+class TestLoggableBasic implements Loggable {
 
     TestLoggableBasic(int a){
         this.a = a;
@@ -73,7 +75,7 @@ class TestLoggableBasic implements Loggable{
 
     @Override
     public String configureLogName(){
-        return "TestLoggableBasic" + a;
+        return "Logger.TestLoggableBasic" + a;
     }
 
     @Log
@@ -93,7 +95,7 @@ class TestRecursionBase {
 
 }
 
-class TestRecursionSuper extends TestRecursionBase implements Loggable{
+class TestRecursionSuper extends TestRecursionBase implements Loggable {
 
     @Log
     int b = 10;

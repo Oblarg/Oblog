@@ -1,11 +1,13 @@
+package Logger;
+
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.shuffleboard.LayoutType;
 
-public class NTContainer implements ShuffleboardContainerWrapper {
+class NTContainer implements ShuffleboardContainerWrapper {
 
     NetworkTable table;
 
-    public NTContainer(NetworkTable table){
+    NTContainer(NetworkTable table){
         this.table = table;
     }
 

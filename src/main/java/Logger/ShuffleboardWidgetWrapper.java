@@ -1,3 +1,5 @@
+package Logger;
+
 import edu.wpi.first.networktables.NetworkTableEntry;
 
 import java.util.Map;

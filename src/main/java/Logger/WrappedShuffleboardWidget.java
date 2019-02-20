@@ -1,14 +1,15 @@
+package Logger;
+
 import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 
 import java.util.Map;
 
-public class WrappedShuffleboardWidget implements ShuffleboardWidgetWrapper {
+class WrappedShuffleboardWidget implements ShuffleboardWidgetWrapper {
 
     private SimpleWidget widget;
 
-    public WrappedShuffleboardWidget(SimpleWidget component) {
+    WrappedShuffleboardWidget(SimpleWidget component) {
         this.widget = component;
     }
 

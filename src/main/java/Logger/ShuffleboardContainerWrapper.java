@@ -1,6 +1,6 @@
-import edu.wpi.first.wpilibj.shuffleboard.LayoutType;
+package Logger;
 
-import java.util.Map;
+import edu.wpi.first.wpilibj.shuffleboard.LayoutType;
 
 interface ShuffleboardContainerWrapper {
     ShuffleboardLayoutWrapper getLayout(String title, LayoutType type);

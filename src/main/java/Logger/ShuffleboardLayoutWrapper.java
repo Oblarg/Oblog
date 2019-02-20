@@ -1,4 +1,4 @@
-import edu.wpi.first.wpilibj.shuffleboard.LayoutType;
+package Logger;
 
 import java.util.Map;
 

@@ -1,13 +1,15 @@
+package Logger;
+
 import edu.wpi.first.wpilibj.shuffleboard.LayoutType;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 
 import java.util.Map;
 
-public class WrappedShuffleboardLayout implements ShuffleboardLayoutWrapper {
+class WrappedShuffleboardLayout implements ShuffleboardLayoutWrapper {
 
     private ShuffleboardLayout layout;
 
-    public WrappedShuffleboardLayout (ShuffleboardLayout layout){
+    WrappedShuffleboardLayout (ShuffleboardLayout layout){
         this.layout = layout;
     }
 

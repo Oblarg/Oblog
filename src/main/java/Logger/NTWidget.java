@@ -1,12 +1,14 @@
+package Logger;
+
 import edu.wpi.first.networktables.NetworkTableEntry;
 
 import java.util.Map;
 
-public class NTWidget implements ShuffleboardWidgetWrapper {
+class NTWidget implements ShuffleboardWidgetWrapper {
 
     NetworkTableEntry entry;
 
-    public NTWidget(NetworkTableEntry entry, Object value){
+    NTWidget(NetworkTableEntry entry, Object value){
         this.entry = entry;
         entry.setValue(value);
     }
