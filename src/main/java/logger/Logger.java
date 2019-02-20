@@ -391,7 +391,7 @@ public class Logger {
         for (Field field : loggable.getClass().getDeclaredFields()) {
             if (isLoggableClassOrArrayOrCollection(field) && field.getAnnotation(LogExclude.class) == null) {
                 field.setAccessible(true);
-                if (!loggedFields.contains(field) && isAncestor(field, loggable, ancestors)) {
+                if (!loggedFields.contains(field) && !isAncestor(field, loggable, ancestors)) {
                     loggedFields.add(field);
                     if (field.getType().isArray()) {
                         Loggable[] toLogs;
