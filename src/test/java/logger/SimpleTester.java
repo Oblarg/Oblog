@@ -13,7 +13,7 @@ import static org.mockito.Mockito.verify;
 
 public class SimpleTester {
     @Test
-    public void testCyclic() {
+    public void testSimple() {
         List<NetworkTableEntry> mockedEntries = new ArrayList<>();
 
         TestRootContainer rootContainer = new TestRootContainer();
