@@ -384,7 +384,7 @@ public class Logger {
                 new HashSet<>(),
                 shuffleboard,
                 bin,
-                ancestors);
+                Set.of(ancestors));
 
         //recurse on logger.Loggable fields
 
