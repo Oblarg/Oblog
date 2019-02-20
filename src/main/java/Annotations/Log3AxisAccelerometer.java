@@ -1,3 +1,5 @@
+package Annotations;
+
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 
 import java.lang.annotation.ElementType;

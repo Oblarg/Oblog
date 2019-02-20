@@ -1,3 +1,4 @@
+import Annotations.*;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 
@@ -16,7 +17,7 @@ public class Logger {
         void processWidget(Supplier<Object> supplier, Annotation params, ShuffleboardContainerWrapper bin, String name);
     }
 
-    private static Map<Class<? extends Annotation>, WidgetProcessor> widgetHandler = Map.ofEntries(
+    private static final Map<Class<? extends Annotation>, WidgetProcessor> widgetHandler = Map.ofEntries(
             entry(Log.class,
                     (supplier, rawParams, bin, name) -> {
                         Log params = (Log) rawParams;
@@ -200,8 +201,6 @@ public class Logger {
                                                  Set<Method> registeredMethods,
                                                  Map<Class<? extends Annotation>, WidgetProcessor> widgetHandler) {
 
-        System.out.println("Registering Fields!");
-
         Set<Field> fields = Set.of(loggableClass.getDeclaredFields());
         Set<Method> methods = Set.of(loggableClass.getDeclaredMethods());
 
@@ -314,7 +313,7 @@ public class Logger {
                             toLogs = new Loggable[0];
                         }
                         for (Loggable toLog : toLogs) {
-                            if ((!loggedObjects.contains(toLog) || (toLog.getClass().getAnnotation(AllowRepeat.class) != null))
+                            if ((!loggedObjects.contains(toLog) || (toLog.getClass().getAnnotation(LogRepeat.class) != null))
                                     && field.getAnnotation(LogExclude.class) == null) {
                                 loggedObjects.add(toLog);
                                 log.accept(toLog);
@@ -329,7 +328,7 @@ public class Logger {
                             toLogs = new HashSet<>();
                         }
                         for (Loggable toLog : toLogs) {
-                            if ((!loggedObjects.contains(toLog) || (toLog.getClass().getAnnotation(AllowRepeat.class) != null))
+                            if ((!loggedObjects.contains(toLog) || (toLog.getClass().getAnnotation(LogRepeat.class) != null))
                                     && field.getAnnotation(LogExclude.class) == null) {
                                 loggedObjects.add(toLog);
                                 log.accept(toLog);
@@ -343,7 +342,7 @@ public class Logger {
                             e.printStackTrace();
                             toLog = null;
                         }
-                        if ((!loggedObjects.contains(toLog) || (toLog.getClass().getAnnotation(AllowRepeat.class) != null))
+                        if ((!loggedObjects.contains(toLog) || (toLog.getClass().getAnnotation(LogRepeat.class) != null))
                                 && field.getAnnotation(LogExclude.class) == null) {
                             loggedObjects.add(toLog);
                             log.accept(toLog);
@@ -446,7 +445,7 @@ public class Logger {
     private static final Map<NetworkTableEntry, Supplier<Object>> entrySupplierMap = new HashMap<>();
 
     /**
-     * Updates all entries.  To be called periodically from the main robot loop.
+     * Updates all entries.  Must be called periodically from the main robot loop.
      */
     public static void updateEntries() {
         entrySupplierMap.forEach((entry, supplier) -> entry.setValue(supplier.get()));
