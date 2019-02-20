@@ -1,4 +1,4 @@
-package Annotations;
+package annotations;
 
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 
@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Displays a 3-axis accelerometer with a number bar for each axis' accleration.
+ * Displays a 3-axis accelerometer with a number bar for each axis' acceleration.
  * <br>Supported types:
  * <ul>
  * <li>{@link edu.wpi.first.wpilibj.ADXL345_I2C}</li>

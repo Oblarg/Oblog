@@ -4,6 +4,7 @@
     <bytecodeTargetLevel>
       <module name="OblargLog.main" target="11" />
       <module name="OblargLog.test" target="11" />
+      <module name="Oblog.main" target="11" />
       <module name="Oblog.Oblog" target="11" />
       <module name="Oblog.test" target="11" />
     </bytecodeTargetLevel>
