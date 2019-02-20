@@ -352,9 +352,9 @@ public class Logger {
                                     ShuffleboardContainerWrapper parentContainer,
                                     Set<Object> ancestors) {
 
-        ShuffleboardContainerWrapper bin;
-
         ancestors.add(loggable);
+
+        ShuffleboardContainerWrapper bin;
 
         if (parentContainer == null) {
             bin = shuffleboard.getTab(loggable.configureLogName());
