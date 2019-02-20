@@ -61,7 +61,8 @@ public class Logger {
                             new HashSet<>(),
                             new HashSet<>(),
                             shuffleboard,
-                            null);
+                            null,
+                            new HashSet<>());
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
@@ -348,14 +349,17 @@ public class Logger {
                                     Set<Field> registeredFields,
                                     Set<Method> registeredMethods,
                                     ShuffleboardWrapper shuffleboard,
-                                    ShuffleboardContainerWrapper parent) {
+                                    ShuffleboardContainerWrapper parentContainer,
+                                    Set<Object> ancestors) {
 
         ShuffleboardContainerWrapper bin;
 
-        if (parent == null) {
+        ancestors.add(loggable);
+
+        if (parentContainer == null) {
             bin = shuffleboard.getTab(loggable.configureLogName());
         } else {
-            bin = parent.getLayout(loggable.configureLogName(), loggable.configureLayoutType())
+            bin = parentContainer.getLayout(loggable.configureLogName(), loggable.configureLayoutType())
                     .withProperties(loggable.configureLayoutProperties());
         }
 
@@ -379,14 +383,15 @@ public class Logger {
                 new HashSet<>(),
                 new HashSet<>(),
                 shuffleboard,
-                bin);
+                bin,
+                ancestors);
 
         //recurse on logger.Loggable fields
 
         for (Field field : loggable.getClass().getDeclaredFields()) {
             if (isLoggableClassOrArrayOrCollection(field) && field.getAnnotation(LogExclude.class) == null) {
                 field.setAccessible(true);
-                if (!loggedFields.contains(field)) {
+                if (!loggedFields.contains(field) && isAncestor(field, loggable, ancestors)) {
                     loggedFields.add(field);
                     if (field.getType().isArray()) {
                         Loggable[] toLogs;
@@ -436,7 +441,17 @@ public class Logger {
                     registeredFields,
                     registeredMethods,
                     shuffleboard,
-                    parent);
+                    parentContainer,
+                    ancestors);
+        }
+    }
+
+    private static boolean isAncestor(Field field, Object loggable, Set<Object> ancestors) {
+        try {
+            return ancestors.contains(field.get(loggable));
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            return true;
         }
     }
 
