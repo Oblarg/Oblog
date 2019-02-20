@@ -426,7 +426,6 @@ public class Logger {
                 new WrappedShuffleboard());
     }
 
-
     /**
      * Configures logging to send values over NetworkTables, but not to add widgets to Shuffleboard.  Use is the same
      * as {@link Logger#configureLogging(Object)}.
