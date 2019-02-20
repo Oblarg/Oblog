@@ -1,4 +1,4 @@
-package logger;
+package Logger;
 
 import java.util.Map;
 

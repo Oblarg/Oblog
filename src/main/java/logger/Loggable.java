@@ -1,6 +1,6 @@
-package logger;
+package Logger;
 
-import annotations.Log;
+import Annotations.Log;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.LayoutType;
 
@@ -41,7 +41,7 @@ public interface Loggable {
 
     /**
      * Override to add custom logging not supported through the standard {@link Log} options.  Called by the logger
-     * on each logger.Loggable after the handling of annotated fields and methods.
+     * on each Logger.Loggable after the handling of annotated fields and methods.
      */
     default void addCustomLogging(){}
 

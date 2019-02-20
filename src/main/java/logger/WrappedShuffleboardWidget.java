@@ -1,4 +1,4 @@
-package logger;
+package Logger;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;

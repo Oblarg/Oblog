@@ -1,4 +1,4 @@
-package logger;
+package Logger;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;

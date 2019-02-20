@@ -1,6 +1,6 @@
-package Logger;
+package logger;
 
-import Annotations.*;
+import annotations.*;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 
@@ -299,7 +299,7 @@ public class Logger {
                 shuffleboard,
                 bin);
 
-        //recurse on Logger.Loggable fields
+        //recurse on logger.Loggable fields
 
         for (Field field : loggable.getClass().getDeclaredFields()) {
             if (isLoggableClassOrArrayOrCollection(field)) {
@@ -417,7 +417,7 @@ public class Logger {
      *
      * @param rootContainer The root of the tree of loggable objects - for most teams, this is Robot.java.
      *                      To send an instance of Robot.java to this method from robotInit, call "configureLogging(this)"
-     *                      Logger.Loggable fields of this object will have their own shuffleboard tabs.
+     *                      logger.Loggable fields of this object will have their own shuffleboard tabs.
      */
 
     public static void configureLogging(Object rootContainer){
@@ -433,7 +433,7 @@ public class Logger {
      * @param rootContainer The root of the tree of loggable objects - for most teams, this is Robot.java.
      *                      To send an instance of Robot.java to this method from robotInit, call "configureLogging(this)"
      *
-     * @param rootName Name of the root NetworkTable.  Logger.Loggable fields of rootContainer will be subtables.
+     * @param rootName Name of the root NetworkTable.  logger.Loggable fields of rootContainer will be subtables.
      */
     public static void configureLoggingNTOnly(Object rootContainer, String rootName){
         configureLogging(widgetHandler,

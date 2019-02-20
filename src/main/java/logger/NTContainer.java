@@ -3,19 +3,12 @@ package Logger;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.shuffleboard.LayoutType;
 
-import java.util.Map;
-
-class NTLayout implements ShuffleboardLayoutWrapper {
+class NTContainer implements ShuffleboardContainerWrapper {
 
     NetworkTable table;
 
-    NTLayout(NetworkTable table){
+    NTContainer(NetworkTable table){
         this.table = table;
-    }
-
-    @Override
-    public ShuffleboardLayoutWrapper withProperties(Map<String, Object> properties) {
-        return this;
     }
 
     @Override

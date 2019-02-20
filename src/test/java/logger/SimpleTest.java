@@ -1,7 +1,7 @@
-package Logger;
+package logger;
 
-import Annotations.Log;
-import Annotations.LogExclude;
+import annotations.Log;
+import annotations.LogExclude;
 import edu.wpi.first.networktables.NetworkTableEntry;
 
 import java.util.ArrayList;
@@ -75,7 +75,7 @@ class TestLoggableBasic implements Loggable {
 
     @Override
     public String configureLogName(){
-        return "Logger.TestLoggableBasic" + a;
+        return "logger.TestLoggableBasic" + a;
     }
 
     @Log
