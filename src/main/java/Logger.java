@@ -254,17 +254,6 @@ public class Logger {
             }
         }
 
-        //recurse on superclass
-
-        /*if (Loggable.class.isAssignableFrom(loggableClass.getSuperclass())) {
-            registerFieldsAndMethods(loggable,
-                    loggableClass.getSuperclass(),
-                    bin,
-                    registeredFields,
-                    registeredMethods,
-                    widgetHandler);
-        }*/
-
     }
 
     private static void logLoggable(Map<Class<? extends Annotation>, WidgetProcessor> widgetHandler,
@@ -415,10 +404,40 @@ public class Logger {
         }
     }
 
-    public static void configureLoggingTest(Object rootContainer, ShuffleboardWrapper shuffleboard) {
+    static void configureLoggingTest(Object rootContainer, ShuffleboardWrapper shuffleboard) {
         configureLogging(widgetHandler,
                 rootContainer,
                 shuffleboard);
+    }
+
+    /**
+     * Configure shuffleboard logging for the robot.  Should be called after all loggable objects have been
+     * instantiated, e.g. at the end of RobotInit.
+     *
+     * @param rootContainer The root of the tree of loggable objects - for most teams, this is Robot.java.
+     *                      To send an instance of Robot.java to this method from robotInit, call "configureLogging(this)"
+     *                      Loggable fields of this object will have their own shuffleboard tabs.
+     */
+
+    public static void configureLogging(Object rootContainer){
+        configureLogging(widgetHandler,
+                rootContainer,
+                new WrappedShuffleboard());
+    }
+
+    /**
+     * Configures logging to send values over NetworkTables, but not to add widgets to Shuffleboard.  Use is the same
+     * as {@link Logger#configureLogging(Object)}.
+     *
+     * @param rootContainer The root of the tree of loggable objects - for most teams, this is Robot.java.
+     *                      To send an instance of Robot.java to this method from robotInit, call "configureLogging(this)"
+     *
+     * @param rootName Name of the root NetworkTable.  Loggable fields of rootContainer will be subtables.
+     */
+    public static void configureLoggingNTOnly(Object rootContainer, String rootName){
+        configureLogging(widgetHandler,
+                rootContainer,
+                new NTShuffleboard(rootName));
     }
 
     /**
