@@ -23,7 +23,7 @@ public class Logger {
      *                      Loggable fields of this object will have their own shuffleboard tabs.
      */
 
-    public static void configureLogging(Object rootContainer){
+    public static void configureLogging(Object rootContainer) {
         configureLogging(widgetHandler,
                 rootContainer,
                 new WrappedShuffleboard());
@@ -35,10 +35,9 @@ public class Logger {
      *
      * @param rootContainer The root of the tree of loggable objects - for most teams, this is Robot.java.
      *                      To send an instance of Robot.java to this method from robotInit, call "configureLogging(this)"
-     *
-     * @param rootName Name of the root NetworkTable.  logger.Loggable fields of rootContainer will be subtables.
+     * @param rootName      Name of the root NetworkTable.  logger.Loggable fields of rootContainer will be subtables.
      */
-    public static void configureLoggingNTOnly(Object rootContainer, String rootName){
+    public static void configureLoggingNTOnly(Object rootContainer, String rootName) {
         configureLogging(widgetHandler,
                 rootContainer,
                 new NTShuffleboard(rootName));
@@ -48,19 +47,17 @@ public class Logger {
                                          Object rootContainer,
                                          ShuffleboardWrapper shuffleboard) {
 
-        Set<Object> loggedObjects = new HashSet<>();
 
         for (Field field : rootContainer.getClass().getDeclaredFields()) {
-            if (Loggable.class.isAssignableFrom(field.getType())) {
+            if (Loggable.class.isAssignableFrom(field.getType()) &&
+                    field.getAnnotation(LogExclude.class) == null) {
                 field.setAccessible(true);
                 try {
                     Loggable toLog = (Loggable) field.get(rootContainer);
-                    loggedObjects.add(toLog);
                     logLoggable(widgetHandler,
                             toLog,
                             toLog.getClass(),
                             new HashSet<>(),
-                            loggedObjects,
                             new HashSet<>(),
                             new HashSet<>(),
                             shuffleboard,
@@ -94,7 +91,7 @@ public class Logger {
      * Registers a new entry.  To be called during initial logging configuration for any value that will
      * change during runtime.
      *
-     * @param entry The entry to be updated.
+     * @param entry    The entry to be updated.
      * @param supplier The supplier with which to update the entry.
      */
     public static void registerEntry(NetworkTableEntry entry, Supplier<Object> supplier) {
@@ -348,7 +345,6 @@ public class Logger {
                                     Loggable loggable,
                                     Class loggableClass,
                                     Set<Field> loggedFields,
-                                    Set<Object> loggedObjects,
                                     Set<Field> registeredFields,
                                     Set<Method> registeredMethods,
                                     ShuffleboardWrapper shuffleboard,
@@ -372,7 +368,7 @@ public class Logger {
 
         //only call on the actual class, to avoid multiple calls if overridden
 
-        if (loggableClass == loggable.getClass()){
+        if (loggableClass == loggable.getClass()) {
             loggable.addCustomLogging();
         }
 
@@ -380,7 +376,6 @@ public class Logger {
                 toLog,
                 toLog.getClass(),
                 new HashSet<>(),
-                loggedObjects,
                 new HashSet<>(),
                 new HashSet<>(),
                 shuffleboard,
@@ -389,7 +384,7 @@ public class Logger {
         //recurse on logger.Loggable fields
 
         for (Field field : loggable.getClass().getDeclaredFields()) {
-            if (isLoggableClassOrArrayOrCollection(field)) {
+            if (isLoggableClassOrArrayOrCollection(field) && field.getAnnotation(LogExclude.class) == null) {
                 field.setAccessible(true);
                 if (!loggedFields.contains(field)) {
                     loggedFields.add(field);
@@ -402,9 +397,7 @@ public class Logger {
                             toLogs = new Loggable[0];
                         }
                         for (Loggable toLog : toLogs) {
-                            if ((!loggedObjects.contains(toLog) || (toLog.getClass().getAnnotation(LogRepeat.class) != null))
-                                    && field.getAnnotation(LogExclude.class) == null) {
-                                loggedObjects.add(toLog);
+                            {
                                 log.accept(toLog);
                             }
                         }
@@ -417,11 +410,7 @@ public class Logger {
                             toLogs = new HashSet<>();
                         }
                         for (Loggable toLog : toLogs) {
-                            if ((!loggedObjects.contains(toLog) || (toLog.getClass().getAnnotation(LogRepeat.class) != null))
-                                    && field.getAnnotation(LogExclude.class) == null) {
-                                loggedObjects.add(toLog);
-                                log.accept(toLog);
-                            }
+                            log.accept(toLog);
                         }
                     } else {
                         Loggable toLog;
@@ -431,11 +420,7 @@ public class Logger {
                             e.printStackTrace();
                             toLog = null;
                         }
-                        if ((!loggedObjects.contains(toLog) || (toLog.getClass().getAnnotation(LogRepeat.class) != null))
-                                && field.getAnnotation(LogExclude.class) == null) {
-                            loggedObjects.add(toLog);
-                            log.accept(toLog);
-                        }
+                        log.accept(toLog);
                     }
                 }
             }
@@ -448,7 +433,6 @@ public class Logger {
                     loggable,
                     loggableClass.getSuperclass(),
                     loggedFields,
-                    loggedObjects,
                     registeredFields,
                     registeredMethods,
                     shuffleboard,
@@ -463,7 +447,6 @@ public class Logger {
                         Loggable.class.isAssignableFrom(
                                 (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]));
     }
-
 
 
 }
