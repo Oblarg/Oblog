@@ -16,11 +16,11 @@ public class Logger {
 
     /**
      * Configure shuffleboard logging for the robot.  Should be called after all loggable objects have been
-     * instantiated, e.g. at the end of RobotInit.
+     * instantiated, e.g. at the end of robotInit.
      *
      * @param rootContainer The root of the tree of loggable objects - for most teams, this is Robot.java.
      *                      To send an instance of Robot.java to this method from robotInit, call "configureLogging(this)"
-     *                      logger.Loggable fields of this object will have their own shuffleboard tabs.
+     *                      Loggable fields of this object will have their own shuffleboard tabs.
      */
 
     public static void configureLogging(Object rootContainer){
