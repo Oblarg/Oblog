@@ -42,8 +42,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-    m_chooser.addOption("My Auto", kCustomAuto);
+    m_chooser.setDefaultOption("5 Seconds", kDefaultAuto);
+    m_chooser.addOption("10 Seconds", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
 
     Logger.configureLogging(this);
