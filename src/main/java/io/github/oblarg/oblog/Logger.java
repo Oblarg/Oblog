@@ -50,7 +50,7 @@ public class Logger {
 
         for (Field field : rootContainer.getClass().getDeclaredFields()) {
             if (Loggable.class.isAssignableFrom(field.getType()) &&
-                    field.getAnnotation(LogExclude.class) == null) {
+                    field.getAnnotation(Log.Exclude.class) == null) {
                 field.setAccessible(true);
                 try {
                     Loggable toLog = (Loggable) field.get(rootContainer);
@@ -389,7 +389,7 @@ public class Logger {
         //recurse on Loggable fields
 
         for (Field field : loggableClass.getDeclaredFields()) {
-            if (isLoggableClassOrArrayOrCollection(field) && field.getAnnotation(LogExclude.class) == null) {
+            if (isLoggableClassOrArrayOrCollection(field) && field.getAnnotation(Log.Exclude.class) == null) {
                 field.setAccessible(true);
                 if (!loggedFields.contains(field) && !isAncestor(field, loggable, ancestors)) {
                     loggedFields.add(field);
