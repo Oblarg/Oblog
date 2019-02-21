@@ -1,0 +1,62 @@
+plugins {
+    id 'java'
+    id 'idea'
+    id 'maven'
+    id "edu.wpi.first.GradleRIO" version "2019.1.1"
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "GradleRio"
+        url = "http://dev.imjac.in/maven"
+    }
+
+    maven { url "https://plugins.gradle.org/m2/" }
+
+    jcenter()
+}
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+    testCompile "org.mockito:mockito-core:2.+"
+    testCompile group: 'org.mockito', name: 'mockito-inline', version: '2.8.9'
+    compile wpi.deps.wpilib()
+    compile wpi.deps.vendor.java()
+    nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
+    nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
+}
+
+/* Utils */
+clean {
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task genJavadoc(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+task deleteDocs(type: Delete) {
+    delete '../docs'
+    followSymlinks = false
+}
+
+task copyDocs(type: Copy, dependsOn: [genJavadoc, deleteDocs]) {
+    from 'build/docs/javadoc'
+    into '../docs'
+}
+
+artifacts {
+    archives sourcesJar
+    archives genJavadoc
+}
+
+compileJava {
+    options.compilerArgs << '-parameters'
+}
+

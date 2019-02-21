@@ -1,7 +1,5 @@
 package io.github.oblarg.oblog;
 
-import io.github.oblarg.oblog.annotations.Log;
-
 import java.util.List;
 
 class TestLoggableList implements Loggable {
