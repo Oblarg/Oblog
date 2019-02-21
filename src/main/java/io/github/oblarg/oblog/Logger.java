@@ -47,8 +47,58 @@ public class Logger {
                                          Object rootContainer,
                                          ShuffleboardWrapper shuffleboard) {
 
+        Consumer<Loggable> log = (toLog) -> logLoggable(widgetHandler,
+                toLog,
+                toLog.getClass(),
+                new HashSet<>(),
+                new HashSet<>(),
+                new HashSet<>(),
+                shuffleboard,
+                null,
+                new HashSet<>());
 
         for (Field field : rootContainer.getClass().getDeclaredFields()) {
+            if (isLoggableClassOrArrayOrCollection(field) && field.getAnnotation(Log.Exclude.class) == null) {
+                field.setAccessible(true);
+                if (field.getType().isArray()) {
+                    Loggable[] toLogs;
+                    try {
+                        toLogs = (Loggable[]) field.get(rootContainer);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                        toLogs = new Loggable[0];
+                    }
+                    for (Loggable toLog : toLogs) {
+                        {
+                            log.accept(toLog);
+                        }
+                    }
+                } else if (Collection.class.isAssignableFrom(field.getType())) {
+                    Collection<Loggable> toLogs;
+                    try {
+                        toLogs = (Collection) field.get(rootContainer);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                        toLogs = new HashSet<>();
+                    }
+                    for (Loggable toLog : toLogs) {
+                        log.accept(toLog);
+                    }
+                } else {
+                    Loggable toLog;
+                    try {
+                        toLog = (Loggable) field.get(rootContainer);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                        toLog = null;
+                    }
+                    log.accept(toLog);
+                }
+            }
+        }
+
+
+        /*for (Field field : rootContainer.getClass().getDeclaredFields()) {
             if (Loggable.class.isAssignableFrom(field.getType()) &&
                     field.getAnnotation(Log.Exclude.class) == null) {
                 field.setAccessible(true);
@@ -67,7 +117,7 @@ public class Logger {
                     e.printStackTrace();
                 }
             }
-        }
+        }*/
     }
 
     static void configureLoggingTest(Object rootContainer, ShuffleboardWrapper shuffleboard) {

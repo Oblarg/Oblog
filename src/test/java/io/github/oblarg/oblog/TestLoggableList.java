@@ -5,8 +5,10 @@ import io.github.oblarg.oblog.annotations.Log;
 import java.util.List;
 
 class TestLoggableList implements Loggable {
-    List<TestLoggableBasic> loggables = List.of(new TestLoggableBasic(1), new TestLoggableBasic(2));
 
-    @Log.Exclude
-    TestLoggableBasic excluded = new TestLoggableBasic(5);
+    List<TestLoggableBasic> loggables;
+
+    public TestLoggableList(int a1, int a2) {
+        loggables = List.of(new TestLoggableBasic(a1), new TestLoggableBasic(a2));
+    }
 }
