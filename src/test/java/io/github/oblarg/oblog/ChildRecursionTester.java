@@ -13,7 +13,7 @@ import static org.mockito.Mockito.verify;
 
 public class ChildRecursionTester {
     @Test
-    public void testSuperclassRecursion() {
+    public void testChildRecursion() {
         List<NetworkTableEntry> mockedEntries = new ArrayList<>();
 
         TestRootContainer rootContainer = new TestRootContainer();
@@ -26,16 +26,13 @@ public class ChildRecursionTester {
         verify(mocks.getMockedContainer(), atLeastOnce()).getLayout("TestLoggableBasic1", BuiltInLayouts.kList);
         verify(mocks.getMockedContainer(), atLeastOnce()).getLayout("TestLoggableBasic2", BuiltInLayouts.kList);
 
-
         verify(mocks.getMockedLayout()).add("a", 1);
         verify(mocks.getMockedLayout()).add("a", 2);
 
 
-
-
         Logger.updateEntries();
 
-        for (NetworkTableEntry entry: mockedEntries) {
+        for (NetworkTableEntry entry : mockedEntries) {
             verify(entry).setValue(any());
         }
     }

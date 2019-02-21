@@ -13,7 +13,7 @@ import static org.mockito.Mockito.verify;
 
 public class ArraysAndListsTester {
     @Test
-    public void testSuperclassRecursion() {
+    public void testArraysAndLists() {
         List<NetworkTableEntry> mockedEntries = new ArrayList<>();
 
         TestRootContainer rootContainer = new TestRootContainer();
