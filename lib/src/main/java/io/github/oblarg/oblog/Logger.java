@@ -55,7 +55,7 @@ public class Logger {
                 new HashSet<>(),
                 shuffleboard,
                 null,
-                new HashSet<>());
+                new HashSet<>(Arrays.asList(toLog)));
 
         for (Field field : rootContainer.getClass().getDeclaredFields()) {
             if (isLoggableClassOrArrayOrCollection(field) && field.getAnnotation(Log.Exclude.class) == null) {
