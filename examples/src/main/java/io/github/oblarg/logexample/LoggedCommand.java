@@ -1,4 +1,4 @@
-package commands;
+package io.github.oblarg.logexample;
 
 import edu.wpi.first.wpilibj.command.Command;
 import io.github.oblarg.oblog.Loggable;

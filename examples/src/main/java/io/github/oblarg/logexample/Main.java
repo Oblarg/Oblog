@@ -1,3 +1,5 @@
+package io.github.oblarg.logexample;
+
 /*----------------------------------------------------------------------------*/
 /* Copyright (c) 2018 FIRST. All Rights Reserved.                             */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
@@ -17,7 +19,7 @@ public final class Main {
   }
 
   /**
-   * Main initialization function. Do not perform any initialization here.
+   * io.github.oblarg.logexample.Main initialization function. Do not perform any initialization here.
    *
    * <p>If you change your main robot class, change the parameter type.
    */

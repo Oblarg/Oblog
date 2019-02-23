@@ -1,4 +1,4 @@
-package subsystems;
+package io.github.oblarg.logexample;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import io.github.oblarg.oblog.Loggable;
