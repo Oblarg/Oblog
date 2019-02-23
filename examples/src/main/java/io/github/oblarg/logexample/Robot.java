@@ -6,6 +6,7 @@ package io.github.oblarg.logexample;/*------------------------------------------
 /*----------------------------------------------------------------------------*/
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import io.github.oblarg.oblog.Logger;
@@ -22,25 +23,23 @@ public class Robot extends TimedRobot {
 
   public static final LoggedSubsystem subsystem = new LoggedSubsystem();
 
-  private static final LoggedCommand command5Seconds = new LoggedCommand(5);
-  private static final LoggedCommand command10Seconds = new LoggedCommand(10);
+  private LoggedCommand command5Seconds = new LoggedCommand(5);
+  private LoggedCommand command10Seconds = new LoggedCommand(10);
 
   //Will not be logged.
   @Log.Exclude
-  private static final LoggedCommand commandExcluded = new LoggedCommand(10);
+  private LoggedCommand commandExcluded = new LoggedCommand(10);
 
-  private static final String kDefaultAuto = "5 Seconds";
-  private static final String kCustomAuto = "10 Seconds";
   private String m_autoSelected;
-  private final SendableChooser<String> m_chooser = new SendableChooser<>();
+  private final SendableChooser<Command> m_chooser = new SendableChooser<>();
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
    */
   @Override
   public void robotInit() {
-    m_chooser.setDefaultOption("5 Seconds", kDefaultAuto);
-    m_chooser.addOption("10 Seconds", kCustomAuto);
+    m_chooser.setDefaultOption("5 Seconds", command5Seconds);
+    m_chooser.addOption("10 Seconds", command10Seconds);
     SmartDashboard.putData("Auto choices", m_chooser);
 
     Logger.configureLogging(this);
@@ -72,19 +71,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autoSelected = m_chooser.getSelected();
+    Command autoCommand = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
 
-    switch (m_autoSelected) {
-      case kCustomAuto:
-        command5Seconds.start();
-        break;
-      case kDefaultAuto:
-      default:
-        command10Seconds.start();
-        break;
-    }
+    autoCommand.start();
   }
 
   /**
