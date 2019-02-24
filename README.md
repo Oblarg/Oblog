@@ -36,6 +36,8 @@ removes the need for users to memorize the property namesfor each Shuffleboard w
 A (very) basic example robot can be found in the "examples" folder, demonstrating a few of the available annotations and the correct way
 to call the necessary Logger functions.
 
+For more detailed information, see the [javadoc](https://oblarg.github.io/Oblog/index.html).
+
 
 Adding Oblog to Your Project
 ------------------
