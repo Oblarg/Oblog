@@ -26,7 +26,7 @@ public @interface Config {
      * </ul>
      * <br>Custom properties:
      * <table>
-     * <caption></caption>>
+     * <caption></caption>
      * <tr><th>Name</th><th>Type</th><th>Default Value</th><th>Notes</th></tr>
      * <tr><td>Min</td><td>Number</td><td>-1.0</td><td>The minimum value of the slider</td></tr>
      * <tr><td>Max</td><td>Number</td><td>1.0</td><td>The maximum value of the slider</td></tr>
