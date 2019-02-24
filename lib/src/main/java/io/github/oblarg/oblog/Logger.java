@@ -1,6 +1,7 @@
 package io.github.oblarg.oblog;
 
 import edu.wpi.first.networktables.EntryListenerFlags;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import io.github.oblarg.oblog.annotations.*;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -26,7 +27,7 @@ public class Logger {
      */
 
     public static void configureLogging(Object rootContainer) {
-        configureLogging(LogType.LOG, rootContainer, new WrappedShuffleboard());
+        configureLogging(LogType.LOG, rootContainer, new WrappedShuffleboard(), NetworkTableInstance.getDefault());
     }
 
     /**
@@ -37,8 +38,8 @@ public class Logger {
      *                      To send an instance of Robot.java to this method from robotInit, call "configureConfig(this)"
      *                      Loggable fields of this object will have their own shuffleboard tabs.
      */
-    public static void configureConfig(Object rootContainer){
-        configureLogging(LogType.CONFIG, rootContainer, new WrappedShuffleboard());
+    public static void configureConfig(Object rootContainer) {
+        configureLogging(LogType.CONFIG, rootContainer, new WrappedShuffleboard(), NetworkTableInstance.getDefault());
     }
 
     /**
@@ -49,16 +50,16 @@ public class Logger {
      * @param rootContainer The root of the tree of loggable objects - for most teams, this is Robot.java.
      *                      To send an instance of Robot.java to this method from robotInit, call "configureLoggingAndConfig(this)"
      *                      Loggable fields of this object will have their own shuffleboard tabs.
-     * @param separate Whether to generate separate tabs for config and logging.  If true, log widgets will be placed in
-     *                 tabs labeled "Log", and config widgets will be placed in tabs labeled "Config".
+     * @param separate      Whether to generate separate tabs for config and logging.  If true, log widgets will be placed in
+     *                      tabs labeled "Log", and config widgets will be placed in tabs labeled "Config".
      */
-    public static void configureLoggingAndConfig(Object rootContainer, boolean separate){
+    public static void configureLoggingAndConfig(Object rootContainer, boolean separate) {
         WrappedShuffleboard shuffleboard = new WrappedShuffleboard();
         if (separate) {
-            configureLogging(LogType.LOG, rootContainer, shuffleboard);
-            configureLogging(LogType.CONFIG, rootContainer, shuffleboard);
+            configureLogging(LogType.LOG, rootContainer, shuffleboard, NetworkTableInstance.getDefault());
+            configureLogging(LogType.CONFIG, rootContainer, shuffleboard, NetworkTableInstance.getDefault());
         } else {
-            configureLogging(LogType.BOTH, rootContainer, shuffleboard);
+            configureLogging(LogType.BOTH, rootContainer, shuffleboard, NetworkTableInstance.getDefault());
         }
     }
 
@@ -71,7 +72,7 @@ public class Logger {
      * @param rootName      Name of the root NetworkTable.  io.github.oblarg.oblog.Loggable fields of rootContainer will be subtables.
      */
     public static void configureLoggingNTOnly(Object rootContainer, String rootName) {
-        configureLogging(LogType.LOG, rootContainer, new NTShuffleboard(rootName));
+        configureLogging(LogType.LOG, rootContainer, new NTShuffleboard(rootName), NetworkTableInstance.getDefault());
     }
 
     /**
@@ -95,7 +96,8 @@ public class Logger {
 
     private static void configureLogging(LogType logType,
                                          Object rootContainer,
-                                         ShuffleboardWrapper shuffleboard) {
+                                         ShuffleboardWrapper shuffleboard,
+                                         NetworkTableInstance nt) {
 
         Consumer<Loggable> log = (toLog) -> logLoggable(logType,
                 toLog,
@@ -104,6 +106,7 @@ public class Logger {
                 new HashSet<>(),
                 new HashSet<>(),
                 shuffleboard,
+                nt,
                 null,
                 new HashSet<>(Collections.singletonList(toLog)));
 
@@ -148,8 +151,8 @@ public class Logger {
         }
     }
 
-    static void configureLoggingTest(LogType logType, Object rootContainer, ShuffleboardWrapper shuffleboard) {
-        configureLogging(logType, rootContainer, shuffleboard);
+    static void configureLoggingTest(LogType logType, Object rootContainer, ShuffleboardWrapper shuffleboard, NetworkTableInstance nt) {
+        configureLogging(logType, rootContainer, shuffleboard, nt);
     }
 
     /**
@@ -157,7 +160,7 @@ public class Logger {
      */
     private static final Map<NetworkTableEntry, Supplier<Object>> entrySupplierMap = new HashMap<>();
 
-    enum LogType{
+    enum LogType {
         LOG, CONFIG, BOTH
     }
 
@@ -170,28 +173,28 @@ public class Logger {
 
     @FunctionalInterface
     private interface BooleanSetterProcessor {
-        void processBooleanSetter(Consumer<Boolean> setter, Annotation params, ShuffleboardContainerWrapper bin, String name);
+        void processBooleanSetter(Consumer<Boolean> setter, Annotation params, ShuffleboardContainerWrapper bin, NetworkTableInstance nt, String name);
     }
 
     @FunctionalInterface
     private interface NumericSetterProcessor {
-        void processNumericSetter(Consumer<Number> setter, Annotation params, ShuffleboardContainerWrapper bin, String name);
+        void processNumericSetter(Consumer<Number> setter, Annotation params, ShuffleboardContainerWrapper bin, NetworkTableInstance nt, String name);
     }
 
     private static final Map<Class<? extends Annotation>, BooleanSetterProcessor> configBooleanSetterHandler = Map.ofEntries(
-            entry(Config.class, (setter, rawParams, bin, name) -> {
+            entry(Config.class, (setter, rawParams, bin, nt, name) -> {
                 Config params = (Config) rawParams;
-                NetworkTableInstance.getDefault().addEntryListener(
-                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), true)
+                nt.addEntryListener(
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), false)
                                 .withWidget(BuiltInWidgets.kToggleButton.getWidgetName()).getEntry(),
                         (entryNotification) -> setterRunner.execute(() -> setter.accept((boolean) entryNotification.value.getValue())),
                         EntryListenerFlags.kUpdate
                 );
-                setter.accept(true);
+                setter.accept(false);
             }),
-            entry(Config.ToggleButton.class, (setter, rawParams, bin, name) -> {
+            entry(Config.ToggleButton.class, (setter, rawParams, bin, nt, name) -> {
                 Config.ToggleButton params = (Config.ToggleButton) rawParams;
-                NetworkTableInstance.getDefault().addEntryListener(
+                nt.addEntryListener(
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValue())
                                 .withWidget(BuiltInWidgets.kToggleButton.getWidgetName()).getEntry(),
                         (entryNotification) -> setterRunner.execute(() -> setter.accept((boolean) entryNotification.value.getValue())),
@@ -199,9 +202,9 @@ public class Logger {
                 );
                 setter.accept(params.defaultValue());
             }),
-            entry(Config.ToggleSwitch.class, (setter, rawParams, bin, name) -> {
+            entry(Config.ToggleSwitch.class, (setter, rawParams, bin, nt, name) -> {
                 Config.ToggleSwitch params = (Config.ToggleSwitch) rawParams;
-                NetworkTableInstance.getDefault().addEntryListener(
+                nt.addEntryListener(
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValue())
                                 .withWidget(BuiltInWidgets.kToggleSwitch.getWidgetName()).getEntry(),
                         (entryNotification) -> setterRunner.execute(() -> setter.accept((boolean) entryNotification.value.getValue())),
@@ -212,9 +215,9 @@ public class Logger {
     );
 
     private static final Map<Class<? extends Annotation>, NumericSetterProcessor> configNumericSetterHandler = Map.ofEntries(
-            entry(Config.class, (setter, rawParams, bin, name) -> {
+            entry(Config.class, (setter, rawParams, bin, nt, name) -> {
                 Config params = (Config) rawParams;
-                NetworkTableInstance.getDefault().addEntryListener(
+                nt.addEntryListener(
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), 0)
                                 .withWidget(BuiltInWidgets.kTextView.getWidgetName()).getEntry(),
                         (entryNotification) -> setterRunner.execute(() -> setter.accept((Number) entryNotification.value.getValue())),
@@ -222,9 +225,9 @@ public class Logger {
                 );
                 setter.accept(0);
             }),
-            entry(Config.NumberSlider.class, (setter, rawParams, bin, name) -> {
+            entry(Config.NumberSlider.class, (setter, rawParams, bin, nt, name) -> {
                 Config.NumberSlider params = (Config.NumberSlider) rawParams;
-                NetworkTableInstance.getDefault().addEntryListener(
+                nt.addEntryListener(
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValue())
                                 .withWidget(BuiltInWidgets.kNumberSlider.getWidgetName())
                                 .withProperties(Map.of(
@@ -428,6 +431,7 @@ public class Logger {
     private static void configFieldsAndMethods(Loggable loggable,
                                                Class loggableClass,
                                                ShuffleboardContainerWrapper bin,
+                                               NetworkTableInstance nt,
                                                Set<Field> registeredFields,
                                                Set<Method> registeredMethods) {
 
@@ -477,13 +481,14 @@ public class Logger {
                                     },
                                     annotation,
                                     bin,
+                                    nt,
                                     method.getName());
                         }
                     }
                 }
             } else if (method.getReturnType().equals(Void.TYPE) &&
                     method.getParameterTypes().length == 1 &&
-                    takesNumeric(method)){
+                    takesNumeric(method)) {
                 method.setAccessible(true);
                 if (!registeredMethods.contains(method)) {
                     registeredMethods.add(method);
@@ -500,6 +505,7 @@ public class Logger {
                                     },
                                     annotation,
                                     bin,
+                                    nt,
                                     method.getName());
                         }
                     }
@@ -578,6 +584,7 @@ public class Logger {
                                     Set<Field> registeredFields,
                                     Set<Method> registeredMethods,
                                     ShuffleboardWrapper shuffleboard,
+                                    NetworkTableInstance nt,
                                     ShuffleboardContainerWrapper parentContainer,
                                     Set<Object> ancestors) {
 
@@ -585,7 +592,7 @@ public class Logger {
 
         ShuffleboardContainerWrapper bin;
 
-        switch(logType) {
+        switch (logType) {
             case LOG:
                 if (parentContainer == null) {
                     bin = shuffleboard.getTab(loggable.configureLogName() + ": Log");
@@ -611,6 +618,7 @@ public class Logger {
                 configFieldsAndMethods(loggable,
                         loggableClass,
                         bin,
+                        nt,
                         registeredFields,
                         registeredMethods);
                 break;
@@ -632,6 +640,7 @@ public class Logger {
                 configFieldsAndMethods(loggable,
                         loggableClass,
                         bin,
+                        nt,
                         registeredFields,
                         registeredMethods);
                 break;
@@ -653,6 +662,7 @@ public class Logger {
                 new HashSet<>(),
                 new HashSet<>(),
                 shuffleboard,
+                nt,
                 bin,
                 new HashSet<>(ancestors));
 
@@ -712,6 +722,7 @@ public class Logger {
                     registeredFields,
                     registeredMethods,
                     shuffleboard,
+                    nt,
                     parentContainer,
                     ancestors);
         }
