@@ -187,6 +187,7 @@ public class Logger {
                         (entryNotification) -> setterRunner.execute(() -> setter.accept((boolean) entryNotification.value.getValue())),
                         EntryListenerFlags.kUpdate
                 );
+                setter.accept(true);
             }),
             entry(Config.ToggleButton.class, (setter, rawParams, bin, name) -> {
                 Config.ToggleButton params = (Config.ToggleButton) rawParams;
@@ -196,6 +197,7 @@ public class Logger {
                         (entryNotification) -> setterRunner.execute(() -> setter.accept((boolean) entryNotification.value.getValue())),
                         EntryListenerFlags.kUpdate
                 );
+                setter.accept(params.defaultValue());
             }),
             entry(Config.ToggleSwitch.class, (setter, rawParams, bin, name) -> {
                 Config.ToggleSwitch params = (Config.ToggleSwitch) rawParams;
@@ -205,6 +207,7 @@ public class Logger {
                         (entryNotification) -> setterRunner.execute(() -> setter.accept((boolean) entryNotification.value.getValue())),
                         EntryListenerFlags.kUpdate
                 );
+                setter.accept(params.defaultValue());
             })
     );
 
@@ -217,6 +220,7 @@ public class Logger {
                         (entryNotification) -> setterRunner.execute(() -> setter.accept((Number) entryNotification.value.getValue())),
                         EntryListenerFlags.kUpdate
                 );
+                setter.accept(0);
             }),
             entry(Config.NumberSlider.class, (setter, rawParams, bin, name) -> {
                 Config.NumberSlider params = (Config.NumberSlider) rawParams;
@@ -231,6 +235,7 @@ public class Logger {
                         (entryNotification) -> setterRunner.execute(() -> setter.accept((Number) entryNotification.value.getValue())),
                         EntryListenerFlags.kUpdate
                 );
+                setter.accept(params.defaultValue());
             })
     );
 
@@ -455,8 +460,7 @@ public class Logger {
         for (Method method : methods) {
             if (method.getReturnType().equals(Void.TYPE) &&
                     method.getParameterTypes().length == 1 &&
-                    (method.getParameterTypes()[0].equals(Boolean.TYPE)) ||
-                        method.getParameterTypes()[0].equals(Boolean.class)) {
+                    takesBoolean(method)) {
                 method.setAccessible(true);
                 if (!registeredMethods.contains(method)) {
                     registeredMethods.add(method);
@@ -479,10 +483,7 @@ public class Logger {
                 }
             } else if (method.getReturnType().equals(Void.TYPE) &&
                     method.getParameterTypes().length == 1 &&
-                    (method.getParameterTypes()[0].equals(Integer.TYPE) ||
-                        method.getParameterTypes()[0].equals(Integer.class) ||
-                        method.getParameterTypes()[0].equals(Double.TYPE) ||
-                        method.getParameterTypes()[0].equals(Double.class))){
+                    takesNumeric(method)){
                 method.setAccessible(true);
                 if (!registeredMethods.contains(method)) {
                     registeredMethods.add(method);
@@ -740,5 +741,14 @@ public class Logger {
                                 (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]));
     }
 
+    private static boolean takesBoolean(Method method) {
+        return method.getParameterTypes()[0].equals(Boolean.TYPE) || method.getParameterTypes()[0].equals(Boolean.class);
+    }
 
+    private static boolean takesNumeric(Method method) {
+        return method.getParameterTypes()[0].equals(Integer.TYPE) ||
+                method.getParameterTypes()[0].equals(Integer.class) ||
+                method.getParameterTypes()[0].equals(Double.TYPE) ||
+                method.getParameterTypes()[0].equals(Double.class);
+    }
 }
