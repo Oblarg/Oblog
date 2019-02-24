@@ -21,16 +21,16 @@ import io.github.oblarg.oblog.annotations.Log;
  */
 public class Robot extends TimedRobot {
 
+  //These fields are loggable, and so Logger will automatically add them as tabs to shuffleboard.  Their own Loggable fields,
+  //in turn, will be added as layouts within those tabs, and their children will become sub-layouts, etc.
   public static final LoggedSubsystem subsystem = new LoggedSubsystem();
-
   private LoggedCommand command5Seconds = new LoggedCommand(5);
   private LoggedCommand command10Seconds = new LoggedCommand(10);
 
-  //Will not be logged.
+  //This is loggable, but will not be logged due to the exclude annotation.
   @Log.Exclude
   private LoggedCommand commandExcluded = new LoggedCommand(10);
 
-  private String m_autoSelected;
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
   /**
    * This function is run when the robot is first started up and should be
@@ -42,6 +42,8 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("10 Seconds", command10Seconds);
     SmartDashboard.putData("Auto choices", m_chooser);
 
+    //Configures logging.  Passing "this" specifies the runtime instance of Robot.java as object whose loggable fields
+    //will be make up the shuffleboard tabs.
     Logger.configureLogging(this);
   }
 
@@ -55,6 +57,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    //Updates all of the NT entries.  Necessary to ensure the values sent to shuffleboard change as they
+    //change in code.
     Logger.updateEntries();
   }
 
@@ -72,8 +76,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     Command autoCommand = m_chooser.getSelected();
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    System.out.println("Auto selected: " + m_autoSelected);
+    System.out.println("Auto selected: " + autoCommand);
 
     autoCommand.start();
   }

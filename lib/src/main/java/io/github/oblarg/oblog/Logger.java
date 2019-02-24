@@ -43,6 +43,24 @@ public class Logger {
                 new NTShuffleboard(rootName));
     }
 
+    /**
+     * Updates all entries.  Must be called periodically from the main robot loop.
+     */
+    public static void updateEntries() {
+        entrySupplierMap.forEach((entry, supplier) -> entry.setValue(supplier.get()));
+    }
+
+    /**
+     * Registers a new entry.  To be called during initial logging configuration for any value that will
+     * change during runtime.  Mostly for internal use, but can be used by advanced users in {@link Loggable#addCustomLogging()}.
+     *
+     * @param entry    The entry to be updated.
+     * @param supplier The supplier with which to update the entry.
+     */
+    public static void registerEntry(NetworkTableEntry entry, Supplier<Object> supplier) {
+        entrySupplierMap.put(entry, supplier);
+    }
+
     private static void configureLogging(Map<Class<? extends Annotation>, WidgetProcessor> widgetHandler,
                                          Object rootContainer,
                                          ShuffleboardWrapper shuffleboard) {
@@ -96,28 +114,6 @@ public class Logger {
                 }
             }
         }
-
-
-        /*for (Field field : rootContainer.getClass().getDeclaredFields()) {
-            if (Loggable.class.isAssignableFrom(field.getType()) &&
-                    field.getAnnotation(Log.Exclude.class) == null) {
-                field.setAccessible(true);
-                try {
-                    Loggable toLog = (Loggable) field.get(rootContainer);
-                    logLoggable(widgetHandler,
-                            toLog,
-                            toLog.getClass(),
-                            new HashSet<>(),
-                            new HashSet<>(),
-                            new HashSet<>(),
-                            shuffleboard,
-                            null,
-                            new HashSet<>());
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-        }*/
     }
 
     static void configureLoggingTest(Object rootContainer, ShuffleboardWrapper shuffleboard) {
@@ -130,24 +126,6 @@ public class Logger {
      * A map of the suppliers that are used to update each entry.
      */
     private static final Map<NetworkTableEntry, Supplier<Object>> entrySupplierMap = new HashMap<>();
-
-    /**
-     * Updates all entries.  Must be called periodically from the main robot loop.
-     */
-    public static void updateEntries() {
-        entrySupplierMap.forEach((entry, supplier) -> entry.setValue(supplier.get()));
-    }
-
-    /**
-     * Registers a new entry.  To be called during initial logging configuration for any value that will
-     * change during runtime.
-     *
-     * @param entry    The entry to be updated.
-     * @param supplier The supplier with which to update the entry.
-     */
-    public static void registerEntry(NetworkTableEntry entry, Supplier<Object> supplier) {
-        entrySupplierMap.put(entry, supplier);
-    }
 
     @FunctionalInterface
     private interface WidgetProcessor {

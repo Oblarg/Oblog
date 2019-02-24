@@ -14,7 +14,9 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Log {
-    //The name of the value on Shuffleboard; defaults to field or method name.
+    /**
+     * @return The name of the value on Shuffleboard; defaults to field or method name.
+     */
     String name() default "NO_NAME";
 
 
@@ -36,16 +38,24 @@ public @interface Log {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface NumberBar {
-        //The name of the value on Shuffleboard; defaults to field or method name.
+        /**
+         * @return The name of the value on Shuffleboard; defaults to field or method name.
+         */
         String name() default "NO_NAME";
 
-        //The minimum value of the number bar.
+        /**
+         * @return The minimum value of the number bar.
+         */
         double min() default -1;
 
-        //The maximum value of the number bar.
+        /**
+         * @return The maximum value of the number bar.
+         */
         double max() default 1;
 
-        //The center value of the number bar.
+        /**
+         * @return The center value of the number bar.
+         */
         double center() default 0;
     }
 
@@ -68,16 +78,24 @@ public @interface Log {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface Dial {
-        //The name of the value on Shuffleboard; defaults to field or method name.
+        /**
+         * @return The name of the value on Shuffleboard; defaults to field or method name.
+         */
         String name() default "NO_NAME";
 
-        //The minimum value of the dial.
+        /**
+         * @return The minimum value of the dial.
+         */
         double min() default 0;
 
-        //The maximum value of the dial.
+        /**
+         * @return The maximum value of the dial.
+         */
         double max() default 100;
 
-        //Whether or not to display the numeric value.
+        /**
+         * @return Whether or not to display the numeric value.
+         */
         boolean showValue() default true;
     }
 
@@ -101,10 +119,14 @@ public @interface Log {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface Graph {
-        //The name of the value on Shuffleboard; defaults to field or method name.
+        /**
+         * @return The name of the value on Shuffleboard; defaults to field or method name.
+         */
         String name() default "NO_NAME";
 
-        //Window length of past data displayed in the graph.
+        /**
+         * @return Window length of past data displayed in the graph.
+         */
         double visibleTime() default 30;
     }
 
@@ -128,13 +150,19 @@ public @interface Log {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface BooleanBox {
-        //The name of the value on Shuffleboard; defaults to field or method name.
+        /**
+         * @return The name of the value on Shuffleboard; defaults to field or method name.
+         */
         String name() default "NO_NAME";
 
-        //The color of the box when true.
+        /**
+         * @return The color of the box when true.
+         */
         String colorWhenTrue() default "green";
 
-        //The color of the box when false.
+        /**
+         * @return The color of the box when false.
+         */
         String colorWhenFalse() default "red";
     }
 
@@ -161,22 +189,34 @@ public @interface Log {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface VoltageView {
-        //The name of the value on Shuffleboard; defaults to field or method name.
+        /**
+         * @return The name of the value on Shuffleboard; defaults to field or method name.
+         */
         String name() default "NO_NAME";
 
-        //The minimum value of the bar.
+        /**
+         * @return The minimum value of the bar.
+         */
         double min() default 0;
 
-        //The maximum value of the bar.
+        /**
+         * @return The maximum value of the bar.
+         */
         double max() default 5;
 
-        //The center ("zero") value of the bar.
+        /**
+         * @return The center ("zero") value of the bar.
+         */
         double center() default 0;
 
-        //The orientation of the bar.  Either "HORIZONTAL" or "VERTICAL".
+        /**
+         * @return The orientation of the bar.  Either "HORIZONTAL" or "VERTICAL".
+         */
         String orientation() default "HORIZONTAL";
 
-        //Number of tick marks
+        /**
+         * @return Number of tick marks
+         */
         int numTicks() default 5;
     }
 
@@ -197,10 +237,14 @@ public @interface Log {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface PDP {
-        //The name of the value on Shuffleboard; defaults to field or method name.
+        /**
+         * @return The name of the value on Shuffleboard; defaults to field or method name.
+         */
         String name() default "NO_NAME";
 
-        //Whether to show the voltage and current values.
+        /**
+         * @return Whether to show the voltage and current values.
+         */
         boolean showVoltageAndCurrent() default true;
     }
 
@@ -216,7 +260,9 @@ public @interface Log {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface Encoder {
-        //The name of the value on Shuffleboard; defaults to field or method name.
+        /**
+         * @return The name of the value on Shuffleboard; defaults to field or method name.
+         */
         String name() default "NO_NAME";
     }
 
@@ -249,10 +295,14 @@ public @interface Log {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface SpeedController {
-        //The name of the value on Shuffleboard; defaults to field or method name.
+        /**
+         * @return The name of the value on Shuffleboard; defaults to field or method name.
+         */
         String name() default "NO_NAME";
 
-        //The orientation of the bar.  Either "HORIZONTAL" or "VERTICAL".
+        /**
+         * @return The orientation of the bar.  Either "HORIZONTAL" or "VERTICAL".
+         */
         String orientation() default "HORIZONTAL";
     }
 
@@ -270,7 +320,9 @@ public @interface Log {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface Command {
-        //The name of the value on Shuffleboard; defaults to field or method name.
+        /**
+         * @return The name of the value on Shuffleboard; defaults to field or method name.
+         */
         String name() default "NO_NAME";
     }
 
@@ -288,7 +340,9 @@ public @interface Log {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface PIDCommand {
-        //The name of the value on Shuffleboard; defaults to field or method name.
+        /**
+         * @return The name of the value on Shuffleboard; defaults to field or method name.
+         */
         String name() default "NO_NAME";
     }
 
@@ -304,7 +358,9 @@ public @interface Log {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface PIDController {
-        //The name of the value on Shuffleboard; defaults to field or method name.
+        /**
+         * @return The name of the value on Shuffleboard; defaults to field or method name.
+         */
         String name() default "NO_NAME";
     }
 
@@ -334,22 +390,34 @@ public @interface Log {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface Accelerometer {
-        //The name of the value on Shuffleboard; defaults to field or method name.
+        /**
+         * @return The name of the value on Shuffleboard; defaults to field or method name.
+         */
         String name() default "NO_NAME";
 
-        //The minimum acceleration value to display.
+        /**
+         * @return The minimum acceleration value to display.
+         */
         double min() default -1;
 
-        //The maximum acceleration value to display.
+        /**
+         * @return The maximum acceleration value to display.
+         */
         double max() default 1;
 
-        //Whether to show or hide the acceleration values.
+        /**
+         * @return Whether to show or hide the acceleration values.
+         */
         boolean showValue() default true;
 
-        //How many digits to display after the decimal point.
+        /**
+         * @return How many digits to display after the decimal point.
+         */
         int precision() default 2;
 
-        //Whether to show the tick marks on the number bars.
+        /**
+         * @return Whether to show the tick marks on the number bars.
+         */
         boolean showTicks() default false;
     }
 
@@ -377,19 +445,29 @@ public @interface Log {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface ThreeAxisAccelerometer {
-        //The name of the value on Shuffleboard; defaults to field or method name.
+        /**
+         * @return The name of the value on Shuffleboard; defaults to field or method name.
+         */
         String name() default "NO_NAME";
 
-        //The range of the accelerometer.
+        /**
+         * @return The range of the accelerometer.
+         */
         edu.wpi.first.wpilibj.interfaces.Accelerometer.Range range() default edu.wpi.first.wpilibj.interfaces.Accelerometer.Range.k16G;
 
-        //Whether to show or hide the acceleration values.
+        /**
+         * @return Whether to show or hide the acceleration values.
+         */
         boolean showValue() default true;
 
-        //How many digits to display after the decimal point.
+        /**
+         * @return How many digits to display after the decimal point.
+         */
         int precision() default 2;
 
-        //Whether to show the tick marks on the number bars.
+        /**
+         * @return Whether to show the tick marks on the number bars.
+         */
         boolean showTicks() default false;
     }
 
@@ -414,16 +492,24 @@ public @interface Log {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface Gyro {
-        //The name of the value on Shuffleboard; defaults to field or method name.
+        /**
+         * @return The name of the value on Shuffleboard; defaults to field or method name.
+         */
         String name() default "NO_NAME";
 
-        //Spacing of the major ticks on the compass.
+        /**
+         * @return Spacing of the major ticks on the compass.
+         */
         double majorTickSpacing() default 45;
 
-        //Offset of the dial, in degrees.
+        /**
+         * @return Offset of the dial, in degrees.
+         */
         double startingAngle() default 180;
 
-        //Whether to show the tick marks.
+        /**
+         * @return Whether to show the tick marks.
+         */
         boolean showTicks() default true;
     }
 
@@ -448,16 +534,24 @@ public @interface Log {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface DifferentialDrive {
-        //The name of the value on Shuffleboard; defaults to field or method name.
+        /**
+         * @return The name of the value on Shuffleboard; defaults to field or method name.
+         */
         String name() default "NO_NAME";
 
-        //Number of wheels.  Must be a positive, even integer.
+        /**
+         * @return Number of wheels.  Must be a positive, even integer.
+         */
         int numWheels() default 4;
 
-        //Wheel diameter in pixels.
+        /**
+         * @return Wheel diameter in pixels.
+         */
         double wheelDiameter() default 80;
 
-        //Whether to show the velocity vectors.
+        /**
+         * @return Whether to show the velocity vectors.
+         */
         boolean showVel() default true;
     }
 
@@ -479,10 +573,14 @@ public @interface Log {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface MecanumDrive {
-        //The name of the value on Shuffleboard; defaults to field or method name.
+        /**
+         * @return The name of the value on Shuffleboard; defaults to field or method name.
+         */
         String name() default "NO_NAME";
 
-        //Whether to show the velocity vectors.
+        /**
+         * @return Whether to show the velocity vectors.
+         */
         boolean showVel() default true;
     }
 
@@ -510,19 +608,32 @@ public @interface Log {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface CameraStream {
-        //The name of the value on Shuffleboard; defaults to field or method name.
+        /**
+         * @return The name of the value on Shuffleboard; defaults to field or method name.
+         */
         String name() default "NO_NAME";
 
-        //Whether to show the crosshairs.
+        /**
+         * @return Whether to show the crosshairs.
+         */
         boolean showCrosshairs() default true;
 
-        //Color of the crosshairs.
+        /**
+         *
+         * @return Color of the crosshairs.
+         */
         String crosshairColor() default "white";
 
-        //Whether to show the stream controls.
+        /**
+         *
+         * @return Whether to show the stream controls.
+         */
         boolean showControls() default true;
 
-        //Rotate the displayed image.  Must be one of: "NONE", "QUARTER_CW", "QUARTER_CCW", "HALF".
+        /**
+         *
+         * @return Rotate the displayed image.  Must be one of: "NONE", "QUARTER_CW", "QUARTER_CCW", "HALF".
+         */
         String rotation() default "NONE";
     }
 
