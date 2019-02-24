@@ -23,11 +23,11 @@ public class SimpleConfigTester {
 
         Logger.configureLoggingTest(Logger.LogType.CONFIG,rootContainer, mocks.getMockedShuffleboard(), mocks.getMockedNTInstance());
 
-        verify(mocks.getMockedShuffleboard().getTab("TestConfigSimple: Config"));
-        verify(mocks.getMockedContainer().add("setB", false));
-        verify(mocks.getMockedContainer().add("setI", 0));
+        verify(mocks.getMockedShuffleboard()).getTab("TestConfigSimple: Config");
+        verify(mocks.getMockedContainer()).add("setB", false);
+        verify(mocks.getMockedContainer()).add("setI", 0);
 
-        verify(mocks.getMockedNTInstance()).addEntryListener(any(NetworkTableEntry.class), any(), EntryListenerFlags.kUpdate);
+        verify(mocks.getMockedNTInstance(), atLeastOnce()).addEntryListener(any(NetworkTableEntry.class), any(), eq(EntryListenerFlags.kUpdate));
 
         assertEquals(rootContainer.test.b, false);
         assertEquals(rootContainer.test.i, 0);
