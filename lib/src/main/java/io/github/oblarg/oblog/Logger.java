@@ -111,7 +111,7 @@ public class Logger {
                 new HashSet<>(Collections.singletonList(toLog)));
 
         for (Field field : rootContainer.getClass().getDeclaredFields()) {
-            if (isLoggableClassOrArrayOrCollection(field) && field.getAnnotation(Log.Exclude.class) == null) {
+            if (isLoggableClassOrArrayOrCollection(field) && isIncluded(field, logType)) {
                 field.setAccessible(true);
                 if (field.getType().isArray()) {
                     Loggable[] toLogs;
@@ -503,7 +503,7 @@ public class Logger {
                             process.processNumericSetter(
                                     (value) -> {
                                         try {
-                                            if(method.getParameterTypes()[0].equals(Integer.TYPE) ||
+                                            if (method.getParameterTypes()[0].equals(Integer.TYPE) ||
                                                     method.getParameterTypes()[0].equals(Integer.class)) {
                                                 method.invoke(loggable, value.intValue());
                                             } else {
@@ -679,7 +679,8 @@ public class Logger {
         //recurse on Loggable fields
 
         for (Field field : loggableClass.getDeclaredFields()) {
-            if (isLoggableClassOrArrayOrCollection(field) && field.getAnnotation(Log.Exclude.class) == null) {
+
+            if (isLoggableClassOrArrayOrCollection(field) && isIncluded(field, logType)) {
                 field.setAccessible(true);
                 if (!loggedFields.contains(field) && !isAncestor(field, loggable, ancestors)) {
                     loggedFields.add(field);
@@ -771,5 +772,24 @@ public class Logger {
                 method.getParameterTypes()[0].equals(Integer.class) ||
                 method.getParameterTypes()[0].equals(Double.TYPE) ||
                 method.getParameterTypes()[0].equals(Double.class);
+    }
+
+    private static boolean isIncluded(Field field, LogType logType) {
+        boolean included = true;
+        switch (logType) {
+            case LOG:
+                included = field.getAnnotation(Log.Exclude.class) == null &&
+                        field.getClass().getAnnotation(Log.Exclude.class) == null;
+                break;
+            case CONFIG:
+                included = field.getAnnotation(Config.Exclude.class) == null &&
+                        field.getClass().getAnnotation(Config.Exclude.class) == null;
+                break;
+            case BOTH:
+                included = (field.getAnnotation(Log.Exclude.class) == null && field.getClass().getAnnotation(Log.Exclude.class) == null) ||
+                        (included = field.getAnnotation(Config.Exclude.class) == null && field.getClass().getAnnotation(Config.Exclude.class) == null);
+                break;
+        }
+        return included;
     }
 }

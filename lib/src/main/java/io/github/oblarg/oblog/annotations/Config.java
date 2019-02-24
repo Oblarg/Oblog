@@ -1,5 +1,7 @@
 package io.github.oblarg.oblog.annotations;
 
+import io.github.oblarg.oblog.Loggable;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -186,5 +188,14 @@ public @interface Config {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+    }
+
+
+    /**
+     * Suppresses the config tab/layout corresponding to this {@link Loggable} instance (or all instances of the type).
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD, ElementType.TYPE})
+    @interface Exclude {
     }
 }

@@ -580,11 +580,10 @@ public @interface Log {
     }
 
     /**
-     * Prevents the logging of a {@link Loggable} field.  Use to suppress unwanted repetition of objects
-     * if the object graph is not a tree.
+     * Suppresses the log tab/layout corresponding to this {@link Loggable} instance (or all instances of the type).
      */
     @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.FIELD})
+    @Target({ElementType.FIELD, ElementType.TYPE})
     @interface Exclude {
     }
 }
