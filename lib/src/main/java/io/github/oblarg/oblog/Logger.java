@@ -18,7 +18,7 @@ public class Logger {
 
     /**
      * Configure shuffleboard logging for the robot.  Should be called after all loggable objects have been
-     * instantiated, e.g. at the end of robotInit.
+     * instantiated, e.g. at the end of robotInit.  Tabs for logging will be separate from tabs for config.
      *
      * @param rootContainer The root of the tree of loggable objects - for most teams, this is Robot.java.
      *                      To send an instance of Robot.java to this method from robotInit, call "configureLogging(this)"
@@ -26,7 +26,40 @@ public class Logger {
      */
 
     public static void configureLogging(Object rootContainer) {
-        configureLogging(rootContainer, new WrappedShuffleboard());
+        configureLogging(LogType.LOG, rootContainer, new WrappedShuffleboard());
+    }
+
+    /**
+     * Configure shuffleboard config for the robot.  Should be called after all loggable objects have been
+     * instantiated, e.g. at the end of robotInit.  Tabs for config will be separate from tabs for logging.
+     *
+     * @param rootContainer The root of the tree of loggable objects - for most teams, this is Robot.java.
+     *                      To send an instance of Robot.java to this method from robotInit, call "configureConfig(this)"
+     *                      Loggable fields of this object will have their own shuffleboard tabs.
+     */
+    public static void configureConfig(Object rootContainer){
+        configureLogging(LogType.CONFIG, rootContainer, new WrappedShuffleboard());
+    }
+
+    /**
+     * Configure shuffleboard logging and config for the robot.  Should be called after all loggable objects have beeen
+     * instantiated, e.g. at the end of robotInit.  Config and logging can either be given separate tabs, or all widgets
+     * can be placed in the same tabs.
+     *
+     * @param rootContainer The root of the tree of loggable objects - for most teams, this is Robot.java.
+     *                      To send an instance of Robot.java to this method from robotInit, call "configureLoggingAndConfig(this)"
+     *                      Loggable fields of this object will have their own shuffleboard tabs.
+     * @param separate Whether to generate separate tabs for config and logging.  If true, log widgets will be placed in
+     *                 tabs labeled "Log", and config widgets will be placed in tabs labeled "Config".
+     */
+    public static void configureLoggingAndConfig(Object rootContainer, boolean separate){
+        WrappedShuffleboard shuffleboard = new WrappedShuffleboard();
+        if (separate) {
+            configureLogging(LogType.LOG, rootContainer, shuffleboard);
+            configureLogging(LogType.CONFIG, rootContainer, shuffleboard);
+        } else {
+            configureLogging(LogType.BOTH, rootContainer, shuffleboard);
+        }
     }
 
     /**
@@ -38,7 +71,7 @@ public class Logger {
      * @param rootName      Name of the root NetworkTable.  io.github.oblarg.oblog.Loggable fields of rootContainer will be subtables.
      */
     public static void configureLoggingNTOnly(Object rootContainer, String rootName) {
-        configureLogging(rootContainer, new NTShuffleboard(rootName));
+        configureLogging(LogType.LOG, rootContainer, new NTShuffleboard(rootName));
     }
 
     /**
@@ -46,6 +79,7 @@ public class Logger {
      */
     public static void updateEntries() {
         entrySupplierMap.forEach((entry, supplier) -> entry.setValue(supplier.get()));
+        setterRunner.runSynchronous();
     }
 
     /**
@@ -59,10 +93,11 @@ public class Logger {
         entrySupplierMap.put(entry, supplier);
     }
 
-    private static void configureLogging(Object rootContainer,
+    private static void configureLogging(LogType logType,
+                                         Object rootContainer,
                                          ShuffleboardWrapper shuffleboard) {
 
-        Consumer<Loggable> log = (toLog) -> logLoggable(
+        Consumer<Loggable> log = (toLog) -> logLoggable(logType,
                 toLog,
                 toLog.getClass(),
                 new HashSet<>(),
@@ -113,14 +148,18 @@ public class Logger {
         }
     }
 
-    static void configureLoggingTest(Object rootContainer, ShuffleboardWrapper shuffleboard) {
-        configureLogging(rootContainer, shuffleboard);
+    static void configureLoggingTest(LogType logType, Object rootContainer, ShuffleboardWrapper shuffleboard) {
+        configureLogging(logType, rootContainer, shuffleboard);
     }
 
     /**
      * A map of the suppliers that are used to update each entry.
      */
     private static final Map<NetworkTableEntry, Supplier<Object>> entrySupplierMap = new HashMap<>();
+
+    enum LogType{
+        LOG, CONFIG, BOTH
+    }
 
     private static SetterRunner setterRunner = new SetterRunner();
 
@@ -531,7 +570,8 @@ public class Logger {
 
     }
 
-    private static void logLoggable(Loggable loggable,
+    private static void logLoggable(LogType logType,
+                                    Loggable loggable,
                                     Class loggableClass,
                                     Set<Field> loggedFields,
                                     Set<Field> registeredFields,
@@ -544,18 +584,60 @@ public class Logger {
 
         ShuffleboardContainerWrapper bin;
 
-        if (parentContainer == null) {
-            bin = shuffleboard.getTab(loggable.configureLogName());
-        } else {
-            bin = parentContainer.getLayout(loggable.configureLogName(), loggable.configureLayoutType())
-                    .withProperties(loggable.configureLayoutProperties());
-        }
+        switch(logType) {
+            case LOG:
+                if (parentContainer == null) {
+                    bin = shuffleboard.getTab(loggable.configureLogName() + ": Log");
+                } else {
+                    bin = parentContainer.getLayout(loggable.configureLogName(), loggable.configureLayoutType())
+                            .withProperties(loggable.configureLayoutProperties());
+                }
 
-        logFieldsAndMethods(loggable,
-                loggableClass,
-                bin,
-                registeredFields,
-                registeredMethods);
+                logFieldsAndMethods(loggable,
+                        loggableClass,
+                        bin,
+                        registeredFields,
+                        registeredMethods);
+                break;
+            case CONFIG:
+                if (parentContainer == null) {
+                    bin = shuffleboard.getTab(loggable.configureLogName() + ": Config");
+                } else {
+                    bin = parentContainer.getLayout(loggable.configureLogName(), loggable.configureLayoutType())
+                            .withProperties(loggable.configureLayoutProperties());
+                }
+
+                configFieldsAndMethods(loggable,
+                        loggableClass,
+                        bin,
+                        registeredFields,
+                        registeredMethods);
+                break;
+            case BOTH:
+                if (parentContainer == null) {
+                    bin = shuffleboard.getTab(loggable.configureLogName());
+                } else {
+                    bin = parentContainer.getLayout(loggable.configureLogName(), loggable.configureLayoutType())
+                            .withProperties(loggable.configureLayoutProperties());
+                }
+
+                logFieldsAndMethods(loggable,
+                        loggableClass,
+                        bin,
+                        registeredFields,
+                        registeredMethods);
+
+
+                configFieldsAndMethods(loggable,
+                        loggableClass,
+                        bin,
+                        registeredFields,
+                        registeredMethods);
+                break;
+            default:
+                bin = shuffleboard.getTab("ERROR");
+                break;
+        }
 
         //only call on the actual class, to avoid multiple calls if overridden
 
@@ -563,7 +645,7 @@ public class Logger {
             loggable.addCustomLogging();
         }
 
-        Consumer<Loggable> log = (toLog) -> logLoggable(
+        Consumer<Loggable> log = (toLog) -> logLoggable(logType,
                 toLog,
                 toLog.getClass(),
                 new HashSet<>(),
@@ -622,6 +704,7 @@ public class Logger {
 
         if (Loggable.class.isAssignableFrom(loggableClass.getSuperclass())) {
             logLoggable(
+                    logType,
                     loggable,
                     loggableClass.getSuperclass(),
                     loggedFields,

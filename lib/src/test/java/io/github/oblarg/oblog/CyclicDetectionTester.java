@@ -21,8 +21,8 @@ public class CyclicDetectionTester {
         ShuffleboardMocks mocks = new ShuffleboardMocks(mockedEntries);
 
 
-        Logger.configureLoggingTest(rootContainer, mocks.getMockedShuffleboard());
-        verify(mocks.getMockedShuffleboard()).getTab("TestCycleOuter");
+        Logger.configureLoggingTest(Logger.LogType.LOG,rootContainer, mocks.getMockedShuffleboard());
+        verify(mocks.getMockedShuffleboard()).getTab("TestCycleOuter: Log");
         verify(mocks.getMockedContainer()).getLayout("TestCycleInner", BuiltInLayouts.kList);
         verify(mocks.getMockedContainer()).add("s", "outer");
         verify(mocks.getMockedLayout()).add("s", "inner");

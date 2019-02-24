@@ -18,10 +18,10 @@ public class SimpleTester {
 
         ShuffleboardMocks mocks = new ShuffleboardMocks(mockedEntries);
 
-        Logger.configureLoggingTest(rootContainer, mocks.getMockedShuffleboard());
+        Logger.configureLoggingTest(Logger.LogType.LOG,rootContainer, mocks.getMockedShuffleboard());
 
-        verify(mocks.getMockedShuffleboard()).getTab("TestLoggableBasic1");
-        verify(mocks.getMockedShuffleboard()).getTab("TestLoggableBasic2");
+        verify(mocks.getMockedShuffleboard()).getTab("TestLoggableBasic1: Log");
+        verify(mocks.getMockedShuffleboard()).getTab("TestLoggableBasic2: Log");
 
         verify(mocks.getMockedContainer()).add("a", 1);
         verify(mocks.getMockedContainer()).add("getA", 1);
