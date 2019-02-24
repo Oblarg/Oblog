@@ -1,5 +1,7 @@
 package io.github.oblarg.oblog;
 
+import edu.wpi.first.networktables.EntryListenerFlags;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import io.github.oblarg.oblog.annotations.*;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -10,6 +12,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.IntConsumer;
 import java.util.function.Supplier;
 
 public class Logger {
@@ -24,7 +27,7 @@ public class Logger {
      */
 
     public static void configureLogging(Object rootContainer) {
-        configureLogging(widgetHandler,
+        configureLogging(logHandler,
                 rootContainer,
                 new WrappedShuffleboard());
     }
@@ -38,7 +41,7 @@ public class Logger {
      * @param rootName      Name of the root NetworkTable.  io.github.oblarg.oblog.Loggable fields of rootContainer will be subtables.
      */
     public static void configureLoggingNTOnly(Object rootContainer, String rootName) {
-        configureLogging(widgetHandler,
+        configureLogging(logHandler,
                 rootContainer,
                 new NTShuffleboard(rootName));
     }
@@ -61,7 +64,7 @@ public class Logger {
         entrySupplierMap.put(entry, supplier);
     }
 
-    private static void configureLogging(Map<Class<? extends Annotation>, WidgetProcessor> widgetHandler,
+    private static void configureLogging(Map<Class<? extends Annotation>, FieldProcessor> widgetHandler,
                                          Object rootContainer,
                                          ShuffleboardWrapper shuffleboard) {
 
@@ -117,7 +120,7 @@ public class Logger {
     }
 
     static void configureLoggingTest(Object rootContainer, ShuffleboardWrapper shuffleboard) {
-        configureLogging(widgetHandler,
+        configureLogging(logHandler,
                 rootContainer,
                 shuffleboard);
     }
@@ -127,12 +130,108 @@ public class Logger {
      */
     private static final Map<NetworkTableEntry, Supplier<Object>> entrySupplierMap = new HashMap<>();
 
+    private static SetterRunner setterRunner = new SetterRunner();
+
     @FunctionalInterface
-    private interface WidgetProcessor {
-        void processWidget(Supplier<Object> supplier, Annotation params, ShuffleboardContainerWrapper bin, String name);
+    private interface FieldProcessor {
+        void processField(Supplier<Object> supplier, Annotation params, ShuffleboardContainerWrapper bin, String name);
     }
 
-    private static final Map<Class<? extends Annotation>, WidgetProcessor> widgetHandler = Map.ofEntries(
+    @FunctionalInterface
+    private interface BooleanSetterProcessor {
+        void processBooleanSetter(Consumer<Boolean> setter, Annotation params, ShuffleboardContainerWrapper bin, String name);
+    }
+
+    @FunctionalInterface
+    private interface NumericSetterProcessor {
+        void processNumericSetter(Consumer<Number> setter, Annotation params, ShuffleboardContainerWrapper bin, String name);
+    }
+
+    private static final Map<Class<? extends Annotation>, BooleanSetterProcessor> configBooleanSetterHandler = Map.ofEntries(
+            entry(Config.class, (setter, rawParams, bin, name) -> {
+                Config params = (Config) rawParams;
+                NetworkTableInstance.getDefault().addEntryListener(
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), true)
+                                .withWidget(BuiltInWidgets.kToggleButton.getWidgetName()).getEntry(),
+                        (entryNotification) -> setterRunner.execute(() -> setter.accept((boolean) entryNotification.value.getValue())),
+                        EntryListenerFlags.kUpdate
+                );
+            }),
+            entry(Config.ToggleButton.class, (setter, rawParams, bin, name) -> {
+                Config.ToggleButton params = (Config.ToggleButton) rawParams;
+                NetworkTableInstance.getDefault().addEntryListener(
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValue())
+                                .withWidget(BuiltInWidgets.kToggleButton.getWidgetName()).getEntry(),
+                        (entryNotification) -> setterRunner.execute(() -> setter.accept((boolean) entryNotification.value.getValue())),
+                        EntryListenerFlags.kUpdate
+                );
+            }),
+            entry(Config.ToggleSwitch.class, (setter, rawParams, bin, name) -> {
+                Config.ToggleSwitch params = (Config.ToggleSwitch) rawParams;
+                NetworkTableInstance.getDefault().addEntryListener(
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValue())
+                                .withWidget(BuiltInWidgets.kToggleSwitch.getWidgetName()).getEntry(),
+                        (entryNotification) -> setterRunner.execute(() -> setter.accept((boolean) entryNotification.value.getValue())),
+                        EntryListenerFlags.kUpdate
+                );
+            })
+    );
+
+    private static final Map<Class<? extends Annotation>, NumericSetterProcessor> configNumericSetterHandler = Map.ofEntries(
+            entry(Config.class, (setter, rawParams, bin, name) -> {
+                Config params = (Config) rawParams;
+                NetworkTableInstance.getDefault().addEntryListener(
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), 0)
+                                .withWidget(BuiltInWidgets.kTextView.getWidgetName()).getEntry(),
+                        (entryNotification) -> setterRunner.execute(() -> setter.accept((Number) entryNotification.value.getValue())),
+                        EntryListenerFlags.kUpdate
+                );
+            }),
+            entry(Config.NumberSlider.class, (setter, rawParams, bin, name) -> {
+                Config.NumberSlider params = (Config.NumberSlider) rawParams;
+                NetworkTableInstance.getDefault().addEntryListener(
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValue())
+                                .withWidget(BuiltInWidgets.kNumberSlider.getWidgetName())
+                                .withProperties(Map.of(
+                                        "min", params.min(),
+                                        "max", params.max(),
+                                        "blockIncrement", params.blockIncrement()))
+                                .getEntry(),
+                        (entryNotification) -> setterRunner.execute(() -> setter.accept((Number) entryNotification.value.getValue())),
+                        EntryListenerFlags.kUpdate
+                );
+            })
+    );
+
+
+    private static final Map<Class<? extends Annotation>, FieldProcessor> configFieldHandler = Map.ofEntries(
+            entry(Config.Command.class,
+                    (supplier, rawParams, bin, name) -> {
+                        Config.Command params = (Config.Command) rawParams;
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
+                                .withWidget(BuiltInWidgets.kCommand.getWidgetName());
+                    }),
+            entry(Config.PIDCommand.class,
+                    (supplier, rawParams, bin, name) -> {
+                        Config.PIDCommand params = (Config.PIDCommand) rawParams;
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
+                                .withWidget(BuiltInWidgets.kPIDCommand.getWidgetName());
+                    }),
+            entry(Config.PIDController.class,
+                    (supplier, rawParams, bin, name) -> {
+                        Config.PIDController params = (Config.PIDController) rawParams;
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
+                                .withWidget(BuiltInWidgets.kPIDController.getWidgetName());
+                    }),
+            entry(Config.Relay.class,
+                    (supplier, rawParams, bin, name) -> {
+                        Config.Relay params = (Config.Relay) rawParams;
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
+                                .withWidget(BuiltInWidgets.kRelay.getWidgetName());
+                    })
+    );
+
+    private static final Map<Class<? extends Annotation>, FieldProcessor> logHandler = Map.ofEntries(
             entry(Log.class,
                     (supplier, rawParams, bin, name) -> {
                         Log params = (Log) rawParams;
@@ -226,24 +325,6 @@ public class Logger {
                                 .withProperties(Map.of(
                                         "orientation", params.orientation()));
                     }),
-            entry(Log.Command.class,
-                    (supplier, rawParams, bin, name) -> {
-                        Log.Command params = (Log.Command) rawParams;
-                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
-                                .withWidget(BuiltInWidgets.kCommand.getWidgetName());
-                    }),
-            entry(Log.PIDCommand.class,
-                    (supplier, rawParams, bin, name) -> {
-                        Log.PIDCommand params = (Log.PIDCommand) rawParams;
-                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
-                                .withWidget(BuiltInWidgets.kPIDCommand.getWidgetName());
-                    }),
-            entry(Log.PIDController.class,
-                    (supplier, rawParams, bin, name) -> {
-                        Log.PIDController params = (Log.PIDController) rawParams;
-                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
-                                .withWidget(BuiltInWidgets.kPIDController.getWidgetName());
-                    }),
             entry(Log.Accelerometer.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.Accelerometer params = (Log.Accelerometer) rawParams;
@@ -314,7 +395,7 @@ public class Logger {
                                                  ShuffleboardContainerWrapper bin,
                                                  Set<Field> registeredFields,
                                                  Set<Method> registeredMethods,
-                                                 Map<Class<? extends Annotation>, WidgetProcessor> widgetHandler) {
+                                                 Map<Class<? extends Annotation>, FieldProcessor> widgetHandler) {
 
         Set<Field> fields = Set.of(loggableClass.getDeclaredFields());
         Set<Method> methods = Set.of(loggableClass.getDeclaredMethods());
@@ -324,9 +405,9 @@ public class Logger {
             if (!registeredFields.contains(field)) {
                 registeredFields.add(field);
                 for (Annotation annotation : field.getAnnotations()) {
-                    WidgetProcessor process = widgetHandler.get(annotation.annotationType());
+                    FieldProcessor process = widgetHandler.get(annotation.annotationType());
                     if (process != null) {
-                        process.processWidget(
+                        process.processField(
                                 () -> {
                                     try {
                                         return field.get(loggable);
@@ -348,9 +429,9 @@ public class Logger {
                 if (!registeredMethods.contains(method)) {
                     registeredMethods.add(method);
                     for (Annotation annotation : method.getAnnotations()) {
-                        WidgetProcessor process = widgetHandler.get(annotation.annotationType());
+                        FieldProcessor process = widgetHandler.get(annotation.annotationType());
                         if (process != null) {
-                            process.processWidget(
+                            process.processField(
                                     () -> {
                                         try {
                                             return method.invoke(loggable);
@@ -370,7 +451,7 @@ public class Logger {
 
     }
 
-    private static void logLoggable(Map<Class<? extends Annotation>, WidgetProcessor> widgetHandler,
+    private static void logLoggable(Map<Class<? extends Annotation>, FieldProcessor> widgetHandler,
                                     Loggable loggable,
                                     Class loggableClass,
                                     Set<Field> loggedFields,
@@ -477,7 +558,7 @@ public class Logger {
     private static boolean isAncestor(Field field, Object loggable, Set<Object> ancestors) {
         try {
             boolean b = ancestors.contains(field.get(loggable));
-            if(b){
+            if (b) {
                 System.out.println("CAUTION: Cyclic reference of Loggables detected!  Recursion terminated after one cycle.");
                 System.out.println(field.getName() + " in " + loggable.getClass().getName() +
                         " is itself an ancestor of " + loggable.getClass().getName());

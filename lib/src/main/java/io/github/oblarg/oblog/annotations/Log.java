@@ -10,7 +10,6 @@ import java.lang.annotation.Target;
 /**
  * Displays a value as its default widget type on Shuffleboard.  Provides no configuration options.
  */
-
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Log {
@@ -306,63 +305,6 @@ public @interface Log {
         String orientation() default "HORIZONTAL";
     }
 
-    /**
-     * Displays a command with a toggle button. Pressing the button will start the command, and the
-     * button will automatically release when the command completes.
-     * <br>Supported types:
-     * <ul>
-     * <li>{@link edu.wpi.first.wpilibj.command.Command}</li>
-     * <li>{@link edu.wpi.first.wpilibj.command.CommandGroup}</li>
-     * <li>Any custom subclass of {@code Command} or {@code CommandGroup}</li>
-     * </ul>
-     * <br>This widget has no custom properties.
-     */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.FIELD, ElementType.METHOD})
-    @interface Command {
-        /**
-         * @return The name of the value on Shuffleboard; defaults to field or method name.
-         */
-        String name() default "NO_NAME";
-    }
-
-    /**
-     * Displays a PID command with a checkbox and an editor for the PIDF constants. Selecting the
-     * checkbox will start the command, and the checkbox will automatically deselect when the command
-     * completes.
-     * <br>Supported types:
-     * <ul>
-     * <li>{@link edu.wpi.first.wpilibj.command.PIDCommand}</li>
-     * <li>Any custom subclass of {@code PIDCommand}</li>
-     * </ul>
-     * <br>This widget has no custom properties.
-     */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.FIELD, ElementType.METHOD})
-    @interface PIDCommand {
-        /**
-         * @return The name of the value on Shuffleboard; defaults to field or method name.
-         */
-        String name() default "NO_NAME";
-    }
-
-    /**
-     * Displays a PID controller with an editor for the PIDF constants and a toggle switch for
-     * enabling and disabling the controller.
-     * <br>Supported types:
-     * <ul>
-     * <li>{@link edu.wpi.first.wpilibj.PIDController}</li>
-     * </ul>
-     * <br>This widget has no custom properties.
-     */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.FIELD, ElementType.METHOD})
-    @interface PIDController {
-        /**
-         * @return The name of the value on Shuffleboard; defaults to field or method name.
-         */
-        String name() default "NO_NAME";
-    }
 
     /**
      * Displays an accelerometer with a number bar displaying the magnitude of the acceleration and
