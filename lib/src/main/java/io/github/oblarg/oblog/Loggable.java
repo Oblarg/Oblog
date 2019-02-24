@@ -7,6 +7,15 @@ import edu.wpi.first.wpilibj.shuffleboard.LayoutType;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Marks a class as loggable.  Loggable classes will define the tabs/layouts/sublayouts of your shuffleboard.  Fields or getters of
+ * Loggable classes that you wish to log should be annotated with {@link Log} or one of its widget-specific sub-annotations.
+ * Any children (i.e. fields) of a Loggable class that are themselves Loggable will be recursively given a layout within the tab/layout defined
+ * by the parent.
+ *
+ * Note that Loggable classes that are not reachable from the root container passed to {@link Logger#configureLogging(Object)}
+ * through a sequence of Loggable ancestors will not be logged, as the Logger will not be able to see them.
+ */
 public interface Loggable {
 
     /**
