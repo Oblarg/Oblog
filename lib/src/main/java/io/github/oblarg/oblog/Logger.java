@@ -12,7 +12,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.IntConsumer;
 import java.util.function.Supplier;
 
 public class Logger {
@@ -27,9 +26,7 @@ public class Logger {
      */
 
     public static void configureLogging(Object rootContainer) {
-        configureLogging(logHandler,
-                rootContainer,
-                new WrappedShuffleboard());
+        configureLogging(rootContainer, new WrappedShuffleboard());
     }
 
     /**
@@ -41,9 +38,7 @@ public class Logger {
      * @param rootName      Name of the root NetworkTable.  io.github.oblarg.oblog.Loggable fields of rootContainer will be subtables.
      */
     public static void configureLoggingNTOnly(Object rootContainer, String rootName) {
-        configureLogging(logHandler,
-                rootContainer,
-                new NTShuffleboard(rootName));
+        configureLogging(rootContainer, new NTShuffleboard(rootName));
     }
 
     /**
@@ -64,11 +59,10 @@ public class Logger {
         entrySupplierMap.put(entry, supplier);
     }
 
-    private static void configureLogging(Map<Class<? extends Annotation>, FieldProcessor> widgetHandler,
-                                         Object rootContainer,
+    private static void configureLogging(Object rootContainer,
                                          ShuffleboardWrapper shuffleboard) {
 
-        Consumer<Loggable> log = (toLog) -> logLoggable(widgetHandler,
+        Consumer<Loggable> log = (toLog) -> logLoggable(
                 toLog,
                 toLog.getClass(),
                 new HashSet<>(),
@@ -120,9 +114,7 @@ public class Logger {
     }
 
     static void configureLoggingTest(Object rootContainer, ShuffleboardWrapper shuffleboard) {
-        configureLogging(logHandler,
-                rootContainer,
-                shuffleboard);
+        configureLogging(rootContainer, shuffleboard);
     }
 
     /**
@@ -389,13 +381,11 @@ public class Logger {
                     })
     );
 
-
-    private static void registerFieldsAndMethods(Loggable loggable,
-                                                 Class loggableClass,
-                                                 ShuffleboardContainerWrapper bin,
-                                                 Set<Field> registeredFields,
-                                                 Set<Method> registeredMethods,
-                                                 Map<Class<? extends Annotation>, FieldProcessor> widgetHandler) {
+    private static void configFieldsAndMethods(Loggable loggable,
+                                               Class loggableClass,
+                                               ShuffleboardContainerWrapper bin,
+                                               Set<Field> registeredFields,
+                                               Set<Method> registeredMethods) {
 
         Set<Field> fields = Set.of(loggableClass.getDeclaredFields());
         Set<Method> methods = Set.of(loggableClass.getDeclaredMethods());
@@ -405,7 +395,97 @@ public class Logger {
             if (!registeredFields.contains(field)) {
                 registeredFields.add(field);
                 for (Annotation annotation : field.getAnnotations()) {
-                    FieldProcessor process = widgetHandler.get(annotation.annotationType());
+                    FieldProcessor process = configFieldHandler.get(annotation.annotationType());
+                    if (process != null) {
+                        process.processField(
+                                () -> {
+                                    try {
+                                        return field.get(loggable);
+                                    } catch (IllegalAccessException e) {
+                                        return null;
+                                    }
+                                },
+                                annotation,
+                                bin,
+                                field.getName());
+                    }
+                }
+            }
+        }
+
+        for (Method method : methods) {
+            if (method.getReturnType().equals(Void.TYPE) &&
+                    method.getParameterTypes().length == 1 &&
+                    (method.getParameterTypes()[0].equals(Boolean.TYPE)) ||
+                        method.getParameterTypes()[0].equals(Boolean.class)) {
+                method.setAccessible(true);
+                if (!registeredMethods.contains(method)) {
+                    registeredMethods.add(method);
+                    for (Annotation annotation : method.getAnnotations()) {
+                        BooleanSetterProcessor process = configBooleanSetterHandler.get(annotation.annotationType());
+                        if (process != null) {
+                            process.processBooleanSetter(
+                                    (value) -> {
+                                        try {
+                                            method.invoke(loggable, value);
+                                        } catch (IllegalAccessException | InvocationTargetException e) {
+                                            e.printStackTrace();
+                                        }
+                                    },
+                                    annotation,
+                                    bin,
+                                    method.getName());
+                        }
+                    }
+                }
+            } else if (method.getReturnType().equals(Void.TYPE) &&
+                    method.getParameterTypes().length == 1 &&
+                    (method.getParameterTypes()[0].equals(Integer.TYPE) ||
+                        method.getParameterTypes()[0].equals(Integer.class) ||
+                        method.getParameterTypes()[0].equals(Double.TYPE) ||
+                        method.getParameterTypes()[0].equals(Double.class))){
+                method.setAccessible(true);
+                if (!registeredMethods.contains(method)) {
+                    registeredMethods.add(method);
+                    for (Annotation annotation : method.getAnnotations()) {
+                        NumericSetterProcessor process = configNumericSetterHandler.get(annotation.annotationType());
+                        if (process != null) {
+                            process.processNumericSetter(
+                                    (value) -> {
+                                        try {
+                                            method.invoke(loggable, value);
+                                        } catch (IllegalAccessException | InvocationTargetException e) {
+                                            e.printStackTrace();
+                                        }
+                                    },
+                                    annotation,
+                                    bin,
+                                    method.getName());
+                        }
+                    }
+                }
+            }
+        }
+
+
+    }
+
+
+    private static void logFieldsAndMethods(Loggable loggable,
+                                            Class loggableClass,
+                                            ShuffleboardContainerWrapper bin,
+                                            Set<Field> registeredFields,
+                                            Set<Method> registeredMethods) {
+
+        Set<Field> fields = Set.of(loggableClass.getDeclaredFields());
+        Set<Method> methods = Set.of(loggableClass.getDeclaredMethods());
+
+        for (Field field : fields) {
+            field.setAccessible(true);
+            if (!registeredFields.contains(field)) {
+                registeredFields.add(field);
+                for (Annotation annotation : field.getAnnotations()) {
+                    FieldProcessor process = logHandler.get(annotation.annotationType());
                     if (process != null) {
                         process.processField(
                                 () -> {
@@ -429,7 +509,7 @@ public class Logger {
                 if (!registeredMethods.contains(method)) {
                     registeredMethods.add(method);
                     for (Annotation annotation : method.getAnnotations()) {
-                        FieldProcessor process = widgetHandler.get(annotation.annotationType());
+                        FieldProcessor process = logHandler.get(annotation.annotationType());
                         if (process != null) {
                             process.processField(
                                     () -> {
@@ -451,8 +531,7 @@ public class Logger {
 
     }
 
-    private static void logLoggable(Map<Class<? extends Annotation>, FieldProcessor> widgetHandler,
-                                    Loggable loggable,
+    private static void logLoggable(Loggable loggable,
                                     Class loggableClass,
                                     Set<Field> loggedFields,
                                     Set<Field> registeredFields,
@@ -472,12 +551,11 @@ public class Logger {
                     .withProperties(loggable.configureLayoutProperties());
         }
 
-        registerFieldsAndMethods(loggable,
+        logFieldsAndMethods(loggable,
                 loggableClass,
                 bin,
                 registeredFields,
-                registeredMethods,
-                widgetHandler);
+                registeredMethods);
 
         //only call on the actual class, to avoid multiple calls if overridden
 
@@ -485,7 +563,7 @@ public class Logger {
             loggable.addCustomLogging();
         }
 
-        Consumer<Loggable> log = (toLog) -> logLoggable(widgetHandler,
+        Consumer<Loggable> log = (toLog) -> logLoggable(
                 toLog,
                 toLog.getClass(),
                 new HashSet<>(),
@@ -543,7 +621,7 @@ public class Logger {
         //recurse on superclass
 
         if (Loggable.class.isAssignableFrom(loggableClass.getSuperclass())) {
-            logLoggable(widgetHandler,
+            logLoggable(
                     loggable,
                     loggableClass.getSuperclass(),
                     loggedFields,
