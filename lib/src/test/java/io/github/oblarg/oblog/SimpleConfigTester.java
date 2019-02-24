@@ -29,7 +29,7 @@ public class SimpleConfigTester {
 
         verify(mocks.getMockedNTInstance(), atLeastOnce()).addEntryListener(any(NetworkTableEntry.class), any(), eq(EntryListenerFlags.kUpdate));
 
-        assertEquals(rootContainer.test.b, false);
+        assertFalse(rootContainer.test.b);
         assertEquals(rootContainer.test.i, 0);
     }
 
