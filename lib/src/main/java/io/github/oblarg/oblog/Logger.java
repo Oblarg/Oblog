@@ -184,9 +184,10 @@ public class Logger {
     private static final Map<Class<? extends Annotation>, BooleanSetterProcessor> configBooleanSetterHandler = Map.ofEntries(
             entry(Config.class, (setter, rawParams, bin, nt, name) -> {
                 Config params = (Config) rawParams;
+                NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), false)
+                        .withWidget(BuiltInWidgets.kToggleButton.getWidgetName()).getEntry();
                 nt.addEntryListener(
-                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), false)
-                                .withWidget(BuiltInWidgets.kToggleButton.getWidgetName()).getEntry(),
+                        entry,
                         (entryNotification) -> setterRunner.execute(() -> setter.accept((boolean) entryNotification.value.getValue())),
                         EntryListenerFlags.kUpdate
                 );
@@ -194,9 +195,10 @@ public class Logger {
             }),
             entry(Config.ToggleButton.class, (setter, rawParams, bin, nt, name) -> {
                 Config.ToggleButton params = (Config.ToggleButton) rawParams;
+                NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValue())
+                        .withWidget(BuiltInWidgets.kToggleButton.getWidgetName()).getEntry();
                 nt.addEntryListener(
-                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValue())
-                                .withWidget(BuiltInWidgets.kToggleButton.getWidgetName()).getEntry(),
+                        entry,
                         (entryNotification) -> setterRunner.execute(() -> setter.accept((boolean) entryNotification.value.getValue())),
                         EntryListenerFlags.kUpdate
                 );
@@ -204,9 +206,10 @@ public class Logger {
             }),
             entry(Config.ToggleSwitch.class, (setter, rawParams, bin, nt, name) -> {
                 Config.ToggleSwitch params = (Config.ToggleSwitch) rawParams;
+                NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValue())
+                        .withWidget(BuiltInWidgets.kToggleSwitch.getWidgetName()).getEntry();
                 nt.addEntryListener(
-                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValue())
-                                .withWidget(BuiltInWidgets.kToggleSwitch.getWidgetName()).getEntry(),
+                        entry,
                         (entryNotification) -> setterRunner.execute(() -> setter.accept((boolean) entryNotification.value.getValue())),
                         EntryListenerFlags.kUpdate
                 );
@@ -217,9 +220,10 @@ public class Logger {
     private static final Map<Class<? extends Annotation>, NumericSetterProcessor> configNumericSetterHandler = Map.ofEntries(
             entry(Config.class, (setter, rawParams, bin, nt, name) -> {
                 Config params = (Config) rawParams;
+                NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), 0)
+                        .withWidget(BuiltInWidgets.kTextView.getWidgetName()).getEntry();
                 nt.addEntryListener(
-                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), 0)
-                                .withWidget(BuiltInWidgets.kTextView.getWidgetName()).getEntry(),
+                        entry,
                         (entryNotification) -> setterRunner.execute(() -> setter.accept((Number) entryNotification.value.getValue())),
                         EntryListenerFlags.kUpdate
                 );
@@ -227,14 +231,15 @@ public class Logger {
             }),
             entry(Config.NumberSlider.class, (setter, rawParams, bin, nt, name) -> {
                 Config.NumberSlider params = (Config.NumberSlider) rawParams;
+                NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValue())
+                        .withWidget(BuiltInWidgets.kNumberSlider.getWidgetName())
+                        .withProperties(Map.of(
+                                "min", params.min(),
+                                "max", params.max(),
+                                "blockIncrement", params.blockIncrement()))
+                        .getEntry();
                 nt.addEntryListener(
-                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValue())
-                                .withWidget(BuiltInWidgets.kNumberSlider.getWidgetName())
-                                .withProperties(Map.of(
-                                        "min", params.min(),
-                                        "max", params.max(),
-                                        "blockIncrement", params.blockIncrement()))
-                                .getEntry(),
+                        entry,
                         (entryNotification) -> setterRunner.execute(() -> setter.accept((Number) entryNotification.value.getValue())),
                         EntryListenerFlags.kUpdate
                 );
@@ -498,7 +503,12 @@ public class Logger {
                             process.processNumericSetter(
                                     (value) -> {
                                         try {
-                                            method.invoke(loggable, value);
+                                            if(method.getParameterTypes()[0].equals(Integer.TYPE) ||
+                                                    method.getParameterTypes()[0].equals(Integer.class)) {
+                                                method.invoke(loggable, value.intValue());
+                                            } else {
+                                                method.invoke(loggable, value.doubleValue());
+                                            }
                                         } catch (IllegalAccessException | InvocationTargetException e) {
                                             e.printStackTrace();
                                         }

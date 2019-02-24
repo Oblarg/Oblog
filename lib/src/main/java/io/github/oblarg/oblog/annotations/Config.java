@@ -83,7 +83,7 @@ public @interface Config {
         /**
          * @return The default value that the setter will return prior to manipulation on the dashboard.
          */
-        boolean defaultValue() default true;
+        boolean defaultValue() default false;
     }
 
 
@@ -106,7 +106,7 @@ public @interface Config {
         /**
          * @return The default value that the setter will return prior to manipulation on the dashboard.
          */
-        boolean defaultValue() default true;
+        boolean defaultValue() default false;
     }
 
 
