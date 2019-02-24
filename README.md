@@ -37,6 +37,12 @@ A (very) basic example robot can be found in the "examples" folder, demonstratin
 to call the necessary Logger functions.
 
 
+Adding Oblog to Your Project
+------------------
+
+It is recommended to use [jitpack](https://jitpack.io) to add Oblog as a dependency to your project.
+
+
 Caveats
 ------------------
 
