@@ -20,7 +20,7 @@ public class LoggedSubsystem extends Subsystem implements Loggable {
         return 2;
     }
 
-    @Config
+    @Config.NumberSlider(min=-10, max=10)
     private void setI(int i) {
         this.i = i;
         System.out.println("i set to: " + i);

@@ -779,15 +779,15 @@ public class Logger {
         switch (logType) {
             case LOG:
                 included = field.getAnnotation(Log.Exclude.class) == null &&
-                        field.getClass().getAnnotation(Log.Exclude.class) == null;
+                        field.getType().getAnnotation(Log.Exclude.class) == null;
                 break;
             case CONFIG:
                 included = field.getAnnotation(Config.Exclude.class) == null &&
-                        field.getClass().getAnnotation(Config.Exclude.class) == null;
+                        field.getType().getAnnotation(Config.Exclude.class) == null;
                 break;
             case BOTH:
-                included = (field.getAnnotation(Log.Exclude.class) == null && field.getClass().getAnnotation(Log.Exclude.class) == null) ||
-                        (included = field.getAnnotation(Config.Exclude.class) == null && field.getClass().getAnnotation(Config.Exclude.class) == null);
+                included = (field.getAnnotation(Log.Exclude.class) == null && field.getType().getAnnotation(Log.Exclude.class) == null) ||
+                        (included = field.getAnnotation(Config.Exclude.class) == null && field.getType().getAnnotation(Config.Exclude.class) == null);
                 break;
         }
         return included;

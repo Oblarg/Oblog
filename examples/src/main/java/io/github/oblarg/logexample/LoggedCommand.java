@@ -2,8 +2,10 @@ package io.github.oblarg.logexample;
 
 import edu.wpi.first.wpilibj.command.Command;
 import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
 
+@Config.Exclude
 public class LoggedCommand extends Command implements Loggable {
 
     private double timeout;
