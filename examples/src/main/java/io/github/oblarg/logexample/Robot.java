@@ -44,7 +44,7 @@ public class Robot extends TimedRobot {
 
     //Configures logging.  Passing "this" specifies the runtime instance of Robot.java as object whose loggable fields
     //will be make up the shuffleboard tabs.
-    Logger.configureLoggingAndConfig(this, true);
+    Logger.configureLoggingAndConfig(this, false);
   }
 
   /**

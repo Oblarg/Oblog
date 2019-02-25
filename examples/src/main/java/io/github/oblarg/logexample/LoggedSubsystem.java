@@ -20,6 +20,8 @@ public class LoggedSubsystem extends Subsystem implements Loggable {
         return 2;
     }
 
+    private LoggedComponent component = new LoggedComponent();
+
     @Config.NumberSlider(min=-10, max=10)
     private void setI(int i) {
         this.i = i;
