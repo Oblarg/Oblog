@@ -14,6 +14,6 @@ public class LoggedComponent implements Loggable {
     @Config.NumberSlider
     private void setD (double d) {
         this.d = d;
-        System.out.println("d set to: " + d);
+        System.out.println("d set to: " + this.d);
     }
 }

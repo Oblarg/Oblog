@@ -20,18 +20,18 @@ public class LoggedSubsystem extends Subsystem implements Loggable {
         return 2;
     }
 
-    private LoggedComponent component = new LoggedComponent();
+    private LoggedComponent component = new LoggedComponentSubclass();
 
     @Config.NumberSlider(min=-10, max=10)
     private void setI(int i) {
         this.i = i;
-        System.out.println("i set to: " + i);
+        System.out.println("i set to: " + this.i);
     }
 
     @Config.ToggleSwitch
     public void setB(boolean b) {
         this.b = b;
-        System.out.println("b set to: " + b);
+        System.out.println("b set to: " + this.b);
     }
 
     @Override
