@@ -22,8 +22,9 @@ How Does It Work?
 Oblog's API is very simple.  Using it takes just three easy steps:
 
 1. Designating classes (e.g. subsystems) as loggable by implementing the Loggable interface.
-2. Designating which fields and getters in Loggable classes will be logged with the @Log annotation, or one of its widget-specific sub-annotations.
-3. Adding calls to Logger.configureLogging and Logger.updateEntries in robotInit and robotPeriodic, respectively.
+2. Designating which fields and getters in Loggable classes will be logged with the @Log annotation, or one of its widget-specific sub-annotations.  Setters can also be bound to interactive widgets using @Config or one of its widget-specific sub-annotations, making it
+extremely easy to tune code parameters from Shuffleboard.
+3. Adding calls to Logger.configureLoggingAndConfig and Logger.updateEntries in robotInit and robotPeriodic, respectively.
 
 Once this is done, Oblog's logger will recursively generate Shuffleboard tabs, layouts, and sub-layouts based on your own code's graph
 of Loggable objects, and populate them with your desired widgets.  No lengthy builder calls, no confusing property lists, no hassle - 
