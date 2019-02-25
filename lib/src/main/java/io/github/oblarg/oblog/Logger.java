@@ -13,6 +13,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class Logger {
@@ -181,19 +182,36 @@ public class Logger {
         void processNumericSetter(Consumer<Number> setter, Annotation params, ShuffleboardContainerWrapper bin, NetworkTableInstance nt, String name);
     }
 
-    private static final Map<Class<? extends Annotation>, BooleanSetterProcessor> configBooleanSetterHandler = Map.ofEntries(
-            entry(Config.class, (setter, rawParams, bin, nt, name) -> {
-                Config params = (Config) rawParams;
-                NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), false)
-                        .withWidget(BuiltInWidgets.kToggleButton.getWidgetName()).getEntry();
-                nt.addEntryListener(
-                        entry,
-                        (entryNotification) -> setterRunner.execute(() -> setter.accept((boolean) entryNotification.value.getValue())),
-                        EntryListenerFlags.kUpdate
-                );
-                setter.accept(false);
+    @FunctionalInterface
+    private interface SetterProcessor {
+        void processSetter(Consumer<Object> setter, Annotation params, ShuffleboardContainerWrapper bin, NetworkTableInstance nt, String name, boolean isBoolean);
+    }
+
+    private static final Map<Class<? extends Annotation>, SetterProcessor> configSetterHandler = Map.ofEntries(
+            entry(Config.class, (setter, rawParams, bin, nt, name, isBoolean) -> {
+                if (isBoolean) {
+                    Config params = (Config) rawParams;
+                    NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), false)
+                            .withWidget(BuiltInWidgets.kToggleButton.getWidgetName()).getEntry();
+                    nt.addEntryListener(
+                            entry,
+                            (entryNotification) -> setterRunner.execute(() -> setter.accept((boolean) entryNotification.value.getValue())),
+                            EntryListenerFlags.kUpdate
+                    );
+                    setter.accept(false);
+                } else {
+                    Config params = (Config) rawParams;
+                    NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), 0)
+                            .withWidget(BuiltInWidgets.kTextView.getWidgetName()).getEntry();
+                    nt.addEntryListener(
+                            entry,
+                            (entryNotification) -> setterRunner.execute(() -> setter.accept((Number) entryNotification.value.getValue())),
+                            EntryListenerFlags.kUpdate
+                    );
+                    setter.accept(0);
+                }
             }),
-            entry(Config.ToggleButton.class, (setter, rawParams, bin, nt, name) -> {
+            entry(Config.ToggleButton.class, (setter, rawParams, bin, nt, name, isBoolean) -> {
                 Config.ToggleButton params = (Config.ToggleButton) rawParams;
                 NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValue())
                         .withWidget(BuiltInWidgets.kToggleButton.getWidgetName()).getEntry();
@@ -204,7 +222,7 @@ public class Logger {
                 );
                 setter.accept(params.defaultValue());
             }),
-            entry(Config.ToggleSwitch.class, (setter, rawParams, bin, nt, name) -> {
+            entry(Config.ToggleSwitch.class, (setter, rawParams, bin, nt, name, isBoolean) -> {
                 Config.ToggleSwitch params = (Config.ToggleSwitch) rawParams;
                 NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValue())
                         .withWidget(BuiltInWidgets.kToggleSwitch.getWidgetName()).getEntry();
@@ -214,22 +232,8 @@ public class Logger {
                         EntryListenerFlags.kUpdate
                 );
                 setter.accept(params.defaultValue());
-            })
-    );
-
-    private static final Map<Class<? extends Annotation>, NumericSetterProcessor> configNumericSetterHandler = Map.ofEntries(
-            entry(Config.class, (setter, rawParams, bin, nt, name) -> {
-                Config params = (Config) rawParams;
-                NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), 0)
-                        .withWidget(BuiltInWidgets.kTextView.getWidgetName()).getEntry();
-                nt.addEntryListener(
-                        entry,
-                        (entryNotification) -> setterRunner.execute(() -> setter.accept((Number) entryNotification.value.getValue())),
-                        EntryListenerFlags.kUpdate
-                );
-                setter.accept(0);
             }),
-            entry(Config.NumberSlider.class, (setter, rawParams, bin, nt, name) -> {
+            entry(Config.NumberSlider.class, (setter, rawParams, bin, nt, name, isBoolean) -> {
                 Config.NumberSlider params = (Config.NumberSlider) rawParams;
                 NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValue())
                         .withWidget(BuiltInWidgets.kNumberSlider.getWidgetName())
@@ -441,6 +445,24 @@ public class Logger {
                     })
     );
 
+    private static Map<Class, Function<Object, Object>> setterCaster = Map.ofEntries(
+            entry(Integer.TYPE, (value) -> ((Number)value).intValue()),
+            entry(Integer.class, (value) -> ((Number)value).intValue()),
+            entry(Double.TYPE, (value) -> ((Number)value).doubleValue()),
+            entry(Double.class, (value) -> ((Number)value).doubleValue()),
+            entry(Float.TYPE, (value) -> ((Number)value).floatValue()),
+            entry(Float.class, (value) -> ((Number)value).floatValue()),
+            entry(Long.TYPE, (value) -> ((Number)value).longValue()),
+            entry(Long.class, (value) -> ((Number)value).longValue()),
+            entry(Short.TYPE, (value) -> ((Number)value).shortValue()),
+            entry(Short.class, (value) -> ((Number)value).shortValue()),
+            entry(Byte.TYPE, (value) -> ((Number)value).byteValue()),
+            entry(Byte.class, (value) -> ((Number)value).byteValue()),
+            entry(Boolean.TYPE, (value) -> value),
+            entry(Boolean.class, (value) -> value)
+
+    );
+
     private static void configFieldsAndMethods(Loggable loggable,
                                                Class loggableClass,
                                                ShuffleboardContainerWrapper bin,
@@ -476,18 +498,17 @@ public class Logger {
 
         for (Method method : methods) {
             if (method.getReturnType().equals(Void.TYPE) &&
-                    method.getParameterTypes().length == 1 &&
-                    takesBoolean(method)) {
+                    method.getParameterTypes().length == 1 && setterCaster.containsKey(method.getParameterTypes()[0])) {
                 method.setAccessible(true);
                 if (!registeredMethods.contains(method)) {
                     registeredMethods.add(method);
                     for (Annotation annotation : method.getAnnotations()) {
-                        BooleanSetterProcessor process = configBooleanSetterHandler.get(annotation.annotationType());
+                        SetterProcessor process = configSetterHandler.get(annotation.annotationType());
                         if (process != null) {
-                            process.processBooleanSetter(
+                            process.processSetter(
                                     (value) -> {
                                         try {
-                                            method.invoke(loggable, value);
+                                            method.invoke(loggable, setterCaster.get(method.getParameterTypes()[0]).apply(value));
                                         } catch (IllegalAccessException | InvocationTargetException e) {
                                             e.printStackTrace();
                                         }
@@ -495,43 +516,13 @@ public class Logger {
                                     annotation,
                                     bin,
                                     nt,
-                                    method.getName());
-                        }
-                    }
-                }
-            } else if (method.getReturnType().equals(Void.TYPE) &&
-                    method.getParameterTypes().length == 1 &&
-                    takesNumeric(method)) {
-                method.setAccessible(true);
-                if (!registeredMethods.contains(method)) {
-                    registeredMethods.add(method);
-                    for (Annotation annotation : method.getAnnotations()) {
-                        NumericSetterProcessor process = configNumericSetterHandler.get(annotation.annotationType());
-                        if (process != null) {
-                            process.processNumericSetter(
-                                    (value) -> {
-                                        try {
-                                            if (method.getParameterTypes()[0].equals(Integer.TYPE) ||
-                                                    method.getParameterTypes()[0].equals(Integer.class)) {
-                                                method.invoke(loggable, value.intValue());
-                                            } else {
-                                                method.invoke(loggable, value.doubleValue());
-                                            }
-                                        } catch (IllegalAccessException | InvocationTargetException e) {
-                                            e.printStackTrace();
-                                        }
-                                    },
-                                    annotation,
-                                    bin,
-                                    nt,
-                                    method.getName());
+                                    method.getName(),
+                                    method.getParameterTypes()[0].equals(Boolean.TYPE) || method.getParameterTypes()[0].equals(Boolean.class));
                         }
                     }
                 }
             }
         }
-
-
     }
 
 

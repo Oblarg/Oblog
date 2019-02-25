@@ -24,16 +24,20 @@ public class IntegerConfigTester {
         verify(mocks.getMockedShuffleboard()).getTab("TestConfigInteger: Config");
         verify(mocks.getMockedContainer()).add("setI", 0);
 
-        verify(mocks.getMockedNTInstance(), atLeastOnce()).addEntryListener(any(NetworkTableEntry.class), any(), eq(EntryListenerFlags.kUpdate));
+        verify(mocks.getMockedNTInstance()).addEntryListener(any(NetworkTableEntry.class), any(), eq(EntryListenerFlags.kUpdate));
 
-        assertEquals(rootContainer.test.i, 0);
+        assertEquals(0,rootContainer.test.i);
 
         mocks.getListenerCallback().accept(new EntryNotification(mocks.getMockedNTInstance(),
                 0, 0, "test", mocks.getMockedNTValue(10), EntryListenerFlags.kUpdate));
-
         Logger.updateEntries();
+        assertEquals( 10, rootContainer.test.i);
 
-        assertEquals(rootContainer.test.i, 10);
+        mocks.getListenerCallback().accept(new EntryNotification(mocks.getMockedNTInstance(),
+                0, 0, "test", mocks.getMockedNTValue(11.5), EntryListenerFlags.kUpdate));
+        Logger.updateEntries();
+        assertEquals( 11, rootContainer.test.i);
+
     }
 
     private class TestRootContainer {
