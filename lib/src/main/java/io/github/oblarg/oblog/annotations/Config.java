@@ -9,7 +9,8 @@ import java.lang.annotation.Target;
 
 
 /**
- * Binds a setter or interactive object to its default interactive widget on Shuffleboard.
+ * Binds a setter or interactive object to its default interactive widget on Shuffleboard.  Defaults to a toggle
+ * button for booleans, and a text field for numerics.
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
