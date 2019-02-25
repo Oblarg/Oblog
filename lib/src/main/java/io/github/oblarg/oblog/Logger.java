@@ -762,17 +762,6 @@ public class Logger {
                                 (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]));
     }
 
-    private static boolean takesBoolean(Method method) {
-        return method.getParameterTypes()[0].equals(Boolean.TYPE) || method.getParameterTypes()[0].equals(Boolean.class);
-    }
-
-    private static boolean takesNumeric(Method method) {
-        return method.getParameterTypes()[0].equals(Integer.TYPE) ||
-                method.getParameterTypes()[0].equals(Integer.class) ||
-                method.getParameterTypes()[0].equals(Double.TYPE) ||
-                method.getParameterTypes()[0].equals(Double.class);
-    }
-
     private static boolean isIncluded(Field field, LogType logType) {
         boolean included = true;
         switch (logType) {
