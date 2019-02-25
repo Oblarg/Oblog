@@ -1,6 +1,7 @@
 package io.github.oblarg.oblog;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
+import io.github.oblarg.oblog.annotations.Log;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -18,9 +19,9 @@ public class SuperclassRecursionTester {
 
         ShuffleboardMocks mocks = new ShuffleboardMocks(mockedEntries);
 
-        Logger.configureLoggingTest(rootContainer, mocks.getMockedShuffleboard());
+        Logger.configureLoggingTest(Logger.LogType.LOG,rootContainer, mocks.getMockedShuffleboard(), mocks.getMockedNTInstance());
 
-        verify(mocks.getMockedShuffleboard(), atLeastOnce()).getTab("TestRecursionSub");
+        verify(mocks.getMockedShuffleboard(), atLeastOnce()).getTab("TestRecursionSub: Log");
         verify(mocks.getMockedShuffleboard(), never()).getTab("TestRecursionSuper");
         verify(mocks.getMockedShuffleboard(), never()).getTab("TestRecursionBase");
 

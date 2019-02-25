@@ -20,12 +20,12 @@ public class ArraysAndListsTester {
 
         ShuffleboardMocks mocks = new ShuffleboardMocks(mockedEntries);
 
-        Logger.configureLoggingTest(rootContainer, mocks.getMockedShuffleboard());
+        Logger.configureLoggingTest(Logger.LogType.LOG,rootContainer, mocks.getMockedShuffleboard(), mocks.getMockedNTInstance());
 
-        verify(mocks.getMockedShuffleboard(), atLeastOnce()).getTab("TestLoggableBasic1");
-        verify(mocks.getMockedShuffleboard(), atLeastOnce()).getTab("TestLoggableBasic2");
-        verify(mocks.getMockedShuffleboard(), atLeastOnce()).getTab("TestLoggableBasic3");
-        verify(mocks.getMockedShuffleboard(), atLeastOnce()).getTab("TestLoggableBasic4");
+        verify(mocks.getMockedShuffleboard(), atLeastOnce()).getTab("TestLoggableBasic1: Log");
+        verify(mocks.getMockedShuffleboard(), atLeastOnce()).getTab("TestLoggableBasic2: Log");
+        verify(mocks.getMockedShuffleboard(), atLeastOnce()).getTab("TestLoggableBasic3: Log");
+        verify(mocks.getMockedShuffleboard(), atLeastOnce()).getTab("TestLoggableBasic4: Log");
 
         verify(mocks.getMockedContainer()).add("a", 1);
         verify(mocks.getMockedContainer()).add("a", 2);

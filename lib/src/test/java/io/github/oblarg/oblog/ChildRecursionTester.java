@@ -20,9 +20,9 @@ public class ChildRecursionTester {
 
         ShuffleboardMocks mocks = new ShuffleboardMocks(mockedEntries);
 
-        Logger.configureLoggingTest(rootContainer, mocks.getMockedShuffleboard());
+        Logger.configureLoggingTest(Logger.LogType.LOG,rootContainer, mocks.getMockedShuffleboard(), mocks.getMockedNTInstance());
 
-        verify(mocks.getMockedShuffleboard(), atLeastOnce()).getTab("TestLoggableChildren");
+        verify(mocks.getMockedShuffleboard(), atLeastOnce()).getTab("TestLoggableChildren: Log");
         verify(mocks.getMockedContainer(), atLeastOnce()).getLayout("TestLoggableBasic1", BuiltInLayouts.kList);
         verify(mocks.getMockedContainer(), atLeastOnce()).getLayout("TestLoggableBasic2", BuiltInLayouts.kList);
 

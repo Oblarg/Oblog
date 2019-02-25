@@ -1,5 +1,8 @@
 package io.github.oblarg.oblog;
 
+import edu.wpi.first.networktables.EntryListenerFlags;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import io.github.oblarg.oblog.annotations.*;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -16,7 +19,7 @@ public class Logger {
 
     /**
      * Configure shuffleboard logging for the robot.  Should be called after all loggable objects have been
-     * instantiated, e.g. at the end of robotInit.
+     * instantiated, e.g. at the end of robotInit.  Tabs for logging will be separate from tabs for config.
      *
      * @param rootContainer The root of the tree of loggable objects - for most teams, this is Robot.java.
      *                      To send an instance of Robot.java to this method from robotInit, call "configureLogging(this)"
@@ -24,9 +27,40 @@ public class Logger {
      */
 
     public static void configureLogging(Object rootContainer) {
-        configureLogging(widgetHandler,
-                rootContainer,
-                new WrappedShuffleboard());
+        configureLogging(LogType.LOG, rootContainer, new WrappedShuffleboard(), NetworkTableInstance.getDefault());
+    }
+
+    /**
+     * Configure shuffleboard config for the robot.  Should be called after all loggable objects have been
+     * instantiated, e.g. at the end of robotInit.  Tabs for config will be separate from tabs for logging.
+     *
+     * @param rootContainer The root of the tree of loggable objects - for most teams, this is Robot.java.
+     *                      To send an instance of Robot.java to this method from robotInit, call "configureConfig(this)"
+     *                      Loggable fields of this object will have their own shuffleboard tabs.
+     */
+    public static void configureConfig(Object rootContainer) {
+        configureLogging(LogType.CONFIG, rootContainer, new WrappedShuffleboard(), NetworkTableInstance.getDefault());
+    }
+
+    /**
+     * Configure shuffleboard logging and config for the robot.  Should be called after all loggable objects have beeen
+     * instantiated, e.g. at the end of robotInit.  Config and logging can either be given separate tabs, or all widgets
+     * can be placed in the same tabs.
+     *
+     * @param rootContainer The root of the tree of loggable objects - for most teams, this is Robot.java.
+     *                      To send an instance of Robot.java to this method from robotInit, call "configureLoggingAndConfig(this)"
+     *                      Loggable fields of this object will have their own shuffleboard tabs.
+     * @param separate      Whether to generate separate tabs for config and logging.  If true, log widgets will be placed in
+     *                      tabs labeled "Log", and config widgets will be placed in tabs labeled "Config".
+     */
+    public static void configureLoggingAndConfig(Object rootContainer, boolean separate) {
+        WrappedShuffleboard shuffleboard = new WrappedShuffleboard();
+        if (separate) {
+            configureLogging(LogType.LOG, rootContainer, shuffleboard, NetworkTableInstance.getDefault());
+            configureLogging(LogType.CONFIG, rootContainer, shuffleboard, NetworkTableInstance.getDefault());
+        } else {
+            configureLogging(LogType.BOTH, rootContainer, shuffleboard, NetworkTableInstance.getDefault());
+        }
     }
 
     /**
@@ -38,9 +72,7 @@ public class Logger {
      * @param rootName      Name of the root NetworkTable.  io.github.oblarg.oblog.Loggable fields of rootContainer will be subtables.
      */
     public static void configureLoggingNTOnly(Object rootContainer, String rootName) {
-        configureLogging(widgetHandler,
-                rootContainer,
-                new NTShuffleboard(rootName));
+        configureLogging(LogType.LOG, rootContainer, new NTShuffleboard(rootName), NetworkTableInstance.getDefault());
     }
 
     /**
@@ -48,6 +80,7 @@ public class Logger {
      */
     public static void updateEntries() {
         entrySupplierMap.forEach((entry, supplier) -> entry.setValue(supplier.get()));
+        setterRunner.runSynchronous();
     }
 
     /**
@@ -61,22 +94,24 @@ public class Logger {
         entrySupplierMap.put(entry, supplier);
     }
 
-    private static void configureLogging(Map<Class<? extends Annotation>, WidgetProcessor> widgetHandler,
+    private static void configureLogging(LogType logType,
                                          Object rootContainer,
-                                         ShuffleboardWrapper shuffleboard) {
+                                         ShuffleboardWrapper shuffleboard,
+                                         NetworkTableInstance nt) {
 
-        Consumer<Loggable> log = (toLog) -> logLoggable(widgetHandler,
+        Consumer<Loggable> log = (toLog) -> logLoggable(logType,
                 toLog,
                 toLog.getClass(),
                 new HashSet<>(),
                 new HashSet<>(),
                 new HashSet<>(),
                 shuffleboard,
+                nt,
                 null,
                 new HashSet<>(Collections.singletonList(toLog)));
 
         for (Field field : rootContainer.getClass().getDeclaredFields()) {
-            if (isLoggableClassOrArrayOrCollection(field) && field.getAnnotation(Log.Exclude.class) == null) {
+            if (isLoggableClassOrArrayOrCollection(field) && isIncluded(field, logType)) {
                 field.setAccessible(true);
                 if (field.getType().isArray()) {
                     Loggable[] toLogs;
@@ -116,10 +151,8 @@ public class Logger {
         }
     }
 
-    static void configureLoggingTest(Object rootContainer, ShuffleboardWrapper shuffleboard) {
-        configureLogging(widgetHandler,
-                rootContainer,
-                shuffleboard);
+    static void configureLoggingTest(LogType logType, Object rootContainer, ShuffleboardWrapper shuffleboard, NetworkTableInstance nt) {
+        configureLogging(logType, rootContainer, shuffleboard, nt);
     }
 
     /**
@@ -127,12 +160,122 @@ public class Logger {
      */
     private static final Map<NetworkTableEntry, Supplier<Object>> entrySupplierMap = new HashMap<>();
 
-    @FunctionalInterface
-    private interface WidgetProcessor {
-        void processWidget(Supplier<Object> supplier, Annotation params, ShuffleboardContainerWrapper bin, String name);
+    enum LogType {
+        LOG, CONFIG, BOTH
     }
 
-    private static final Map<Class<? extends Annotation>, WidgetProcessor> widgetHandler = Map.ofEntries(
+    private static SetterRunner setterRunner = new SetterRunner();
+
+    @FunctionalInterface
+    private interface FieldProcessor {
+        void processField(Supplier<Object> supplier, Annotation params, ShuffleboardContainerWrapper bin, String name);
+    }
+
+    @FunctionalInterface
+    private interface BooleanSetterProcessor {
+        void processBooleanSetter(Consumer<Boolean> setter, Annotation params, ShuffleboardContainerWrapper bin, NetworkTableInstance nt, String name);
+    }
+
+    @FunctionalInterface
+    private interface NumericSetterProcessor {
+        void processNumericSetter(Consumer<Number> setter, Annotation params, ShuffleboardContainerWrapper bin, NetworkTableInstance nt, String name);
+    }
+
+    private static final Map<Class<? extends Annotation>, BooleanSetterProcessor> configBooleanSetterHandler = Map.ofEntries(
+            entry(Config.class, (setter, rawParams, bin, nt, name) -> {
+                Config params = (Config) rawParams;
+                NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), false)
+                        .withWidget(BuiltInWidgets.kToggleButton.getWidgetName()).getEntry();
+                nt.addEntryListener(
+                        entry,
+                        (entryNotification) -> setterRunner.execute(() -> setter.accept((boolean) entryNotification.value.getValue())),
+                        EntryListenerFlags.kUpdate
+                );
+                setter.accept(false);
+            }),
+            entry(Config.ToggleButton.class, (setter, rawParams, bin, nt, name) -> {
+                Config.ToggleButton params = (Config.ToggleButton) rawParams;
+                NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValue())
+                        .withWidget(BuiltInWidgets.kToggleButton.getWidgetName()).getEntry();
+                nt.addEntryListener(
+                        entry,
+                        (entryNotification) -> setterRunner.execute(() -> setter.accept((boolean) entryNotification.value.getValue())),
+                        EntryListenerFlags.kUpdate
+                );
+                setter.accept(params.defaultValue());
+            }),
+            entry(Config.ToggleSwitch.class, (setter, rawParams, bin, nt, name) -> {
+                Config.ToggleSwitch params = (Config.ToggleSwitch) rawParams;
+                NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValue())
+                        .withWidget(BuiltInWidgets.kToggleSwitch.getWidgetName()).getEntry();
+                nt.addEntryListener(
+                        entry,
+                        (entryNotification) -> setterRunner.execute(() -> setter.accept((boolean) entryNotification.value.getValue())),
+                        EntryListenerFlags.kUpdate
+                );
+                setter.accept(params.defaultValue());
+            })
+    );
+
+    private static final Map<Class<? extends Annotation>, NumericSetterProcessor> configNumericSetterHandler = Map.ofEntries(
+            entry(Config.class, (setter, rawParams, bin, nt, name) -> {
+                Config params = (Config) rawParams;
+                NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), 0)
+                        .withWidget(BuiltInWidgets.kTextView.getWidgetName()).getEntry();
+                nt.addEntryListener(
+                        entry,
+                        (entryNotification) -> setterRunner.execute(() -> setter.accept((Number) entryNotification.value.getValue())),
+                        EntryListenerFlags.kUpdate
+                );
+                setter.accept(0);
+            }),
+            entry(Config.NumberSlider.class, (setter, rawParams, bin, nt, name) -> {
+                Config.NumberSlider params = (Config.NumberSlider) rawParams;
+                NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValue())
+                        .withWidget(BuiltInWidgets.kNumberSlider.getWidgetName())
+                        .withProperties(Map.of(
+                                "min", params.min(),
+                                "max", params.max(),
+                                "blockIncrement", params.blockIncrement()))
+                        .getEntry();
+                nt.addEntryListener(
+                        entry,
+                        (entryNotification) -> setterRunner.execute(() -> setter.accept((Number) entryNotification.value.getValue())),
+                        EntryListenerFlags.kUpdate
+                );
+                setter.accept(params.defaultValue());
+            })
+    );
+
+
+    private static final Map<Class<? extends Annotation>, FieldProcessor> configFieldHandler = Map.ofEntries(
+            entry(Config.Command.class,
+                    (supplier, rawParams, bin, name) -> {
+                        Config.Command params = (Config.Command) rawParams;
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
+                                .withWidget(BuiltInWidgets.kCommand.getWidgetName());
+                    }),
+            entry(Config.PIDCommand.class,
+                    (supplier, rawParams, bin, name) -> {
+                        Config.PIDCommand params = (Config.PIDCommand) rawParams;
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
+                                .withWidget(BuiltInWidgets.kPIDCommand.getWidgetName());
+                    }),
+            entry(Config.PIDController.class,
+                    (supplier, rawParams, bin, name) -> {
+                        Config.PIDController params = (Config.PIDController) rawParams;
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
+                                .withWidget(BuiltInWidgets.kPIDController.getWidgetName());
+                    }),
+            entry(Config.Relay.class,
+                    (supplier, rawParams, bin, name) -> {
+                        Config.Relay params = (Config.Relay) rawParams;
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
+                                .withWidget(BuiltInWidgets.kRelay.getWidgetName());
+                    })
+    );
+
+    private static final Map<Class<? extends Annotation>, FieldProcessor> logHandler = Map.ofEntries(
             entry(Log.class,
                     (supplier, rawParams, bin, name) -> {
                         Log params = (Log) rawParams;
@@ -226,24 +369,6 @@ public class Logger {
                                 .withProperties(Map.of(
                                         "orientation", params.orientation()));
                     }),
-            entry(Log.Command.class,
-                    (supplier, rawParams, bin, name) -> {
-                        Log.Command params = (Log.Command) rawParams;
-                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
-                                .withWidget(BuiltInWidgets.kCommand.getWidgetName());
-                    }),
-            entry(Log.PIDCommand.class,
-                    (supplier, rawParams, bin, name) -> {
-                        Log.PIDCommand params = (Log.PIDCommand) rawParams;
-                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
-                                .withWidget(BuiltInWidgets.kPIDCommand.getWidgetName());
-                    }),
-            entry(Log.PIDController.class,
-                    (supplier, rawParams, bin, name) -> {
-                        Log.PIDController params = (Log.PIDController) rawParams;
-                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
-                                .withWidget(BuiltInWidgets.kPIDController.getWidgetName());
-                    }),
             entry(Log.Accelerometer.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.Accelerometer params = (Log.Accelerometer) rawParams;
@@ -308,13 +433,12 @@ public class Logger {
                     })
     );
 
-
-    private static void registerFieldsAndMethods(Loggable loggable,
-                                                 Class loggableClass,
-                                                 ShuffleboardContainerWrapper bin,
-                                                 Set<Field> registeredFields,
-                                                 Set<Method> registeredMethods,
-                                                 Map<Class<? extends Annotation>, WidgetProcessor> widgetHandler) {
+    private static void configFieldsAndMethods(Loggable loggable,
+                                               Class loggableClass,
+                                               ShuffleboardContainerWrapper bin,
+                                               NetworkTableInstance nt,
+                                               Set<Field> registeredFields,
+                                               Set<Method> registeredMethods) {
 
         Set<Field> fields = Set.of(loggableClass.getDeclaredFields());
         Set<Method> methods = Set.of(loggableClass.getDeclaredMethods());
@@ -324,9 +448,102 @@ public class Logger {
             if (!registeredFields.contains(field)) {
                 registeredFields.add(field);
                 for (Annotation annotation : field.getAnnotations()) {
-                    WidgetProcessor process = widgetHandler.get(annotation.annotationType());
+                    FieldProcessor process = configFieldHandler.get(annotation.annotationType());
                     if (process != null) {
-                        process.processWidget(
+                        process.processField(
+                                () -> {
+                                    try {
+                                        return field.get(loggable);
+                                    } catch (IllegalAccessException e) {
+                                        return null;
+                                    }
+                                },
+                                annotation,
+                                bin,
+                                field.getName());
+                    }
+                }
+            }
+        }
+
+        for (Method method : methods) {
+            if (method.getReturnType().equals(Void.TYPE) &&
+                    method.getParameterTypes().length == 1 &&
+                    takesBoolean(method)) {
+                method.setAccessible(true);
+                if (!registeredMethods.contains(method)) {
+                    registeredMethods.add(method);
+                    for (Annotation annotation : method.getAnnotations()) {
+                        BooleanSetterProcessor process = configBooleanSetterHandler.get(annotation.annotationType());
+                        if (process != null) {
+                            process.processBooleanSetter(
+                                    (value) -> {
+                                        try {
+                                            method.invoke(loggable, value);
+                                        } catch (IllegalAccessException | InvocationTargetException e) {
+                                            e.printStackTrace();
+                                        }
+                                    },
+                                    annotation,
+                                    bin,
+                                    nt,
+                                    method.getName());
+                        }
+                    }
+                }
+            } else if (method.getReturnType().equals(Void.TYPE) &&
+                    method.getParameterTypes().length == 1 &&
+                    takesNumeric(method)) {
+                method.setAccessible(true);
+                if (!registeredMethods.contains(method)) {
+                    registeredMethods.add(method);
+                    for (Annotation annotation : method.getAnnotations()) {
+                        NumericSetterProcessor process = configNumericSetterHandler.get(annotation.annotationType());
+                        if (process != null) {
+                            process.processNumericSetter(
+                                    (value) -> {
+                                        try {
+                                            if (method.getParameterTypes()[0].equals(Integer.TYPE) ||
+                                                    method.getParameterTypes()[0].equals(Integer.class)) {
+                                                method.invoke(loggable, value.intValue());
+                                            } else {
+                                                method.invoke(loggable, value.doubleValue());
+                                            }
+                                        } catch (IllegalAccessException | InvocationTargetException e) {
+                                            e.printStackTrace();
+                                        }
+                                    },
+                                    annotation,
+                                    bin,
+                                    nt,
+                                    method.getName());
+                        }
+                    }
+                }
+            }
+        }
+
+
+    }
+
+
+    private static void logFieldsAndMethods(Loggable loggable,
+                                            Class loggableClass,
+                                            ShuffleboardContainerWrapper bin,
+                                            Set<Field> registeredFields,
+                                            Set<Method> registeredMethods) {
+
+        Set<Field> fields = Set.of(loggableClass.getDeclaredFields());
+        Set<Method> methods = Set.of(loggableClass.getDeclaredMethods());
+
+        for (Field field : fields) {
+            field.setAccessible(true);
+            if (!registeredFields.contains(field)) {
+                registeredFields.add(field);
+                for (Annotation annotation : field.getAnnotations()) {
+                    FieldProcessor process = logHandler.get(annotation.annotationType());
+                    if (process != null) {
+                        process.processField(
                                 () -> {
                                     try {
                                         return field.get(loggable);
@@ -348,9 +565,9 @@ public class Logger {
                 if (!registeredMethods.contains(method)) {
                     registeredMethods.add(method);
                     for (Annotation annotation : method.getAnnotations()) {
-                        WidgetProcessor process = widgetHandler.get(annotation.annotationType());
+                        FieldProcessor process = logHandler.get(annotation.annotationType());
                         if (process != null) {
-                            process.processWidget(
+                            process.processField(
                                     () -> {
                                         try {
                                             return method.invoke(loggable);
@@ -370,13 +587,14 @@ public class Logger {
 
     }
 
-    private static void logLoggable(Map<Class<? extends Annotation>, WidgetProcessor> widgetHandler,
+    private static void logLoggable(LogType logType,
                                     Loggable loggable,
                                     Class loggableClass,
                                     Set<Field> loggedFields,
                                     Set<Field> registeredFields,
                                     Set<Method> registeredMethods,
                                     ShuffleboardWrapper shuffleboard,
+                                    NetworkTableInstance nt,
                                     ShuffleboardContainerWrapper parentContainer,
                                     Set<Object> ancestors) {
 
@@ -384,19 +602,62 @@ public class Logger {
 
         ShuffleboardContainerWrapper bin;
 
-        if (parentContainer == null) {
-            bin = shuffleboard.getTab(loggable.configureLogName());
-        } else {
-            bin = parentContainer.getLayout(loggable.configureLogName(), loggable.configureLayoutType())
-                    .withProperties(loggable.configureLayoutProperties());
-        }
+        switch (logType) {
+            case LOG:
+                if (parentContainer == null) {
+                    bin = shuffleboard.getTab(loggable.configureLogName() + ": Log");
+                } else {
+                    bin = parentContainer.getLayout(loggable.configureLogName(), loggable.configureLayoutType())
+                            .withProperties(loggable.configureLayoutProperties());
+                }
 
-        registerFieldsAndMethods(loggable,
-                loggableClass,
-                bin,
-                registeredFields,
-                registeredMethods,
-                widgetHandler);
+                logFieldsAndMethods(loggable,
+                        loggableClass,
+                        bin,
+                        registeredFields,
+                        registeredMethods);
+                break;
+            case CONFIG:
+                if (parentContainer == null) {
+                    bin = shuffleboard.getTab(loggable.configureLogName() + ": Config");
+                } else {
+                    bin = parentContainer.getLayout(loggable.configureLogName(), loggable.configureLayoutType())
+                            .withProperties(loggable.configureLayoutProperties());
+                }
+
+                configFieldsAndMethods(loggable,
+                        loggableClass,
+                        bin,
+                        nt,
+                        registeredFields,
+                        registeredMethods);
+                break;
+            case BOTH:
+                if (parentContainer == null) {
+                    bin = shuffleboard.getTab(loggable.configureLogName());
+                } else {
+                    bin = parentContainer.getLayout(loggable.configureLogName(), loggable.configureLayoutType())
+                            .withProperties(loggable.configureLayoutProperties());
+                }
+
+                logFieldsAndMethods(loggable,
+                        loggableClass,
+                        bin,
+                        registeredFields,
+                        registeredMethods);
+
+
+                configFieldsAndMethods(loggable,
+                        loggableClass,
+                        bin,
+                        nt,
+                        registeredFields,
+                        registeredMethods);
+                break;
+            default:
+                bin = shuffleboard.getTab("ERROR");
+                break;
+        }
 
         //only call on the actual class, to avoid multiple calls if overridden
 
@@ -404,20 +665,22 @@ public class Logger {
             loggable.addCustomLogging();
         }
 
-        Consumer<Loggable> log = (toLog) -> logLoggable(widgetHandler,
+        Consumer<Loggable> log = (toLog) -> logLoggable(logType,
                 toLog,
                 toLog.getClass(),
                 new HashSet<>(),
                 new HashSet<>(),
                 new HashSet<>(),
                 shuffleboard,
+                nt,
                 bin,
                 new HashSet<>(ancestors));
 
         //recurse on Loggable fields
 
         for (Field field : loggableClass.getDeclaredFields()) {
-            if (isLoggableClassOrArrayOrCollection(field) && field.getAnnotation(Log.Exclude.class) == null) {
+
+            if (isLoggableClassOrArrayOrCollection(field) && isIncluded(field, logType)) {
                 field.setAccessible(true);
                 if (!loggedFields.contains(field) && !isAncestor(field, loggable, ancestors)) {
                     loggedFields.add(field);
@@ -462,13 +725,15 @@ public class Logger {
         //recurse on superclass
 
         if (Loggable.class.isAssignableFrom(loggableClass.getSuperclass())) {
-            logLoggable(widgetHandler,
+            logLoggable(
+                    logType,
                     loggable,
                     loggableClass.getSuperclass(),
                     loggedFields,
                     registeredFields,
                     registeredMethods,
                     shuffleboard,
+                    nt,
                     parentContainer,
                     ancestors);
         }
@@ -477,7 +742,7 @@ public class Logger {
     private static boolean isAncestor(Field field, Object loggable, Set<Object> ancestors) {
         try {
             boolean b = ancestors.contains(field.get(loggable));
-            if(b){
+            if (b) {
                 System.out.println("CAUTION: Cyclic reference of Loggables detected!  Recursion terminated after one cycle.");
                 System.out.println(field.getName() + " in " + loggable.getClass().getName() +
                         " is itself an ancestor of " + loggable.getClass().getName());
@@ -498,5 +763,33 @@ public class Logger {
                                 (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]));
     }
 
+    private static boolean takesBoolean(Method method) {
+        return method.getParameterTypes()[0].equals(Boolean.TYPE) || method.getParameterTypes()[0].equals(Boolean.class);
+    }
 
+    private static boolean takesNumeric(Method method) {
+        return method.getParameterTypes()[0].equals(Integer.TYPE) ||
+                method.getParameterTypes()[0].equals(Integer.class) ||
+                method.getParameterTypes()[0].equals(Double.TYPE) ||
+                method.getParameterTypes()[0].equals(Double.class);
+    }
+
+    private static boolean isIncluded(Field field, LogType logType) {
+        boolean included = true;
+        switch (logType) {
+            case LOG:
+                included = field.getAnnotation(Log.Exclude.class) == null &&
+                        field.getType().getAnnotation(Log.Exclude.class) == null;
+                break;
+            case CONFIG:
+                included = field.getAnnotation(Config.Exclude.class) == null &&
+                        field.getType().getAnnotation(Config.Exclude.class) == null;
+                break;
+            case BOTH:
+                included = (field.getAnnotation(Log.Exclude.class) == null && field.getType().getAnnotation(Log.Exclude.class) == null) ||
+                        (included = field.getAnnotation(Config.Exclude.class) == null && field.getType().getAnnotation(Config.Exclude.class) == null);
+                break;
+        }
+        return included;
+    }
 }

@@ -1,6 +1,7 @@
 package io.github.oblarg.oblog;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
 import java.util.List;
 
@@ -14,6 +15,8 @@ class ShuffleboardMocks {
     private ShuffleboardContainerWrapper mockedContainer = mock(WrappedShuffleboardContainer.class);
     private ShuffleboardLayoutWrapper mockedLayout = mock(WrappedShuffleboardLayout.class);
     private ShuffleboardWidgetWrapper mockedWidget = mock(WrappedShuffleboardWidget.class);
+
+    private NetworkTableInstance mockedNTInstance = mock(NetworkTableInstance.class);
 
     ShuffleboardMocks(List<NetworkTableEntry> mockedEntries) {
         this.mockedEntries = mockedEntries;
@@ -42,6 +45,10 @@ class ShuffleboardMocks {
 
     ShuffleboardWidgetWrapper getMockedWidget() {
         return mockedWidget;
+    }
+
+    public NetworkTableInstance getMockedNTInstance() {
+        return mockedNTInstance;
     }
 
     private static NetworkTableEntry newMockEntry(List<NetworkTableEntry> mockedEntries) {
