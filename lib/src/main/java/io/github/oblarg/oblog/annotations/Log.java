@@ -579,6 +579,20 @@ public @interface Log {
         String rotation() default "NONE";
     }
 
+
+    /**
+     * Logs an object as the value returned by its toString method.  Useful for logging object types not natively supported by
+     * Shuffleboard without having to implement {@link edu.wpi.first.wpilibj.Sendable}.
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD, ElementType.METHOD})
+    @interface ToString {
+        /**
+         * @return The name of the value on Shuffleboard; defaults to field or method name.
+         */
+        String name() default "NO_NAME";
+    }
+
     /**
      * Suppresses the log tab/layout corresponding to this {@link Loggable} instance (or all instances of the type).
      */

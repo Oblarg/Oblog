@@ -430,6 +430,14 @@ public class Logger {
                                         "crosshairColor", params.crosshairColor(),
                                         "showControls", params.showControls(),
                                         "rotation", params.rotation()));
+                    }),
+            entry(Log.ToString.class,
+                    (supplier, rawParams, bin, name) -> {
+                        Log.ToString params = (Log.ToString) rawParams;
+                        Logger.registerEntry(
+                                bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get().toString())
+                                        .getEntry(),
+                                () -> supplier.get().toString());
                     })
     );
 
