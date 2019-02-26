@@ -8,7 +8,7 @@ public class WrappedComplexWidget implements ComplexWidgetWrapper{
 
     ComplexWidget widget;
 
-    public WrappedComplexWidget(ComplexWidget widget) {
+    WrappedComplexWidget(ComplexWidget widget) {
         this.widget = widget;
     }
 
