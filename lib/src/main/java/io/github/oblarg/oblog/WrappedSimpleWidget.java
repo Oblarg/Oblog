@@ -1,30 +1,32 @@
 package io.github.oblarg.oblog;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 
 import java.util.Map;
 
-class NTWidget implements SimpleWidgetWrapper {
+class WrappedSimpleWidget implements SimpleWidgetWrapper {
 
-    NetworkTableEntry entry;
+    private SimpleWidget widget;
 
-    NTWidget(NetworkTableEntry entry, Object value){
-        this.entry = entry;
-        entry.setValue(value);
+    WrappedSimpleWidget(SimpleWidget component) {
+        this.widget = component;
     }
 
     @Override
     public NetworkTableEntry getEntry() {
-        return entry;
+        return widget.getEntry();
     }
 
     @Override
     public SimpleWidgetWrapper withProperties(Map<String, Object> properties) {
+        widget.withProperties(properties);
         return this;
     }
 
     @Override
     public SimpleWidgetWrapper withWidget(String widgetType) {
+        widget.withWidget(widgetType);
         return this;
     }
 }

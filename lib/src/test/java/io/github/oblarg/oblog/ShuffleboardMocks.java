@@ -1,6 +1,7 @@
 package io.github.oblarg.oblog;
 
 import edu.wpi.first.networktables.*;
+import edu.wpi.first.wpilibj.Sendable;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -16,7 +17,8 @@ class ShuffleboardMocks {
     private ShuffleboardWrapper mockedShuffleboard = mock(WrappedShuffleboard.class);
     private ShuffleboardContainerWrapper mockedContainer = mock(WrappedShuffleboardContainer.class);
     private ShuffleboardLayoutWrapper mockedLayout = mock(WrappedShuffleboardLayout.class);
-    private ShuffleboardWidgetWrapper mockedWidget = mock(WrappedShuffleboardWidget.class);
+    private SimpleWidgetWrapper mockedSimpleWidget = mock(WrappedSimpleWidget.class);
+    private ComplexWidgetWrapper mockedComplexWidget = mock(WrappedComplexWidget.class);
 
     private NetworkTableInstance mockedNTInstance = mock(NetworkTableInstance.class);
 
@@ -28,13 +30,17 @@ class ShuffleboardMocks {
         this.mockedEntries = mockedEntries;
         when(mockedShuffleboard.getTab(any())).thenReturn(mockedContainer);
         when(mockedContainer.getLayout(any(), any())).thenReturn(mockedLayout);
-        when(mockedContainer.add(any(), any())).thenReturn(mockedWidget);
+        when(mockedContainer.add(any(), any(Object.class))).thenReturn(mockedSimpleWidget);
+        when(mockedContainer.add(any(), any(Sendable.class))).thenReturn(mockedComplexWidget);
         when(mockedLayout.getLayout(any(), any())).thenReturn(mockedLayout);
-        when(mockedLayout.add(any(), any())).thenReturn(mockedWidget);
+        when(mockedLayout.add(any(), any(Object.class))).thenReturn(mockedSimpleWidget);
+        when(mockedLayout.add(any(), any(Sendable.class))).thenReturn(mockedComplexWidget);
         when(mockedLayout.withProperties(any())).thenReturn(mockedLayout);
-        when(mockedWidget.withProperties(any())).thenReturn(mockedWidget);
-        when(mockedWidget.withWidget(any())).thenReturn(mockedWidget);
-        when(mockedWidget.getEntry()).thenReturn(newMockEntry(mockedEntries));
+        when(mockedSimpleWidget.withProperties(any())).thenReturn(mockedSimpleWidget);
+        when(mockedSimpleWidget.withWidget(any())).thenReturn(mockedSimpleWidget);
+        when(mockedSimpleWidget.getEntry()).thenReturn(newMockEntry(mockedEntries));
+        when(mockedComplexWidget.withProperties(any())).thenReturn(mockedComplexWidget);
+        when(mockedComplexWidget.withWidget(any())).thenReturn(mockedComplexWidget);
         when(mockedNTInstance.addEntryListener(any(NetworkTableEntry.class), any(), eq(EntryListenerFlags.kUpdate))).thenAnswer(
                 new Answer() {
                     public Object answer(InvocationOnMock invocation) {
@@ -63,8 +69,8 @@ class ShuffleboardMocks {
         return mockedLayout;
     }
 
-    ShuffleboardWidgetWrapper getMockedWidget() {
-        return mockedWidget;
+    SimpleWidgetWrapper getMockedSimpleWidget() {
+        return mockedSimpleWidget;
     }
 
     NetworkTableInstance getMockedNTInstance() {

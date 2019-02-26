@@ -1,5 +1,6 @@
 package io.github.oblarg.oblog;
 
+import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.shuffleboard.LayoutType;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 
@@ -19,8 +20,13 @@ class WrappedShuffleboardLayout implements ShuffleboardLayoutWrapper {
     }
 
     @Override
-    public ShuffleboardWidgetWrapper add(String title, Object defaultValue) {
-        return new WrappedShuffleboardWidget(layout.add(title, defaultValue));
+    public SimpleWidgetWrapper add(String title, Object defaultValue) {
+        return new WrappedSimpleWidget(layout.add(title, defaultValue));
+    }
+
+    @Override
+    public ComplexWidgetWrapper add(String title, Sendable defaultValue) {
+        return new WrappedComplexWidget(layout.add(title, defaultValue));
     }
 
     @Override

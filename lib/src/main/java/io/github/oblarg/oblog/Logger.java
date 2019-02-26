@@ -3,6 +3,8 @@ package io.github.oblarg.oblog;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.Sendable;
 import io.github.oblarg.oblog.annotations.*;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -256,25 +258,25 @@ public class Logger {
             entry(Config.Command.class,
                     (supplier, rawParams, bin, name) -> {
                         Config.Command params = (Config.Command) rawParams;
-                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kCommand.getWidgetName());
                     }),
             entry(Config.PIDCommand.class,
                     (supplier, rawParams, bin, name) -> {
                         Config.PIDCommand params = (Config.PIDCommand) rawParams;
-                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kPIDCommand.getWidgetName());
                     }),
             entry(Config.PIDController.class,
                     (supplier, rawParams, bin, name) -> {
                         Config.PIDController params = (Config.PIDController) rawParams;
-                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kPIDController.getWidgetName());
                     }),
             entry(Config.Relay.class,
                     (supplier, rawParams, bin, name) -> {
                         Config.Relay params = (Config.Relay) rawParams;
-                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kRelay.getWidgetName());
                     })
     );
@@ -338,23 +340,35 @@ public class Logger {
                     }),
             entry(Log.VoltageView.class,
                     (supplier, rawParams, bin, name) -> {
-                        Log.VoltageView params = (Log.VoltageView) rawParams;
-                        Logger.registerEntry(
-                                bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
-                                        .withWidget(BuiltInWidgets.kVoltageView.getWidgetName())
-                                        .withProperties(Map.of(
-                                                "min", params.min(),
-                                                "max", params.max(),
-                                                "center", params.center(),
-                                                "orientation", params.orientation(),
-                                                "numberOfTickMarks", params.numTicks()))
-                                        .getEntry(),
-                                supplier);
+                        if (supplier.get() instanceof AnalogInput) {
+                            Log.VoltageView params = (Log.VoltageView) rawParams;
+                            bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
+                                            .withWidget(BuiltInWidgets.kVoltageView.getWidgetName())
+                                            .withProperties(Map.of(
+                                                    "min", params.min(),
+                                                    "max", params.max(),
+                                                    "center", params.center(),
+                                                    "orientation", params.orientation(),
+                                                    "numberOfTickMarks", params.numTicks()));
+                        } else {
+                            Log.VoltageView params = (Log.VoltageView) rawParams;
+                            Logger.registerEntry(
+                                    bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
+                                            .withWidget(BuiltInWidgets.kVoltageView.getWidgetName())
+                                            .withProperties(Map.of(
+                                                    "min", params.min(),
+                                                    "max", params.max(),
+                                                    "center", params.center(),
+                                                    "orientation", params.orientation(),
+                                                    "numberOfTickMarks", params.numTicks()))
+                                            .getEntry(),
+                                    supplier);
+                        }
                     }),
             entry(Log.PDP.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.PDP params = (Log.PDP) rawParams;
-                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kPowerDistributionPanel.getWidgetName())
                                 .withProperties(Map.of(
                                         "showVoltageAndCurrentValues", params.showVoltageAndCurrent()));
@@ -362,13 +376,13 @@ public class Logger {
             entry(Log.Encoder.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.Encoder params = (Log.Encoder) rawParams;
-                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kEncoder.getWidgetName());
                     }),
             entry(Log.SpeedController.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.SpeedController params = (Log.SpeedController) rawParams;
-                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kSpeedController.getWidgetName())
                                 .withProperties(Map.of(
                                         "orientation", params.orientation()));
@@ -376,7 +390,7 @@ public class Logger {
             entry(Log.Accelerometer.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.Accelerometer params = (Log.Accelerometer) rawParams;
-                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kAccelerometer.getWidgetName())
                                 .withProperties(Map.of(
                                         "min", params.min(),
@@ -388,7 +402,7 @@ public class Logger {
             entry(Log.ThreeAxisAccelerometer.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.ThreeAxisAccelerometer params = (Log.ThreeAxisAccelerometer) rawParams;
-                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.k3AxisAccelerometer.getWidgetName())
                                 .withProperties(Map.of(
                                         "range", params.range(),
@@ -399,7 +413,7 @@ public class Logger {
             entry(Log.Gyro.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.Gyro params = (Log.Gyro) rawParams;
-                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kGyro.getWidgetName())
                                 .withProperties(Map.of(
                                         "majorTickSpacing", params.majorTickSpacing(),
@@ -409,7 +423,7 @@ public class Logger {
             entry(Log.DifferentialDrive.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.DifferentialDrive params = (Log.DifferentialDrive) rawParams;
-                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kDifferentialDrive.getWidgetName())
                                 .withProperties(Map.of(
                                         "numberOfWheels", params.numWheels(),
@@ -419,7 +433,7 @@ public class Logger {
             entry(Log.MecanumDrive.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.MecanumDrive params = (Log.MecanumDrive) rawParams;
-                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kMecanumDrive.getWidgetName())
                                 .withProperties(Map.of(
                                         "showVelocityVectors", params.showVel()));
@@ -427,7 +441,7 @@ public class Logger {
             entry(Log.CameraStream.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.CameraStream params = (Log.CameraStream) rawParams;
-                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kCameraStream.getWidgetName())
                                 .withProperties(Map.of(
                                         "showCrosshair", params.showCrosshairs(),
