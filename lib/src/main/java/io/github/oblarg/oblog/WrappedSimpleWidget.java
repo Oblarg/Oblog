@@ -20,13 +20,13 @@ class WrappedSimpleWidget implements SimpleWidgetWrapper {
 
     @Override
     public SimpleWidgetWrapper withProperties(Map<String, Object> properties) {
-        widget.withProperties(properties);
+        widget = widget.withProperties(properties);
         return this;
     }
 
     @Override
     public SimpleWidgetWrapper withWidget(String widgetType) {
-        widget.withWidget(widgetType);
+        widget = widget.withWidget(widgetType);
         return this;
     }
 }

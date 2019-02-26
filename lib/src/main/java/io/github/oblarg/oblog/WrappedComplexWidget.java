@@ -14,13 +14,13 @@ public class WrappedComplexWidget implements ComplexWidgetWrapper{
 
     @Override
     public ComplexWidgetWrapper withProperties(Map<String, Object> properties) {
-        widget.withProperties(properties);
+        widget = widget.withProperties(properties);
         return this;
     }
 
     @Override
     public ComplexWidgetWrapper withWidget(String widgetType) {
-        widget.withWidget(widgetType);
+        widget = widget.withWidget(widgetType);
         return this;
     }
 }

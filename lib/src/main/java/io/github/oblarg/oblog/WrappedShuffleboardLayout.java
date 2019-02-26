@@ -31,6 +31,7 @@ class WrappedShuffleboardLayout implements ShuffleboardLayoutWrapper {
 
     @Override
     public ShuffleboardLayoutWrapper withProperties(Map<String, Object> properties) {
-        return new WrappedShuffleboardLayout(layout.withProperties(properties));
+        layout = layout.withProperties(properties);
+        return this;
     }
 }
