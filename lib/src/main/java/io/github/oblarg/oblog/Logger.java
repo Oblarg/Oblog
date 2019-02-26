@@ -498,27 +498,27 @@ public class Logger {
 
         for (Method method : methods) {
             if (method.getReturnType().equals(Void.TYPE) &&
-                    method.getParameterTypes().length == 1 && setterCaster.containsKey(method.getParameterTypes()[0])) {
+                    method.getParameterTypes().length == 1 &&
+                    setterCaster.containsKey(method.getParameterTypes()[0]) &&
+                    !registeredMethods.contains(method)) {
                 method.setAccessible(true);
-                if (!registeredMethods.contains(method)) {
-                    registeredMethods.add(method);
-                    for (Annotation annotation : method.getAnnotations()) {
-                        SetterProcessor process = configSetterHandler.get(annotation.annotationType());
-                        if (process != null) {
-                            process.processSetter(
-                                    (value) -> {
-                                        try {
-                                            method.invoke(loggable, setterCaster.get(method.getParameterTypes()[0]).apply(value));
-                                        } catch (IllegalAccessException | InvocationTargetException e) {
-                                            e.printStackTrace();
-                                        }
-                                    },
-                                    annotation,
-                                    bin,
-                                    nt,
-                                    method.getName(),
-                                    method.getParameterTypes()[0].equals(Boolean.TYPE) || method.getParameterTypes()[0].equals(Boolean.class));
-                        }
+                registeredMethods.add(method);
+                for (Annotation annotation : method.getAnnotations()) {
+                    SetterProcessor process = configSetterHandler.get(annotation.annotationType());
+                    if (process != null) {
+                        process.processSetter(
+                                (value) -> {
+                                    try {
+                                        method.invoke(loggable, setterCaster.get(method.getParameterTypes()[0]).apply(value));
+                                    } catch (IllegalAccessException | InvocationTargetException e) {
+                                        e.printStackTrace();
+                                    }
+                                },
+                                annotation,
+                                bin,
+                                nt,
+                                method.getName(),
+                                method.getParameterTypes()[0].equals(Boolean.TYPE) || method.getParameterTypes()[0].equals(Boolean.class));
                     }
                 }
             }
@@ -559,26 +559,26 @@ public class Logger {
         }
 
         for (Method method : methods) {
-            if (!method.getReturnType().equals(Void.TYPE) && method.getParameterTypes().length == 0) {
+            if (!method.getReturnType().equals(Void.TYPE)
+                    && method.getParameterTypes().length == 0
+                    && !registeredMethods.contains(method)) {
                 method.setAccessible(true);
-                if (!registeredMethods.contains(method)) {
-                    registeredMethods.add(method);
-                    for (Annotation annotation : method.getAnnotations()) {
-                        FieldProcessor process = logHandler.get(annotation.annotationType());
-                        if (process != null) {
-                            process.processField(
-                                    () -> {
-                                        try {
-                                            return method.invoke(loggable);
-                                        } catch (IllegalAccessException | InvocationTargetException e) {
-                                            e.printStackTrace();
-                                            return null;
-                                        }
-                                    },
-                                    annotation,
-                                    bin,
-                                    method.getName());
-                        }
+                registeredMethods.add(method);
+                for (Annotation annotation : method.getAnnotations()) {
+                    FieldProcessor process = logHandler.get(annotation.annotationType());
+                    if (process != null) {
+                        process.processField(
+                                () -> {
+                                    try {
+                                        return method.invoke(loggable);
+                                    } catch (IllegalAccessException | InvocationTargetException e) {
+                                        e.printStackTrace();
+                                        return null;
+                                    }
+                                },
+                                annotation,
+                                bin,
+                                method.getName());
                     }
                 }
             }
