@@ -20,7 +20,7 @@ class WrappedSimpleWidget implements SimpleWidgetWrapper {
 
     @Override
     public SimpleWidgetWrapper withProperties(Map<String, Object> properties) {
-        widget = widget.withProperties(properties);
+        widget.withProperties(properties);
         return this;
     }
 

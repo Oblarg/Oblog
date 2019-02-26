@@ -14,7 +14,7 @@ public class WrappedComplexWidget implements ComplexWidgetWrapper{
 
     @Override
     public ComplexWidgetWrapper withProperties(Map<String, Object> properties) {
-        widget = widget.withProperties(properties);
+        widget.withProperties(properties);
         return this;
     }
 
