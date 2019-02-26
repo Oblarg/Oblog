@@ -103,9 +103,15 @@ public class Logger {
                                          ShuffleboardWrapper shuffleboard,
                                          NetworkTableInstance nt) {
 
-        ShuffleboardContainerWrapper bin = shuffleboard.getTab(rootContainer.getClass().getSimpleName());
+        ShuffleboardContainerWrapper bin;
 
-        switch(logType) {
+        if (rootContainer instanceof Loggable) {
+            bin = shuffleboard.getTab(((Loggable) rootContainer).configureLogName());
+        } else {
+            bin = shuffleboard.getTab(rootContainer.getClass().getSimpleName());
+        }
+
+        switch (logType) {
             case LOG:
                 logFieldsAndMethods(rootContainer,
                         rootContainer.getClass(),
@@ -377,13 +383,13 @@ public class Logger {
                         if (supplier.get() instanceof AnalogInput) {
                             Log.VoltageView params = (Log.VoltageView) rawParams;
                             bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
-                                            .withWidget(BuiltInWidgets.kVoltageView.getWidgetName())
-                                            .withProperties(Map.of(
-                                                    "min", params.min(),
-                                                    "max", params.max(),
-                                                    "center", params.center(),
-                                                    "orientation", params.orientation(),
-                                                    "numberOfTickMarks", params.numTicks()));
+                                    .withWidget(BuiltInWidgets.kVoltageView.getWidgetName())
+                                    .withProperties(Map.of(
+                                            "min", params.min(),
+                                            "max", params.max(),
+                                            "center", params.center(),
+                                            "orientation", params.orientation(),
+                                            "numberOfTickMarks", params.numTicks()));
                         } else {
                             Log.VoltageView params = (Log.VoltageView) rawParams;
                             Logger.registerEntry(
@@ -494,18 +500,18 @@ public class Logger {
     );
 
     private static Map<Class, Function<Object, Object>> setterCaster = Map.ofEntries(
-            entry(Integer.TYPE, (value) -> ((Number)value).intValue()),
-            entry(Integer.class, (value) -> ((Number)value).intValue()),
-            entry(Double.TYPE, (value) -> ((Number)value).doubleValue()),
-            entry(Double.class, (value) -> ((Number)value).doubleValue()),
-            entry(Float.TYPE, (value) -> ((Number)value).floatValue()),
-            entry(Float.class, (value) -> ((Number)value).floatValue()),
-            entry(Long.TYPE, (value) -> ((Number)value).longValue()),
-            entry(Long.class, (value) -> ((Number)value).longValue()),
-            entry(Short.TYPE, (value) -> ((Number)value).shortValue()),
-            entry(Short.class, (value) -> ((Number)value).shortValue()),
-            entry(Byte.TYPE, (value) -> ((Number)value).byteValue()),
-            entry(Byte.class, (value) -> ((Number)value).byteValue()),
+            entry(Integer.TYPE, (value) -> ((Number) value).intValue()),
+            entry(Integer.class, (value) -> ((Number) value).intValue()),
+            entry(Double.TYPE, (value) -> ((Number) value).doubleValue()),
+            entry(Double.class, (value) -> ((Number) value).doubleValue()),
+            entry(Float.TYPE, (value) -> ((Number) value).floatValue()),
+            entry(Float.class, (value) -> ((Number) value).floatValue()),
+            entry(Long.TYPE, (value) -> ((Number) value).longValue()),
+            entry(Long.class, (value) -> ((Number) value).longValue()),
+            entry(Short.TYPE, (value) -> ((Number) value).shortValue()),
+            entry(Short.class, (value) -> ((Number) value).shortValue()),
+            entry(Byte.TYPE, (value) -> ((Number) value).byteValue()),
+            entry(Byte.class, (value) -> ((Number) value).byteValue()),
             entry(Boolean.TYPE, (value) -> value),
             entry(Boolean.class, (value) -> value)
 
