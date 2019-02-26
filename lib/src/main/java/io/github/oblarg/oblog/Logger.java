@@ -5,6 +5,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Sendable;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
 import io.github.oblarg.oblog.annotations.*;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -101,6 +102,39 @@ public class Logger {
                                          Object rootContainer,
                                          ShuffleboardWrapper shuffleboard,
                                          NetworkTableInstance nt) {
+
+        ShuffleboardContainerWrapper bin = shuffleboard.getTab(rootContainer.getClass().getSimpleName());
+
+        switch(logType) {
+            case LOG:
+                logFieldsAndMethods(rootContainer,
+                        rootContainer.getClass(),
+                        bin,
+                        new HashSet<>(),
+                        new HashSet<>());
+                break;
+            case CONFIG:
+                configFieldsAndMethods(rootContainer,
+                        rootContainer.getClass(),
+                        bin,
+                        nt,
+                        new HashSet<>(),
+                        new HashSet<>());
+                break;
+            case BOTH:
+                logFieldsAndMethods(rootContainer,
+                        rootContainer.getClass(),
+                        bin,
+                        new HashSet<>(),
+                        new HashSet<>());
+                configFieldsAndMethods(rootContainer,
+                        rootContainer.getClass(),
+                        bin,
+                        nt,
+                        new HashSet<>(),
+                        new HashSet<>());
+                break;
+        }
 
         Consumer<Loggable> log = (toLog) -> logLoggable(logType,
                 toLog,
@@ -477,7 +511,7 @@ public class Logger {
 
     );
 
-    private static void configFieldsAndMethods(Loggable loggable,
+    private static void configFieldsAndMethods(Object loggable,
                                                Class loggableClass,
                                                ShuffleboardContainerWrapper bin,
                                                NetworkTableInstance nt,
@@ -540,7 +574,7 @@ public class Logger {
     }
 
 
-    private static void logFieldsAndMethods(Loggable loggable,
+    private static void logFieldsAndMethods(Object loggable,
                                             Class loggableClass,
                                             ShuffleboardContainerWrapper bin,
                                             Set<Field> registeredFields,

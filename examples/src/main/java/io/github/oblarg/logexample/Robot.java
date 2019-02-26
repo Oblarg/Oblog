@@ -6,7 +6,9 @@ package io.github.oblarg.logexample;/*------------------------------------------
 /*----------------------------------------------------------------------------*/
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import io.github.oblarg.oblog.Logger;
@@ -26,6 +28,10 @@ public class Robot extends TimedRobot {
   public static final LoggedSubsystem subsystem = new LoggedSubsystem();
   private LoggedCommand command5Seconds = new LoggedCommand(5);
   private LoggedCommand command10Seconds = new LoggedCommand(10);
+
+
+  @Log.DifferentialDrive
+  private static DifferentialDrive drive = new DifferentialDrive(new Victor(1), new Victor(2));
 
   //This is loggable, but will not be logged due to the exclude annotation.
   @Log.Exclude
