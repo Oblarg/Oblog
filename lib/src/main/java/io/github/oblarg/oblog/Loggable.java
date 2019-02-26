@@ -12,7 +12,7 @@ import java.util.Map;
  * Loggable classes that you wish to log should be annotated with {@link Log} or one of its widget-specific sub-annotations.
  * Any children (i.e. fields) of a Loggable class that are themselves Loggable will be recursively given a layout within the tab/layout defined
  * by the parent.
- *
+ * <p>
  * Note that Loggable classes that are not reachable from the root container passed to {@link Logger#configureLogging(Object)}
  * through a sequence of Loggable ancestors will not be logged, as the Logger will not be able to see them.
  */
@@ -24,7 +24,7 @@ public interface Loggable {
      *
      * @return The name the object will take when logged on Shuffleboard.  Defaults to the class name.
      */
-    default String configureLogName(){
+    default String configureLogName() {
         return this.getClass().getSimpleName();
     }
 
@@ -34,7 +34,7 @@ public interface Loggable {
      *
      * @return the type of layout of the object in shuffleboard.  Defaults to list.
      */
-    default LayoutType configureLayoutType(){
+    default LayoutType configureLayoutType() {
         return BuiltInLayouts.kList;
     }
 
@@ -44,7 +44,7 @@ public interface Loggable {
      *
      * @return A map of property keys and values.  Defaults to null (will yield default Shuffleboard properties).
      */
-    default Map<String, Object> configureLayoutProperties(){
+    default Map<String, Object> configureLayoutProperties() {
         return new HashMap<>();
     }
 
@@ -52,6 +52,18 @@ public interface Loggable {
      * Override to add custom logging not supported through the standard {@link Log} options.  Called by the logger
      * on each io.github.oblarg.oblog.Loggable after the handling of annotated fields and methods.
      */
-    default void addCustomLogging(){}
+    default void addCustomLogging() {
+    }
+
+    /**
+     * Whether this Loggable should not define its own layout.  Useful for Loggables that hold other Loggables, but
+     * do not contain any logged fields or methods, or for when you want fields of a Loggable child to appear directly
+     * in the layout/tab of its parent.
+     *
+     * @return whether to skip this Loggable's layout.
+     */
+    default boolean skipLayout() {
+        return false;
+    }
 
 }

@@ -660,8 +660,12 @@ public class Logger {
                 if (parentContainer == null) {
                     bin = shuffleboard.getTab(loggable.configureLogName() + ": Log");
                 } else {
-                    bin = parentContainer.getLayout(loggable.configureLogName(), loggable.configureLayoutType())
-                            .withProperties(loggable.configureLayoutProperties());
+                    if (loggable.skipLayout()) {
+                        bin = parentContainer;
+                    } else {
+                        bin = parentContainer.getLayout(loggable.configureLogName(), loggable.configureLayoutType())
+                                .withProperties(loggable.configureLayoutProperties());
+                    }
                 }
 
                 logFieldsAndMethods(loggable,
