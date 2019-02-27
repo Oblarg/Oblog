@@ -6,9 +6,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableBuilderImpl;
 
 import java.util.Map;
 
-public class NTComplexWidget implements ComplexWidgetWrapper {
+class NTComplexWidget implements ComplexWidgetWrapper {
 
-    public NTComplexWidget (NetworkTable parent, String title, Sendable sendable) {
+    NTComplexWidget (NetworkTable parent, String title, Sendable sendable) {
+
         SendableBuilderImpl builder = new SendableBuilderImpl();
         builder.setTable(parent.getSubTable(title));
         sendable.initSendable(builder);
