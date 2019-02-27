@@ -4,11 +4,11 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 
 import java.util.Map;
 
-class NTWidget implements SimpleWidgetWrapper {
+class NTSimpleWidget implements SimpleWidgetWrapper {
 
     NetworkTableEntry entry;
 
-    NTWidget(NetworkTableEntry entry, Object value){
+    NTSimpleWidget(NetworkTableEntry entry, Object value){
         this.entry = entry;
         entry.setValue(value);
     }

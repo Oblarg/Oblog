@@ -19,11 +19,11 @@ class NTContainer implements ShuffleboardContainerWrapper {
 
     @Override
     public SimpleWidgetWrapper add(String title, Object defaultValue) {
-        return new NTWidget(table.getEntry(title), defaultValue);
+        return new NTSimpleWidget(table.getEntry(title), defaultValue);
     }
 
     @Override
     public ComplexWidgetWrapper add(String title, Sendable defaultValue) {
-        return new NTComplexWidget();
+        return new NTComplexWidget(table, title, defaultValue);
     }
 }
