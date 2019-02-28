@@ -1,8 +1,10 @@
-package io.github.oblarg.logexample;
+package io.github.oblarg.logexample.subsystems;
 
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import io.github.oblarg.logexample.LoggedComponent;
+import io.github.oblarg.logexample.LoggedComponentSubclass;
 import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;

@@ -7,6 +7,7 @@ package io.github.oblarg.logexample;
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
+import edu.wpi.first.hal.sim.DriverStationSim;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -25,5 +26,9 @@ public final class Main {
    */
   public static void main(String... args) {
     RobotBase.startRobot(Robot::new);
+    /*DriverStationSim sim = new DriverStationSim();
+    sim.setAutonomous(true);
+    sim.setEnabled(true);
+    sim.notifyNewData();*/
   }
 }

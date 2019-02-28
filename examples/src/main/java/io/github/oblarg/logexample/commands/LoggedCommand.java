@@ -1,14 +1,16 @@
-package io.github.oblarg.logexample;
+package io.github.oblarg.logexample.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
 
-@Config.Exclude
 public class LoggedCommand extends Command implements Loggable {
 
     private double timeout;
+
+    @Config.Command
+    private Command thisCommand = this;
 
     //logs a graph of time since initialized
     @Log.Graph(name = "Time Elapsed", visibleTime = 15)
@@ -31,6 +33,7 @@ public class LoggedCommand extends Command implements Loggable {
     @Override
     public void execute(){
         time = timeSinceInitialized();
+        System.out.println("Executing!");
     }
 
     @Override

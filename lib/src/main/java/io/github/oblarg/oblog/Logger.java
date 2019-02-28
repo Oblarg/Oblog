@@ -31,7 +31,7 @@ public class Logger {
      */
 
     public static void configureLogging(Object rootContainer) {
-        configureLogging(LogType.LOG, rootContainer, new WrappedShuffleboard(), NetworkTableInstance.getDefault());
+        configureLogging(LogType.LOG, true, rootContainer, new WrappedShuffleboard(), NetworkTableInstance.getDefault());
     }
 
     /**
@@ -43,7 +43,7 @@ public class Logger {
      *                      Loggable fields of this object will have their own shuffleboard tabs.
      */
     public static void configureConfig(Object rootContainer) {
-        configureLogging(LogType.CONFIG, rootContainer, new WrappedShuffleboard(), NetworkTableInstance.getDefault());
+        configureLogging(LogType.CONFIG, true, rootContainer, new WrappedShuffleboard(), NetworkTableInstance.getDefault());
     }
 
     /**
@@ -59,12 +59,8 @@ public class Logger {
      */
     public static void configureLoggingAndConfig(Object rootContainer, boolean separate) {
         WrappedShuffleboard shuffleboard = new WrappedShuffleboard();
-        if (separate) {
-            configureLogging(LogType.LOG, rootContainer, shuffleboard, NetworkTableInstance.getDefault());
-            configureLogging(LogType.CONFIG, rootContainer, shuffleboard, NetworkTableInstance.getDefault());
-        } else {
-            configureLogging(LogType.BOTH, rootContainer, shuffleboard, NetworkTableInstance.getDefault());
-        }
+        configureLogging(LogType.LOG, separate, rootContainer, shuffleboard, NetworkTableInstance.getDefault());
+        configureLogging(LogType.CONFIG, separate, rootContainer, shuffleboard, NetworkTableInstance.getDefault());
     }
 
     /**
@@ -76,7 +72,7 @@ public class Logger {
      * @param rootName      Name of the root NetworkTable.  io.github.oblarg.oblog.Loggable fields of rootContainer will be subtables.
      */
     public static void configureLoggingNTOnly(Object rootContainer, String rootName) {
-        configureLogging(LogType.LOG, rootContainer, new NTShuffleboard(rootName), NetworkTableInstance.getDefault());
+        configureLogging(LogType.LOG, true, rootContainer, new NTShuffleboard(rootName), NetworkTableInstance.getDefault());
     }
 
     /**
@@ -99,6 +95,7 @@ public class Logger {
     }
 
     private static void configureLogging(LogType logType,
+                                         boolean separate,
                                          Object rootContainer,
                                          ShuffleboardWrapper shuffleboard,
                                          NetworkTableInstance nt) {
@@ -127,22 +124,10 @@ public class Logger {
                         new HashSet<>(),
                         new HashSet<>());
                 break;
-            case BOTH:
-                logFieldsAndMethods(rootContainer,
-                        rootContainer.getClass(),
-                        bin,
-                        new HashSet<>(),
-                        new HashSet<>());
-                configFieldsAndMethods(rootContainer,
-                        rootContainer.getClass(),
-                        bin,
-                        nt,
-                        new HashSet<>(),
-                        new HashSet<>());
-                break;
         }
 
         Consumer<Loggable> log = (toLog) -> logLoggable(logType,
+                separate,
                 toLog,
                 toLog.getClass(),
                 new HashSet<>(),
@@ -195,7 +180,7 @@ public class Logger {
     }
 
     static void configureLoggingTest(LogType logType, Object rootContainer, ShuffleboardWrapper shuffleboard, NetworkTableInstance nt) {
-        configureLogging(logType, rootContainer, shuffleboard, nt);
+        configureLogging(logType, true, rootContainer, shuffleboard, nt);
     }
 
     /**
@@ -204,7 +189,7 @@ public class Logger {
     private static final Map<NetworkTableEntry, Supplier<Object>> entrySupplierMap = new HashMap<>();
 
     enum LogType {
-        LOG, CONFIG, BOTH
+        LOG, CONFIG
     }
 
     private static SetterRunner setterRunner = new SetterRunner();
@@ -529,6 +514,7 @@ public class Logger {
 
         for (Field field : fields) {
             field.setAccessible(true);
+            //System.out.println(loggableClass + " " + field.getName() + " " + registeredFields.contains(field));
             if (!registeredFields.contains(field)) {
                 registeredFields.add(field);
                 for (Annotation annotation : field.getAnnotations()) {
@@ -596,6 +582,7 @@ public class Logger {
                 for (Annotation annotation : field.getAnnotations()) {
                     FieldProcessor process = logHandler.get(annotation.annotationType());
                     if (process != null) {
+                        System.out.println(loggable.getClass().getName() + " " + field.getName());
                         process.processField(
                                 () -> {
                                     try {
@@ -641,6 +628,7 @@ public class Logger {
     }
 
     private static void logLoggable(LogType logType,
+                                    boolean separate,
                                     Loggable loggable,
                                     Class loggableClass,
                                     Set<Field> loggedFields,
@@ -658,7 +646,7 @@ public class Logger {
         switch (logType) {
             case LOG:
                 if (parentContainer == null) {
-                    bin = shuffleboard.getTab(loggable.configureLogName() + ": Log");
+                    bin = shuffleboard.getTab(separate ? loggable.configureLogName() + ": Log" : loggable.configureLogName());
                 } else {
                     if (loggable.skipLayout()) {
                         bin = parentContainer;
@@ -676,33 +664,11 @@ public class Logger {
                 break;
             case CONFIG:
                 if (parentContainer == null) {
-                    bin = shuffleboard.getTab(loggable.configureLogName() + ": Config");
+                    bin = shuffleboard.getTab(separate ? loggable.configureLogName() + ": Config" : loggable.configureLogName());
                 } else {
                     bin = parentContainer.getLayout(loggable.configureLogName(), loggable.configureLayoutType())
                             .withProperties(loggable.configureLayoutProperties());
                 }
-
-                configFieldsAndMethods(loggable,
-                        loggableClass,
-                        bin,
-                        nt,
-                        registeredFields,
-                        registeredMethods);
-                break;
-            case BOTH:
-                if (parentContainer == null) {
-                    bin = shuffleboard.getTab(loggable.configureLogName());
-                } else {
-                    bin = parentContainer.getLayout(loggable.configureLogName(), loggable.configureLayoutType())
-                            .withProperties(loggable.configureLayoutProperties());
-                }
-
-                logFieldsAndMethods(loggable,
-                        loggableClass,
-                        bin,
-                        registeredFields,
-                        registeredMethods);
-
 
                 configFieldsAndMethods(loggable,
                         loggableClass,
@@ -723,6 +689,7 @@ public class Logger {
         }
 
         Consumer<Loggable> log = (toLog) -> logLoggable(logType,
+                separate,
                 toLog,
                 toLog.getClass(),
                 new HashSet<>(),
@@ -784,6 +751,7 @@ public class Logger {
         if (Loggable.class.isAssignableFrom(loggableClass.getSuperclass())) {
             logLoggable(
                     logType,
+                    separate,
                     loggable,
                     loggableClass.getSuperclass(),
                     loggedFields,
@@ -824,16 +792,14 @@ public class Logger {
         boolean included = true;
         switch (logType) {
             case LOG:
-                included = field.getAnnotation(Log.Exclude.class) == null &&
-                        field.getType().getAnnotation(Log.Exclude.class) == null;
+                included = (field.getAnnotation(Log.Exclude.class) == null &&
+                        field.getType().getAnnotation(Log.Exclude.class) == null) ||
+                        field.getAnnotation(Log.Include.class) != null;
                 break;
             case CONFIG:
-                included = field.getAnnotation(Config.Exclude.class) == null &&
-                        field.getType().getAnnotation(Config.Exclude.class) == null;
-                break;
-            case BOTH:
-                included = (field.getAnnotation(Log.Exclude.class) == null && field.getType().getAnnotation(Log.Exclude.class) == null) ||
-                        (included = field.getAnnotation(Config.Exclude.class) == null && field.getType().getAnnotation(Config.Exclude.class) == null);
+                included = (field.getAnnotation(Config.Exclude.class) == null &&
+                        field.getType().getAnnotation(Config.Exclude.class) == null) ||
+                        field.getAnnotation(Config.Include.class) != null;
                 break;
         }
         return included;

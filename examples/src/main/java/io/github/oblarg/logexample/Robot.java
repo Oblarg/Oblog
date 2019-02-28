@@ -8,10 +8,14 @@ package io.github.oblarg.logexample;/*------------------------------------------
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import io.github.oblarg.logexample.commands.LoggedCommand;
+import io.github.oblarg.logexample.subsystems.LoggedSubsystem;
 import io.github.oblarg.oblog.Logger;
+import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
 
 /**
@@ -26,7 +30,9 @@ public class Robot extends TimedRobot {
   //These fields are loggable, and so Logger will automatically add them as tabs to shuffleboard.  Their own Loggable fields,
   //in turn, will be added as layouts within those tabs, and their children will become sub-layouts, etc.
   public static final LoggedSubsystem subsystem = new LoggedSubsystem();
+
   private LoggedCommand command5Seconds = new LoggedCommand(5);
+
   private LoggedCommand command10Seconds = new LoggedCommand(10);
 
 
@@ -35,7 +41,7 @@ public class Robot extends TimedRobot {
 
   //This is loggable, but will not be logged due to the exclude annotation.
   @Log.Exclude
-  private LoggedCommand commandExcluded = new LoggedCommand(10);
+  private LoggedCommand commandExcluded = new LoggedCommand(11);
 
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
   /**
@@ -52,6 +58,8 @@ public class Robot extends TimedRobot {
     //will be make up the shuffleboard tabs.
     //Logger.configureLoggingNTOnly(this, "Robot");
     Logger.configureLoggingAndConfig(this, false);
+
+    Scheduler.getInstance().add(command5Seconds);
   }
 
   /**
@@ -67,6 +75,7 @@ public class Robot extends TimedRobot {
     //Updates all of the NT entries.  Necessary to ensure the values sent to shuffleboard change as they
     //change in code.
     Logger.updateEntries();
+    Scheduler.getInstance().run();
   }
 
   /**

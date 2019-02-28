@@ -14,6 +14,8 @@ import static org.mockito.Mockito.verify;
 public class ArraysAndListsTester {
     @Test
     public void testArraysAndLists() {
+        long startTime = System.currentTimeMillis();
+
         List<NetworkTableEntry> mockedEntries = new ArrayList<>();
 
         TestRootContainer rootContainer = new TestRootContainer();
@@ -43,14 +45,12 @@ public class ArraysAndListsTester {
         verify(mocks.getMockedLayout()).add("a", 8);
 
 
-
-
-
         Logger.updateEntries();
 
         for (NetworkTableEntry entry : mockedEntries) {
             verify(entry).setValue(any());
         }
+
     }
 
     private class TestRootContainer {

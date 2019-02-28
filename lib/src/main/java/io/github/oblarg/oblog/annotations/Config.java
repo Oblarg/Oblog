@@ -199,4 +199,12 @@ public @interface Config {
     @Target({ElementType.FIELD, ElementType.TYPE})
     @interface Exclude {
     }
+
+    /**
+     * Overrides a class-level Exclude annotation for an individual field.
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD})
+    @interface Include {
+    }
 }
