@@ -5,11 +5,13 @@ package io.github.oblarg.logexample;/*------------------------------------------
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilderImpl;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import io.github.oblarg.logexample.commands.LoggedCommand;
@@ -60,6 +62,8 @@ public class Robot extends TimedRobot {
     Logger.configureLoggingAndConfig(this, false);
 
     Scheduler.getInstance().add(command5Seconds);
+
+
   }
 
   /**

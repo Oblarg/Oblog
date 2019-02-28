@@ -582,7 +582,6 @@ public class Logger {
                 for (Annotation annotation : field.getAnnotations()) {
                     FieldProcessor process = logHandler.get(annotation.annotationType());
                     if (process != null) {
-                        System.out.println(loggable.getClass().getName() + " " + field.getName());
                         process.processField(
                                 () -> {
                                     try {

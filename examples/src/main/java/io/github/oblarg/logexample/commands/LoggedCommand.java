@@ -38,6 +38,6 @@ public class LoggedCommand extends Command implements Loggable {
 
     @Override
     protected boolean isFinished() {
-        return false;
+        return isTimedOut();
     }
 }
