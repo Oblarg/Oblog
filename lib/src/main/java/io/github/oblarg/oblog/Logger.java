@@ -1,11 +1,18 @@
 package io.github.oblarg.oblog;
 
+import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.Sendable;
+import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.PIDCommand;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
+import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
 import io.github.oblarg.oblog.annotations.*;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -280,6 +287,11 @@ public class Logger {
 
 
     private static final Map<Class<? extends Annotation>, FieldProcessor> configFieldHandler = Map.ofEntries(
+            entry(Config.class,
+                    (supplier, rawParams, bin, name) -> {
+                        Config params = (Config) rawParams;
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get());
+                    }),
             entry(Config.Command.class,
                     (supplier, rawParams, bin, name) -> {
                         Config.Command params = (Config.Command) rawParams;
@@ -310,9 +322,13 @@ public class Logger {
             entry(Log.class,
                     (supplier, rawParams, bin, name) -> {
                         Log params = (Log) rawParams;
-                        Logger.registerEntry(
-                                bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get()).getEntry(),
-                                supplier);
+                        if (supplier.get() instanceof Sendable) {
+                            bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get());
+                        } else {
+                            Logger.registerEntry(
+                                    bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get()).getEntry(),
+                                    supplier);
+                        }
                     }),
             entry(Log.NumberBar.class,
                     (supplier, rawParams, bin, name) -> {
@@ -484,7 +500,7 @@ public class Logger {
                     })
     );
 
-    private static Map<Class, Function<Object, Object>> setterCaster = Map.ofEntries(
+    private static final Map<Class, Function<Object, Object>> setterCaster = Map.ofEntries(
             entry(Integer.TYPE, (value) -> ((Number) value).intValue()),
             entry(Integer.class, (value) -> ((Number) value).intValue()),
             entry(Double.TYPE, (value) -> ((Number) value).doubleValue()),

@@ -9,7 +9,7 @@ public class LoggedCommand extends Command implements Loggable {
 
     private double timeout;
 
-    @Config.Command
+    @Config
     private Command thisCommand = this;
 
     //logs a graph of time since initialized
@@ -28,12 +28,13 @@ public class LoggedCommand extends Command implements Loggable {
     public LoggedCommand(double timeout){
         super(timeout);
         this.timeout = timeout;
+
+        setRunWhenDisabled(true);
     }
 
     @Override
     public void execute(){
         time = timeSinceInitialized();
-        System.out.println("Executing!");
     }
 
     @Override
