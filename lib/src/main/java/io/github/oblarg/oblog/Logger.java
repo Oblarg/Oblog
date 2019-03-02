@@ -612,10 +612,11 @@ public class Logger {
                     }
                     for (int i = 0; i < numParams; i++) {
                         final int ii = i;
+                        Parameter parameter = method.getParameters()[i];
                         SetterProcessor process = configSetterHandler.get(Config.class);
                         process.processSetter(
                                 (value) -> {
-                                    setValue(values, ii, setterCaster.get(method.getParameters()[ii].getType()).apply(value));
+                                    setValue(values, ii, setterCaster.get(parameter.getType()).apply(value));
                                     try {
                                         method.invoke(loggable, values.toArray());
                                     } catch(IllegalAccessException | InvocationTargetException e){
@@ -625,8 +626,8 @@ public class Logger {
                                 getDefaultConfig(),
                                 list,
                                 nt,
-                                method.getParameters()[i].getName(),
-                                method.getParameters()[i].getType().equals(Boolean.TYPE) || method.getParameters()[i].getType().equals(Boolean.class));
+                                parameter.getName(),
+                                parameter.getType().equals(Boolean.TYPE) || parameter.getType().equals(Boolean.class));
                     }
                 }
             }
