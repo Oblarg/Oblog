@@ -521,8 +521,8 @@ public class Logger {
     private static final Map<Class, Object> setterDefaults = Map.ofEntries(
             entry(Integer.TYPE, 0),
             entry(Integer.class, 0),
-            entry(Double.TYPE,0.),
-            entry(Double.class,0.),
+            entry(Double.TYPE, 0.),
+            entry(Double.class, 0.),
             entry(Float.TYPE, 0.f),
             entry(Float.class, 0.f),
             entry(Long.TYPE, 0L),
@@ -619,7 +619,7 @@ public class Logger {
                                     setValue(values, ii, setterCaster.get(parameter.getType()).apply(value));
                                     try {
                                         method.invoke(loggable, values.toArray());
-                                    } catch(IllegalAccessException | InvocationTargetException e){
+                                    } catch (IllegalAccessException | InvocationTargetException e) {
                                         e.printStackTrace();
                                     }
                                 },
