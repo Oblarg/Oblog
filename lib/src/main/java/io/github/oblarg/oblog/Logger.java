@@ -616,7 +616,7 @@ public class Logger {
                         SetterProcessor process = configSetterHandler.get(Config.class);
                         process.processSetter(
                                 (value) -> {
-                                    setValue(values, ii, setterCaster.get(parameter.getType()).apply(value));
+                                    values.set(ii, setterCaster.get(parameter.getType()).apply(value));
                                     try {
                                         method.invoke(loggable, values.toArray());
                                     } catch (IllegalAccessException | InvocationTargetException e) {
@@ -894,9 +894,5 @@ public class Logger {
             e.printStackTrace();
             return null;
         }
-    }
-
-    private static void setValue(List<Object> values, int i, Object value) {
-        values.set(i, value);
     }
 }
