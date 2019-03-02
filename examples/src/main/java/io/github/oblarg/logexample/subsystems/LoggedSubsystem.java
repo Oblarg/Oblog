@@ -14,6 +14,10 @@ public class LoggedSubsystem extends Subsystem implements Loggable {
     private int i;
     private boolean b;
 
+    private double kP;
+    private double kI;
+    private double kD;
+
     //Example of logged field.
     @Log
     private double exampleValue = 1;
@@ -36,6 +40,15 @@ public class LoggedSubsystem extends Subsystem implements Loggable {
     public void setB(boolean b) {
         this.b = b;
         System.out.println("b set to: " + this.b);
+    }
+
+    @Config()
+    public void setPID(double p, double i, double d) {
+        kP = p;
+        kI = i;
+        kD = d;
+
+        System.out.println("PID: " + kP + " " + kI + " " + kD);
     }
 
     @Override
