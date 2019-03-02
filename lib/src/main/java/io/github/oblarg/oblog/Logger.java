@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.command.PIDCommand;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
 import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
 import io.github.oblarg.oblog.annotations.*;
@@ -515,7 +516,23 @@ public class Logger {
             entry(Byte.class, (value) -> ((Number) value).byteValue()),
             entry(Boolean.TYPE, (value) -> value),
             entry(Boolean.class, (value) -> value)
+    );
 
+    private static final Map<Class, Object> setterDefaults = Map.ofEntries(
+            entry(Integer.TYPE, 0),
+            entry(Integer.class, 0),
+            entry(Double.TYPE, 0.),
+            entry(Double.class, 0.),
+            entry(Float.TYPE, 0.f),
+            entry(Float.class, 0.f),
+            entry(Long.TYPE, 0L),
+            entry(Long.class, 0L),
+            entry(Short.TYPE, (short) 0),
+            entry(Short.class, (short) 0),
+            entry(Byte.TYPE, (byte) 0),
+            entry(Byte.class, (byte) 0),
+            entry(Boolean.TYPE, false),
+            entry(Boolean.class, false)
     );
 
     private static void configFieldsAndMethods(Object loggable,
@@ -575,6 +592,42 @@ public class Logger {
                                 nt,
                                 method.getName(),
                                 method.getParameterTypes()[0].equals(Boolean.TYPE) || method.getParameterTypes()[0].equals(Boolean.class));
+                    }
+                }
+            } else if (method.getReturnType().equals(Void.TYPE) &&
+                    method.getParameterTypes().length > 1 &&
+                    containsKeys(setterCaster, List.of(method.getParameterTypes())) &&
+                    !registeredMethods.contains(method)) {
+                method.setAccessible(true);
+                registeredMethods.add(method);
+                Config annotation = method.getAnnotation(Config.class);
+                if (annotation != null) {
+                    ShuffleboardContainerWrapper list = bin.getLayout(
+                            annotation.name().equals("NO_NAME") ? method.getName() : (annotation).name(),
+                            BuiltInLayouts.kList);
+                    int numParams = method.getParameterCount();
+                    List<Object> values = new ArrayList<>(numParams);
+                    for (int i = 0; i < numParams; i++) {
+                        values.add(setterDefaults.get(method.getParameters()[i].getType()));
+                    }
+                    for (int i = 0; i < numParams; i++) {
+                        final int ii = i;
+                        Parameter parameter = method.getParameters()[i];
+                        SetterProcessor process = configSetterHandler.get(Config.class);
+                        process.processSetter(
+                                (value) -> {
+                                    setValue(values, ii, setterCaster.get(parameter.getType()).apply(value));
+                                    try {
+                                        method.invoke(loggable, values.toArray());
+                                    } catch (IllegalAccessException | InvocationTargetException e) {
+                                        e.printStackTrace();
+                                    }
+                                },
+                                getDefaultConfig(),
+                                list,
+                                nt,
+                                parameter.getName(),
+                                parameter.getType().equals(Boolean.TYPE) || parameter.getType().equals(Boolean.class));
                     }
                 }
             }
@@ -818,5 +871,32 @@ public class Logger {
                 break;
         }
         return included;
+    }
+
+    private static boolean containsKeys(Map map, List<Object> keys) {
+        boolean containsKeys = true;
+        for (Object key : keys) {
+            containsKeys &= map.containsKey(key);
+        }
+        return containsKeys;
+    }
+
+    private static Config getDefaultConfig() {
+
+        class defaultHolder {
+            @Config
+            private int defaultField;
+        }
+
+        try {
+            return defaultHolder.class.getDeclaredField("defaultField").getAnnotation(Config.class);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private static void setValue(List<Object> values, int i, Object value) {
+        values.set(i, value);
     }
 }

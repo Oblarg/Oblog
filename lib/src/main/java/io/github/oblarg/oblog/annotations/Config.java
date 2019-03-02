@@ -10,7 +10,12 @@ import java.lang.annotation.Target;
 
 /**
  * Binds a setter or interactive object to its default interactive widget on Shuffleboard.  Defaults to a toggle
- * button for booleans, and a text field for numerics.
+ * button for booleans, and a text field for numerics.  Numerics default to a value of 0, booleans to false.
+ *
+ * For multi-argument setters, constructs a list containing the default widget type for each argument.  Names for each
+ * argument's widget are taken from the method's parameter names.  Multi-argument setters are only supported through default
+ * widgets - there is no support for specifying per-argument widget types.  If more detailed control is desired, write
+ * individual setters.
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
