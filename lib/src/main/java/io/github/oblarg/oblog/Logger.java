@@ -596,7 +596,7 @@ public class Logger {
                 }
             } else if (method.getReturnType().equals(Void.TYPE) &&
                     method.getParameterTypes().length > 1 &&
-                    containsKeys(setterCaster, List.of(method.getParameterTypes())) &&
+                    containsKeys(setterCaster, List.of((Object[]) method.getParameterTypes())) &&
                     !registeredMethods.contains(method)) {
                 method.setAccessible(true);
                 registeredMethods.add(method);
