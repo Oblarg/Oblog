@@ -753,7 +753,7 @@ public class Logger {
         //only call on the actual class, to avoid multiple calls if overridden
 
         if (loggableClass == loggable.getClass()) {
-            loggable.addCustomLogging();
+            loggable.addCustomLogging(bin);
         }
 
         Consumer<Loggable> log = (toLog) -> logLoggable(logType,
