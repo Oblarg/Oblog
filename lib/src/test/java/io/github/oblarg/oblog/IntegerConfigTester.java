@@ -19,30 +19,30 @@ public class IntegerConfigTester {
 
         ShuffleboardMocks mocks = new ShuffleboardMocks(mockedEntries);
 
-        Logger.configureLoggingTest(Logger.LogType.CONFIG,rootContainer, mocks.getMockedShuffleboard(), mocks.getMockedNTInstance());
+        Logger.configureLoggingTest(Logger.LogType.CONFIG, rootContainer, mocks.getMockedShuffleboard(), mocks.getMockedNTInstance());
 
         verify(mocks.getMockedShuffleboard()).getTab("TestConfigInteger: Config");
         verify(mocks.getMockedContainer()).add("setI", 0);
 
         verify(mocks.getMockedNTInstance()).addEntryListener(any(NetworkTableEntry.class), any(), eq(EntryListenerFlags.kUpdate));
 
-        assertEquals(0,rootContainer.test.i);
+        assertEquals(0, rootContainer.test.i);
 
         mocks.getListenerCallback().accept(new EntryNotification(mocks.getMockedNTInstance(),
                 0, 0, "test", mocks.getMockedNTValue(10), EntryListenerFlags.kUpdate));
         Logger.updateEntries();
-        assertEquals( 10, rootContainer.test.i);
+        assertEquals(10, rootContainer.test.i);
 
         mocks.getListenerCallback().accept(new EntryNotification(mocks.getMockedNTInstance(),
                 0, 0, "test", mocks.getMockedNTValue(11.5), EntryListenerFlags.kUpdate));
         Logger.updateEntries();
-        assertEquals( 11, rootContainer.test.i);
+        assertEquals(11, rootContainer.test.i);
 
     }
 
     private class TestRootContainer {
 
-       TestConfigInteger test = new TestConfigInteger();
+        TestConfigInteger test = new TestConfigInteger();
 
     }
 }

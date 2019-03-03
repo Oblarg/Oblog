@@ -25,7 +25,7 @@ public class LoggedCommand extends Command implements Loggable {
 
     //runs for specified amount of time
 
-    public LoggedCommand(double timeout){
+    public LoggedCommand(double timeout) {
         super(timeout);
         this.timeout = timeout;
 
@@ -33,7 +33,7 @@ public class LoggedCommand extends Command implements Loggable {
     }
 
     @Override
-    public void execute(){
+    public void execute() {
         time = timeSinceInitialized();
     }
 

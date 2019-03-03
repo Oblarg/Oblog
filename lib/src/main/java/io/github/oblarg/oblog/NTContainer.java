@@ -8,7 +8,7 @@ class NTContainer implements ShuffleboardContainerWrapper {
 
     NetworkTable table;
 
-    NTContainer(NetworkTable table){
+    NTContainer(NetworkTable table) {
         this.table = table;
     }
 

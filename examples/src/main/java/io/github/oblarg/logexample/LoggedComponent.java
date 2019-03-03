@@ -12,7 +12,7 @@ public class LoggedComponent implements Loggable {
     private double d;
 
     @Config.NumberSlider
-    private void setD (double d) {
+    private void setD(double d) {
         this.d = d;
         System.out.println("d set to: " + this.d);
     }

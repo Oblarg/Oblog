@@ -10,7 +10,7 @@ class NTLayout implements ShuffleboardLayoutWrapper {
 
     NetworkTable table;
 
-    NTLayout(NetworkTable table){
+    NTLayout(NetworkTable table) {
         this.table = table;
     }
 

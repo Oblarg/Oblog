@@ -24,7 +24,7 @@ public class SendableTester {
 
         ShuffleboardMocks mocks = new ShuffleboardMocks(mockedEntries);
 
-        Logger.configureLoggingTest(Logger.LogType.LOG,rootContainer, mocks.getMockedShuffleboard(), mocks.getMockedNTInstance());
+        Logger.configureLoggingTest(Logger.LogType.LOG, rootContainer, mocks.getMockedShuffleboard(), mocks.getMockedNTInstance());
 
         verify(mocks.getMockedShuffleboard()).getTab("TestSendable: Log");
         verify(mocks.getMockedContainer()).add(eq("drive"), any());

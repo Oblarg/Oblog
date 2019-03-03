@@ -18,7 +18,7 @@ public class SimpleTester {
 
         ShuffleboardMocks mocks = new ShuffleboardMocks(mockedEntries);
 
-        Logger.configureLoggingTest(Logger.LogType.LOG,rootContainer, mocks.getMockedShuffleboard(), mocks.getMockedNTInstance());
+        Logger.configureLoggingTest(Logger.LogType.LOG, rootContainer, mocks.getMockedShuffleboard(), mocks.getMockedNTInstance());
 
         verify(mocks.getMockedShuffleboard()).getTab("TestLoggableBasic1: Log");
         verify(mocks.getMockedShuffleboard()).getTab("TestLoggableBasic2: Log");
@@ -30,10 +30,9 @@ public class SimpleTester {
         verify(mocks.getMockedContainer()).add("getA", 2);
 
 
-
         Logger.updateEntries();
 
-        for (NetworkTableEntry entry: mockedEntries) {
+        for (NetworkTableEntry entry : mockedEntries) {
             verify(entry).setValue(any());
         }
     }

@@ -8,7 +8,7 @@ import java.util.Map;
 
 class NTComplexWidget implements ComplexWidgetWrapper {
 
-    NTComplexWidget (NetworkTable parent, String title, Sendable sendable) {
+    NTComplexWidget(NetworkTable parent, String title, Sendable sendable) {
 
         SendableBuilderImpl builder = new SendableBuilderImpl();
         builder.setTable(parent.getSubTable(title));

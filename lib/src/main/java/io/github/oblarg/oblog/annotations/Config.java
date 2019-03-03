@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 /**
  * Binds a setter or interactive object to its default interactive widget on Shuffleboard.  Defaults to a toggle
  * button for booleans, and a text field for numerics.  Numerics default to a value of 0, booleans to false.
- *
+ * <p>
  * For multi-argument setters, constructs a list containing the default widget type for each argument.  Names for each
  * argument's widget are taken from the method's parameter names.  Multi-argument setters are only supported through default
  * widgets - there is no support for specifying per-argument widget types.  If more detailed control is desired, write
@@ -44,7 +44,7 @@ public @interface Config {
      */
     @Target({ElementType.METHOD})
     @Retention(RetentionPolicy.RUNTIME)
-    @interface NumberSlider{
+    @interface NumberSlider {
         /**
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
@@ -82,7 +82,7 @@ public @interface Config {
      */
     @Target({ElementType.METHOD})
     @Retention(RetentionPolicy.RUNTIME)
-    @interface ToggleButton{
+    @interface ToggleButton {
         /**
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
@@ -105,7 +105,7 @@ public @interface Config {
      */
     @Target({ElementType.METHOD})
     @Retention(RetentionPolicy.RUNTIME)
-    @interface ToggleSwitch{
+    @interface ToggleSwitch {
         /**
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
@@ -189,7 +189,7 @@ public @interface Config {
      */
     @Target({ElementType.FIELD})
     @Retention(RetentionPolicy.RUNTIME)
-    @interface Relay{
+    @interface Relay {
         /**
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */

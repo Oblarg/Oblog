@@ -8,7 +8,7 @@ class NTSimpleWidget implements SimpleWidgetWrapper {
 
     NetworkTableEntry entry;
 
-    NTSimpleWidget(NetworkTableEntry entry, Object value){
+    NTSimpleWidget(NetworkTableEntry entry, Object value) {
         this.entry = entry;
         entry.setValue(value);
     }

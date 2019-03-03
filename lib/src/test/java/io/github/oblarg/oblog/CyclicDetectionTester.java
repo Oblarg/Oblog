@@ -21,7 +21,7 @@ public class CyclicDetectionTester {
         ShuffleboardMocks mocks = new ShuffleboardMocks(mockedEntries);
 
 
-        Logger.configureLoggingTest(Logger.LogType.LOG,rootContainer, mocks.getMockedShuffleboard(), mocks.getMockedNTInstance());
+        Logger.configureLoggingTest(Logger.LogType.LOG, rootContainer, mocks.getMockedShuffleboard(), mocks.getMockedNTInstance());
         verify(mocks.getMockedShuffleboard()).getTab("TestCycleOuter: Log");
         verify(mocks.getMockedContainer()).getLayout("TestCycleInner", BuiltInLayouts.kList);
         verify(mocks.getMockedContainer()).add("s", "outer");
@@ -30,7 +30,7 @@ public class CyclicDetectionTester {
 
         Logger.updateEntries();
 
-        for (NetworkTableEntry entry: mockedEntries) {
+        for (NetworkTableEntry entry : mockedEntries) {
             verify(entry).setValue(any());
         }
     }
@@ -39,7 +39,7 @@ public class CyclicDetectionTester {
 
         private TestCycleOuter outer = new TestCycleOuter();
 
-        TestRootContainer(){
+        TestRootContainer() {
             TestCycleInner inner = new TestCycleInner();
             inner.setOuter(outer);
             outer.setInner(inner);

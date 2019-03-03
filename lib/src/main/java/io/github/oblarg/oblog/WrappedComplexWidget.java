@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 
 import java.util.Map;
 
-class WrappedComplexWidget implements ComplexWidgetWrapper{
+class WrappedComplexWidget implements ComplexWidgetWrapper {
 
     ComplexWidget widget;
 

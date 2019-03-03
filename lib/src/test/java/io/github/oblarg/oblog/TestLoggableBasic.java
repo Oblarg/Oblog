@@ -4,12 +4,12 @@ import io.github.oblarg.oblog.annotations.Log;
 
 class TestLoggableBasic implements Loggable {
 
-    TestLoggableBasic(int a){
+    TestLoggableBasic(int a) {
         this.a = a;
     }
 
     @Override
-    public String configureLogName(){
+    public String configureLogName() {
         return "TestLoggableBasic" + a;
     }
 
@@ -17,7 +17,7 @@ class TestLoggableBasic implements Loggable {
     int a;
 
     @Log
-    private int getA(){
+    private int getA() {
         return a;
     }
 }

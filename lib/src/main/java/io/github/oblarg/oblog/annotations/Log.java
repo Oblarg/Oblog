@@ -561,19 +561,16 @@ public @interface Log {
         boolean showCrosshairs() default true;
 
         /**
-         *
          * @return Color of the crosshairs.
          */
         String crosshairColor() default "white";
 
         /**
-         *
          * @return Whether to show the stream controls.
          */
         boolean showControls() default true;
 
         /**
-         *
          * @return Rotate the displayed image.  Must be one of: "NONE", "QUARTER_CW", "QUARTER_CCW", "HALF".
          */
         String rotation() default "NONE";

@@ -1,5 +1,5 @@
 package io.github.oblarg.oblog;
 
-interface  ShuffleboardWrapper {
+interface ShuffleboardWrapper {
     ShuffleboardContainerWrapper getTab(String title);
 }

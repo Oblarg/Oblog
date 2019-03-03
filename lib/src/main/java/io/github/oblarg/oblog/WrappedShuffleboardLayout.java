@@ -10,7 +10,7 @@ class WrappedShuffleboardLayout implements ShuffleboardLayoutWrapper {
 
     private ShuffleboardLayout layout;
 
-    WrappedShuffleboardLayout (ShuffleboardLayout layout){
+    WrappedShuffleboardLayout(ShuffleboardLayout layout) {
         this.layout = layout;
     }
 

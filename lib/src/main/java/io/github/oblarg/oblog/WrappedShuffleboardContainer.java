@@ -5,10 +5,10 @@ import edu.wpi.first.wpilibj.shuffleboard.LayoutType;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
 
 class WrappedShuffleboardContainer implements ShuffleboardContainerWrapper {
-    
+
     private ShuffleboardContainer container;
-    
-    WrappedShuffleboardContainer(ShuffleboardContainer container){
+
+    WrappedShuffleboardContainer(ShuffleboardContainer container) {
         this.container = container;
     }
 

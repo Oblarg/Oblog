@@ -19,7 +19,7 @@ public class SuperclassRecursionTester {
 
         ShuffleboardMocks mocks = new ShuffleboardMocks(mockedEntries);
 
-        Logger.configureLoggingTest(Logger.LogType.LOG,rootContainer, mocks.getMockedShuffleboard(), mocks.getMockedNTInstance());
+        Logger.configureLoggingTest(Logger.LogType.LOG, rootContainer, mocks.getMockedShuffleboard(), mocks.getMockedNTInstance());
 
         verify(mocks.getMockedShuffleboard(), atLeastOnce()).getTab("TestRecursionSub: Log");
         verify(mocks.getMockedShuffleboard(), never()).getTab("TestRecursionSuper");
@@ -37,10 +37,9 @@ public class SuperclassRecursionTester {
         verify(mocks.getMockedContainer(), never()).add("a", 1);
 
 
-
         Logger.updateEntries();
 
-        for (NetworkTableEntry entry: mockedEntries) {
+        for (NetworkTableEntry entry : mockedEntries) {
             verify(entry).setValue(any());
         }
     }

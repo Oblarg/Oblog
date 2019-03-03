@@ -50,7 +50,9 @@ class ShuffleboardMocks {
                 });
     }
 
-    Consumer<EntryNotification> getListenerCallback() { return listenerCallback; }
+    Consumer<EntryNotification> getListenerCallback() {
+        return listenerCallback;
+    }
 
     NetworkTableValue getMockedNTValue(Object value) {
         when(mockedNTValue.getValue()).thenReturn(value);

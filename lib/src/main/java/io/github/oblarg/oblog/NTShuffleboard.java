@@ -7,7 +7,7 @@ class NTShuffleboard implements ShuffleboardWrapper {
 
     private NetworkTable table;
 
-    NTShuffleboard(String rootName){
+    NTShuffleboard(String rootName) {
         table = NetworkTableInstance.getDefault().getTable(rootName);
     }
 

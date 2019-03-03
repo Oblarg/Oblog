@@ -2,14 +2,14 @@ package io.github.oblarg.oblog;
 
 import io.github.oblarg.oblog.annotations.Log;
 
-class TestCycleInner implements Loggable{
+class TestCycleInner implements Loggable {
 
     TestCycleOuter outer;
 
     @Log
     String s = "inner";
 
-    void setOuter(TestCycleOuter outer){
+    void setOuter(TestCycleOuter outer) {
         this.outer = outer;
     }
 

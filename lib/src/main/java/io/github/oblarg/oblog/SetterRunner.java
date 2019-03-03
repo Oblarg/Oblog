@@ -14,7 +14,7 @@ class SetterRunner implements Executor {
     }
 
     synchronized void runSynchronous() {
-        for(Runnable setter: setters) {
+        for (Runnable setter : setters) {
             setter.run();
         }
         setters.clear();
