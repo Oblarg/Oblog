@@ -1,3 +1,7 @@
+#Simple utility for filling in missing data from Shuffleboard recording files.
+#Shuffleboard recordings contain missing values when values are not changing, this function fills them in.
+#Shuffleboard recordings should probably be converted to CSV before being loaded into R.
+
 fillShuffleboardRecording <- function(dat) {
   for(col in colnames(dat)[colnames(dat) != "Event" || 
                            colnames(dat) != "Event.Description" || 
