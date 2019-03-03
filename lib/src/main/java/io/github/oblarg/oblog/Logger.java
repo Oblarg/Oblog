@@ -93,7 +93,7 @@ public class Logger {
 
     /**
      * Registers a new entry.  To be called during initial logging configuration for any value that will
-     * change during runtime.  Mostly for internal use, but can be used by advanced users in {@link Loggable#addCustomLogging()}.
+     * change during runtime.  Mostly for internal use, but can be used by advanced users in {@link Loggable#addCustomLogging(ShuffleboardContainerWrapper)}.
      *
      * @param entry    The entry to be updated.
      * @param supplier The supplier with which to update the entry.
