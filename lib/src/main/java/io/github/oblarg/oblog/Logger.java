@@ -11,12 +11,9 @@ import edu.wpi.first.wpilibj.command.PIDCommand;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
-import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
+import edu.wpi.first.wpilibj.shuffleboard.*;
 import io.github.oblarg.oblog.annotations.*;
 import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 
 import static java.util.Map.entry;
 
@@ -483,7 +480,8 @@ public class Logger {
             entry(Log.CameraStream.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.CameraStream params = (Log.CameraStream) rawParams;
-                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                                SendableCameraWrapper.wrap((VideoSource) supplier.get()))
                                 .withWidget(BuiltInWidgets.kCameraStream.getWidgetName())
                                 .withProperties(Map.of(
                                         "showCrosshair", params.showCrosshairs(),
