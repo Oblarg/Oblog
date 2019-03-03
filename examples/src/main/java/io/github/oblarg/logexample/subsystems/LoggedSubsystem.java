@@ -1,5 +1,6 @@
 package io.github.oblarg.logexample.subsystems;
 
+import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;

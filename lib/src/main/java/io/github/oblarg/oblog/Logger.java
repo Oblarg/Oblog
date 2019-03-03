@@ -483,7 +483,7 @@ public class Logger {
             entry(Log.CameraStream.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.CameraStream params = (Log.CameraStream) rawParams;
-                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
                                 .withWidget(BuiltInWidgets.kCameraStream.getWidgetName())
                                 .withProperties(Map.of(
                                         "showCrosshair", params.showCrosshairs(),
