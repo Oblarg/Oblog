@@ -230,7 +230,7 @@ public class Logger {
                             (entryNotification) -> setterRunner.execute(() -> setter.accept((boolean) entryNotification.value.getValue())),
                             EntryListenerFlags.kUpdate
                     );
-                    setter.accept(false);
+                    setter.accept(params.defaultValueBoolean());
                 } else {
                     Config params = (Config) rawParams;
                     NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), 0)
@@ -240,7 +240,7 @@ public class Logger {
                             (entryNotification) -> setterRunner.execute(() -> setter.accept((Number) entryNotification.value.getValue())),
                             EntryListenerFlags.kUpdate
                     );
-                    setter.accept(0);
+                    setter.accept(params.defaultValueNumeric());
                 }
             }),
             entry(Config.ToggleButton.class, (setter, rawParams, bin, nt, name, isBoolean) -> {

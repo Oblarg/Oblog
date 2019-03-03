@@ -25,6 +25,16 @@ public @interface Config {
      */
     String name() default "NO_NAME";
 
+    /**
+     * @return The default value for this setter if it is a single-argument boolean setter.
+     */
+    boolean defaultValueBoolean() default false;
+
+    /**
+     * @return The default value for this setter if it is a single-argument numeric setter.
+     */
+    double defaultValueNumeric() default 0;
+
 
     /**
      * Displays a setter with a controllable slider.
