@@ -18,6 +18,14 @@ public @interface Log {
      */
     String name() default "NO_NAME";
 
+    int rowIndex();
+
+    int columnIndex();
+
+    int width();
+
+    int height();
+
 
     /**
      * Displays a number with a view-only bar.
@@ -56,6 +64,14 @@ public @interface Log {
          * @return The center value of the number bar.
          */
         double center() default 0;
+
+        int rowIndex();
+
+        int columnIndex();
+
+        int width();
+
+        int height();
     }
 
     /**
@@ -96,6 +112,14 @@ public @interface Log {
          * @return Whether or not to display the numeric value.
          */
         boolean showValue() default true;
+
+        int rowIndex();
+
+        int columnIndex();
+
+        int width();
+
+        int height();
     }
 
     /**
@@ -127,6 +151,14 @@ public @interface Log {
          * @return Window length of past data displayed in the graph.
          */
         double visibleTime() default 30;
+
+        int rowIndex();
+
+        int columnIndex();
+
+        int width();
+
+        int height();
     }
 
     /**
@@ -163,6 +195,14 @@ public @interface Log {
          * @return The color of the box when false.
          */
         String colorWhenFalse() default "red";
+
+        int rowIndex();
+
+        int columnIndex();
+
+        int width();
+
+        int height();
     }
 
     /**
@@ -217,6 +257,14 @@ public @interface Log {
          * @return Number of tick marks
          */
         int numTicks() default 5;
+
+        int rowIndex();
+
+        int columnIndex();
+
+        int width();
+
+        int height();
     }
 
     /**
@@ -245,6 +293,14 @@ public @interface Log {
          * @return Whether to show the voltage and current values.
          */
         boolean showVoltageAndCurrent() default true;
+
+        int rowIndex();
+
+        int columnIndex();
+
+        int width();
+
+        int height();
     }
 
     /**
@@ -263,6 +319,14 @@ public @interface Log {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        int rowIndex();
+
+        int columnIndex();
+
+        int width();
+
+        int height();
     }
 
     /**
@@ -303,6 +367,14 @@ public @interface Log {
          * @return The orientation of the bar.  Either "HORIZONTAL" or "VERTICAL".
          */
         String orientation() default "HORIZONTAL";
+
+        int rowIndex();
+
+        int columnIndex();
+
+        int width();
+
+        int height();
     }
 
 
@@ -361,6 +433,14 @@ public @interface Log {
          * @return Whether to show the tick marks on the number bars.
          */
         boolean showTicks() default false;
+
+        int rowIndex();
+
+        int columnIndex();
+
+        int width();
+
+        int height();
     }
 
     /**
@@ -411,6 +491,14 @@ public @interface Log {
          * @return Whether to show the tick marks on the number bars.
          */
         boolean showTicks() default false;
+
+        int rowIndex();
+
+        int columnIndex();
+
+        int width();
+
+        int height();
     }
 
     /**
@@ -453,6 +541,14 @@ public @interface Log {
          * @return Whether to show the tick marks.
          */
         boolean showTicks() default true;
+
+        int rowIndex();
+
+        int columnIndex();
+
+        int width();
+
+        int height();
     }
 
     /**
@@ -495,6 +591,14 @@ public @interface Log {
          * @return Whether to show the velocity vectors.
          */
         boolean showVel() default true;
+
+        int rowIndex();
+
+        int columnIndex();
+
+        int width();
+
+        int height();
     }
 
     /**
@@ -524,6 +628,14 @@ public @interface Log {
          * @return Whether to show the velocity vectors.
          */
         boolean showVel() default true;
+
+        int rowIndex();
+
+        int columnIndex();
+
+        int width();
+
+        int height();
     }
 
     /**
@@ -574,6 +686,14 @@ public @interface Log {
          * @return Rotate the displayed image.  Must be one of: "NONE", "QUARTER_CW", "QUARTER_CCW", "HALF".
          */
         String rotation() default "NONE";
+
+        int rowIndex();
+
+        int columnIndex();
+
+        int width();
+
+        int height();
     }
 
 
@@ -588,6 +708,14 @@ public @interface Log {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        int rowIndex();
+
+        int columnIndex();
+
+        int width();
+
+        int height();
     }
 
     /**
