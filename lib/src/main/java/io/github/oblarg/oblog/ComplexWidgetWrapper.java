@@ -11,7 +11,7 @@ public interface ComplexWidgetWrapper {
 
     ComplexWidgetWrapper withWidget(String widgetType);
 
-    SimpleWidgetWrapper withPosition(int columnIndex, int rowIndex);
+    ComplexWidgetWrapper withPosition(int columnIndex, int rowIndex);
 
-    SimpleWidgetWrapper withSize(int width, int height);
+    ComplexWidgetWrapper withSize(int width, int height);
 }

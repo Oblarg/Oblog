@@ -18,13 +18,13 @@ public @interface Log {
      */
     String name() default "NO_NAME";
 
-    int rowIndex();
+    int rowIndex() default -1;
 
-    int columnIndex();
+    int columnIndex() default -1;
 
-    int width();
+    int width() default -1;
 
-    int height();
+    int height() default -1;
 
 
     /**
@@ -65,13 +65,13 @@ public @interface Log {
          */
         double center() default 0;
 
-        int rowIndex();
+        int rowIndex() default -1;
 
-        int columnIndex();
+        int columnIndex() default -1;
 
-        int width();
+        int width() default -1;
 
-        int height();
+        int height() default -1;
     }
 
     /**
@@ -113,13 +113,13 @@ public @interface Log {
          */
         boolean showValue() default true;
 
-        int rowIndex();
+        int rowIndex() default -1;
 
-        int columnIndex();
+        int columnIndex() default -1;
 
-        int width();
+        int width() default -1;
 
-        int height();
+        int height() default -1;
     }
 
     /**
@@ -152,13 +152,13 @@ public @interface Log {
          */
         double visibleTime() default 30;
 
-        int rowIndex();
+        int rowIndex() default -1;
 
-        int columnIndex();
+        int columnIndex() default -1;
 
-        int width();
+        int width() default -1;
 
-        int height();
+        int height() default -1;
     }
 
     /**
@@ -196,13 +196,13 @@ public @interface Log {
          */
         String colorWhenFalse() default "red";
 
-        int rowIndex();
+        int rowIndex() default -1;
 
-        int columnIndex();
+        int columnIndex() default -1;
 
-        int width();
+        int width() default -1;
 
-        int height();
+        int height() default -1;
     }
 
     /**
@@ -258,13 +258,13 @@ public @interface Log {
          */
         int numTicks() default 5;
 
-        int rowIndex();
+        int rowIndex() default -1;
 
-        int columnIndex();
+        int columnIndex() default -1;
 
-        int width();
+        int width() default -1;
 
-        int height();
+        int height() default -1;
     }
 
     /**
@@ -294,13 +294,13 @@ public @interface Log {
          */
         boolean showVoltageAndCurrent() default true;
 
-        int rowIndex();
+        int rowIndex() default -1;
 
-        int columnIndex();
+        int columnIndex() default -1;
 
-        int width();
+        int width() default -1;
 
-        int height();
+        int height() default -1;
     }
 
     /**
@@ -320,13 +320,13 @@ public @interface Log {
          */
         String name() default "NO_NAME";
 
-        int rowIndex();
+        int rowIndex() default -1;
 
-        int columnIndex();
+        int columnIndex() default -1;
 
-        int width();
+        int width() default -1;
 
-        int height();
+        int height() default -1;
     }
 
     /**
@@ -368,13 +368,13 @@ public @interface Log {
          */
         String orientation() default "HORIZONTAL";
 
-        int rowIndex();
+        int rowIndex() default -1;
 
-        int columnIndex();
+        int columnIndex() default -1;
 
-        int width();
+        int width() default -1;
 
-        int height();
+        int height() default -1;
     }
 
 
@@ -434,13 +434,13 @@ public @interface Log {
          */
         boolean showTicks() default false;
 
-        int rowIndex();
+        int rowIndex() default -1;
 
-        int columnIndex();
+        int columnIndex() default -1;
 
-        int width();
+        int width() default -1;
 
-        int height();
+        int height() default -1;
     }
 
     /**
@@ -492,13 +492,13 @@ public @interface Log {
          */
         boolean showTicks() default false;
 
-        int rowIndex();
+        int rowIndex() default -1;
 
-        int columnIndex();
+        int columnIndex() default -1;
 
-        int width();
+        int width() default -1;
 
-        int height();
+        int height() default -1;
     }
 
     /**
@@ -542,13 +542,13 @@ public @interface Log {
          */
         boolean showTicks() default true;
 
-        int rowIndex();
+        int rowIndex() default -1;
 
-        int columnIndex();
+        int columnIndex() default -1;
 
-        int width();
+        int width() default -1;
 
-        int height();
+        int height() default -1;
     }
 
     /**
@@ -592,13 +592,13 @@ public @interface Log {
          */
         boolean showVel() default true;
 
-        int rowIndex();
+        int rowIndex() default -1;
 
-        int columnIndex();
+        int columnIndex() default -1;
 
-        int width();
+        int width() default -1;
 
-        int height();
+        int height() default -1;
     }
 
     /**
@@ -629,13 +629,13 @@ public @interface Log {
          */
         boolean showVel() default true;
 
-        int rowIndex();
+        int rowIndex() default -1;
 
-        int columnIndex();
+        int columnIndex() default -1;
 
-        int width();
+        int width() default -1;
 
-        int height();
+        int height() default -1;
     }
 
     /**
@@ -687,13 +687,13 @@ public @interface Log {
          */
         String rotation() default "NONE";
 
-        int rowIndex();
+        int rowIndex() default -1;
 
-        int columnIndex();
+        int columnIndex() default -1;
 
-        int width();
+        int width() default -1;
 
-        int height();
+        int height() default -1;
     }
 
 
@@ -709,13 +709,13 @@ public @interface Log {
          */
         String name() default "NO_NAME";
 
-        int rowIndex();
+        int rowIndex() default -1;
 
-        int columnIndex();
+        int columnIndex() default -1;
 
-        int width();
+        int width() default -1;
 
-        int height();
+        int height() default -1;
     }
 
     /**
