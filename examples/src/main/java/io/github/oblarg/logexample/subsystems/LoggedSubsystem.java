@@ -43,7 +43,7 @@ public class LoggedSubsystem extends Subsystem implements Loggable {
         System.out.println("b set to: " + this.b);
     }
 
-    @Config()
+    @Config
     public void setPID(double p, double i, double d) {
         kP = p;
         kI = i;

@@ -223,7 +223,7 @@ public class Logger {
             entry(Config.class, (setter, rawParams, bin, nt, name, isBoolean) -> {
                 if (isBoolean) {
                     Config params = (Config) rawParams;
-                    NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), false)
+                    NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValueBoolean())
                             .withWidget(BuiltInWidgets.kToggleButton.getWidgetName()).getEntry();
                     nt.addEntryListener(
                             entry,
@@ -233,7 +233,7 @@ public class Logger {
                     setter.accept(params.defaultValueBoolean());
                 } else {
                     Config params = (Config) rawParams;
-                    NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), 0)
+                    NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValueNumeric())
                             .withWidget(BuiltInWidgets.kTextView.getWidgetName()).getEntry();
                     nt.addEntryListener(
                             entry,
