@@ -35,6 +35,14 @@ public @interface Config {
      */
     double defaultValueNumeric() default 0;
 
+    int rowIndex() default -1;
+
+    int columnIndex() default -1;
+
+    int width() default -1;
+
+    int height() default -1;
+
 
     /**
      * Displays a setter with a controllable slider.
@@ -79,6 +87,14 @@ public @interface Config {
          * @return The default value that the setter will return prior to manipulation on the dashboard.
          */
         double defaultValue() default 0;
+
+        int rowIndex() default -1;
+
+        int columnIndex() default -1;
+
+        int width() default -1;
+
+        int height() default -1;
     }
 
 
@@ -102,6 +118,14 @@ public @interface Config {
          * @return The default value that the setter will return prior to manipulation on the dashboard.
          */
         boolean defaultValue() default false;
+
+        int rowIndex() default -1;
+
+        int columnIndex() default -1;
+
+        int width() default -1;
+
+        int height() default -1;
     }
 
 
@@ -125,6 +149,14 @@ public @interface Config {
          * @return The default value that the setter will return prior to manipulation on the dashboard.
          */
         boolean defaultValue() default false;
+
+        int rowIndex() default -1;
+
+        int columnIndex() default -1;
+
+        int width() default -1;
+
+        int height() default -1;
     }
 
 
@@ -146,6 +178,14 @@ public @interface Config {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        int rowIndex() default -1;
+
+        int columnIndex() default -1;
+
+        int width() default -1;
+
+        int height() default -1;
     }
 
 
@@ -167,6 +207,14 @@ public @interface Config {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        int rowIndex() default -1;
+
+        int columnIndex() default -1;
+
+        int width() default -1;
+
+        int height() default -1;
     }
 
 
@@ -186,6 +234,14 @@ public @interface Config {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        int rowIndex() default -1;
+
+        int columnIndex() default -1;
+
+        int width() default -1;
+
+        int height() default -1;
     }
 
 
@@ -204,6 +260,14 @@ public @interface Config {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        int rowIndex() default -1;
+
+        int columnIndex() default -1;
+
+        int width() default -1;
+
+        int height() default -1;
     }
 
 

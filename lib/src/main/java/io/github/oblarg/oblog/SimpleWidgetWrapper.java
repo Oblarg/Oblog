@@ -14,4 +14,8 @@ public interface SimpleWidgetWrapper {
     SimpleWidgetWrapper withProperties(Map<String, Object> properties);
 
     SimpleWidgetWrapper withWidget(String widgetType);
+
+    SimpleWidgetWrapper withPosition(int columnIndex, int rowIndex);
+
+    SimpleWidgetWrapper withSize(int width, int height);
 }

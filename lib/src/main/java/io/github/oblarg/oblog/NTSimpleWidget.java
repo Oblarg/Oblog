@@ -27,4 +27,14 @@ class NTSimpleWidget implements SimpleWidgetWrapper {
     public SimpleWidgetWrapper withWidget(String widgetType) {
         return this;
     }
+
+    @Override
+    public SimpleWidgetWrapper withPosition(int columnIndex, int rowIndex) {
+        return this;
+    }
+
+    @Override
+    public SimpleWidgetWrapper withSize(int width, int height) {
+        return this;
+    }
 }
