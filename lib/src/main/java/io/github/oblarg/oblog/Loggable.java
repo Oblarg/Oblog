@@ -71,6 +71,8 @@ public interface Loggable {
     /**
      * Override to add custom logging not supported through the standard {@link Log} options.  Called by the logger
      * on each io.github.oblarg.oblog.Loggable after the handling of annotated fields and methods.
+     *
+     * @param container The ShuffleboardContainer corresponding to this object, in which widgets can be placed.
      */
     default void addCustomLogging(ShuffleboardContainerWrapper container) {
     }

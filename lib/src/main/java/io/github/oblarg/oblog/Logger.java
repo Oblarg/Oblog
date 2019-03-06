@@ -790,12 +790,16 @@ public class Logger {
                 if (parentContainer == null) {
                     bin = shuffleboard.getTab(separate ? loggable.configureLogName() + ": Config" : loggable.configureLogName());
                 } else {
-                    bin = parentContainer.getLayout(loggable.configureLogName(), loggable.configureLayoutType())
-                            .withSize(loggable.configureLayoutSize()[0],
-                                    loggable.configureLayoutSize()[1])
-                            .withPosition(loggable.configureLayoutPosition()[0],
-                                    loggable.configureLayoutPosition()[1])
-                            .withProperties(loggable.configureLayoutProperties());
+                    if (loggable.skipLayout()) {
+                        bin = parentContainer;
+                    } else {
+                        bin = parentContainer.getLayout(loggable.configureLogName(), loggable.configureLayoutType())
+                                .withSize(loggable.configureLayoutSize()[0],
+                                        loggable.configureLayoutSize()[1])
+                                .withPosition(loggable.configureLayoutPosition()[0],
+                                        loggable.configureLayoutPosition()[1])
+                                .withProperties(loggable.configureLayoutProperties());
+                    }
                 }
 
                 configFieldsAndMethods(loggable,
