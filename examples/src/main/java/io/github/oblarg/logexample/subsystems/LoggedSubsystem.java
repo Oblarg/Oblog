@@ -20,30 +20,30 @@ public class LoggedSubsystem extends Subsystem implements Loggable {
     private double kD;
 
     //Example of logged field.
-    @Log
+    @Log(columnIndex = 0, rowIndex = 3)
     private double exampleValue = 1;
 
     //Example of logged getter.
-    @Log
+    @Log(columnIndex = 3, rowIndex = 0)
     private double exampleGetter() {
         return 2;
     }
 
-    private LoggedComponent component = new LoggedComponentSubclass();
+    private LoggedComponent component = new LoggedComponentSubclass(0, 0);
 
-    @Config.NumberSlider(min = -10, max = 10)
+    @Config.NumberSlider(min = -10, max = 10, width = 2, columnIndex = 3, rowIndex = 0)
     private void setI(int i) {
         this.i = i;
         System.out.println("i set to: " + this.i);
     }
 
-    @Config.ToggleSwitch
+    @Config.ToggleSwitch(columnIndex = 4, rowIndex = 0)
     public void setB(boolean b) {
         this.b = b;
         System.out.println("b set to: " + this.b);
     }
 
-    @Config
+    @Config(columnIndex = 1, rowIndex = 2, width = 1, height = 3)
     public void setPID(double p, double i, double d) {
         kP = p;
         kI = i;
@@ -56,4 +56,5 @@ public class LoggedSubsystem extends Subsystem implements Loggable {
     protected void initDefaultCommand() {
 
     }
+
 }

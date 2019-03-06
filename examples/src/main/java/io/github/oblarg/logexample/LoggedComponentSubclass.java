@@ -4,6 +4,10 @@ import io.github.oblarg.oblog.annotations.Config;
 
 public class LoggedComponentSubclass extends LoggedComponent {
 
+    public LoggedComponentSubclass(int columnIndex, int rowIndex){
+        super(columnIndex, rowIndex);
+    }
+
     boolean toggle;
 
     @Config.ToggleButton

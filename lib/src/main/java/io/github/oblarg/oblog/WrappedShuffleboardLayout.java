@@ -31,7 +31,19 @@ class WrappedShuffleboardLayout implements ShuffleboardLayoutWrapper {
 
     @Override
     public ShuffleboardLayoutWrapper withProperties(Map<String, Object> properties) {
-        layout = layout.withProperties(properties);
+        layout.withProperties(properties);
+        return this;
+    }
+
+    @Override
+    public ShuffleboardLayoutWrapper withPosition(int columnIndex, int rowIndex) {
+        layout.withPosition(columnIndex, rowIndex);
+        return this;
+    }
+
+    @Override
+    public ShuffleboardLayoutWrapper withSize(int width, int height) {
+        layout.withSize(width, height);
         return this;
     }
 }

@@ -654,7 +654,9 @@ public class Logger {
                 if (annotation != null) {
                     ShuffleboardContainerWrapper list = bin.getLayout(
                             annotation.name().equals("NO_NAME") ? method.getName() : (annotation).name(),
-                            BuiltInLayouts.kList);
+                            BuiltInLayouts.kList)
+                            .withPosition(annotation.columnIndex(), annotation.rowIndex())
+                            .withSize(annotation.width(), annotation.height());
                     int numParams = method.getParameterCount();
                     List<Object> values = new ArrayList<>(numParams);
                     for (int i = 0; i < numParams; i++) {
@@ -770,6 +772,10 @@ public class Logger {
                         bin = parentContainer;
                     } else {
                         bin = parentContainer.getLayout(loggable.configureLogName(), loggable.configureLayoutType())
+                                .withSize(loggable.configureLayoutSize()[0],
+                                        loggable.configureLayoutSize()[1])
+                                .withPosition(loggable.configureLayoutPosition()[0],
+                                        loggable.configureLayoutPosition()[1])
                                 .withProperties(loggable.configureLayoutProperties());
                     }
                 }
@@ -785,6 +791,10 @@ public class Logger {
                     bin = shuffleboard.getTab(separate ? loggable.configureLogName() + ": Config" : loggable.configureLogName());
                 } else {
                     bin = parentContainer.getLayout(loggable.configureLogName(), loggable.configureLayoutType())
+                            .withSize(loggable.configureLayoutSize()[0],
+                                    loggable.configureLayoutSize()[1])
+                            .withPosition(loggable.configureLayoutPosition()[0],
+                                    loggable.configureLayoutPosition()[1])
                             .withProperties(loggable.configureLayoutProperties());
                 }
 
