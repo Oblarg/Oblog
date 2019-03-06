@@ -35,6 +35,30 @@ public @interface Config {
      */
     double defaultValueNumeric() default 0;
 
+    /**
+         * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int rowIndex() default -1;
+
+        /**
+         * @return The column in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int columnIndex() default -1;
+
+        /**
+         * @return The width of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int width() default -1;
+
+        /**
+         * @return The height of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int height() default -1;
+
 
     /**
      * Displays a setter with a controllable slider.
@@ -79,6 +103,30 @@ public @interface Config {
          * @return The default value that the setter will return prior to manipulation on the dashboard.
          */
         double defaultValue() default 0;
+
+        /**
+         * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int rowIndex() default -1;
+
+        /**
+         * @return The column in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int columnIndex() default -1;
+
+        /**
+         * @return The width of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int width() default -1;
+
+        /**
+         * @return The height of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int height() default -1;
     }
 
 
@@ -102,6 +150,30 @@ public @interface Config {
          * @return The default value that the setter will return prior to manipulation on the dashboard.
          */
         boolean defaultValue() default false;
+
+        /**
+         * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int rowIndex() default -1;
+
+        /**
+         * @return The column in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int columnIndex() default -1;
+
+        /**
+         * @return The width of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int width() default -1;
+
+        /**
+         * @return The height of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int height() default -1;
     }
 
 
@@ -125,6 +197,30 @@ public @interface Config {
          * @return The default value that the setter will return prior to manipulation on the dashboard.
          */
         boolean defaultValue() default false;
+
+        /**
+         * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int rowIndex() default -1;
+
+        /**
+         * @return The column in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int columnIndex() default -1;
+
+        /**
+         * @return The width of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int width() default -1;
+
+        /**
+         * @return The height of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int height() default -1;
     }
 
 
@@ -146,6 +242,30 @@ public @interface Config {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int rowIndex() default -1;
+
+        /**
+         * @return The column in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int columnIndex() default -1;
+
+        /**
+         * @return The width of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int width() default -1;
+
+        /**
+         * @return The height of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int height() default -1;
     }
 
 
@@ -167,6 +287,30 @@ public @interface Config {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int rowIndex() default -1;
+
+        /**
+         * @return The column in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int columnIndex() default -1;
+
+        /**
+         * @return The width of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int width() default -1;
+
+        /**
+         * @return The height of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int height() default -1;
     }
 
 
@@ -186,6 +330,30 @@ public @interface Config {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int rowIndex() default -1;
+
+        /**
+         * @return The column in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int columnIndex() default -1;
+
+        /**
+         * @return The width of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int width() default -1;
+
+        /**
+         * @return The height of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int height() default -1;
     }
 
 
@@ -204,6 +372,30 @@ public @interface Config {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int rowIndex() default -1;
+
+        /**
+         * @return The column in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int columnIndex() default -1;
+
+        /**
+         * @return The width of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int width() default -1;
+
+        /**
+         * @return The height of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int height() default -1;
     }
 
 

@@ -2,15 +2,8 @@ package io.github.oblarg.oblog;
 
 import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.networktables.EntryListenerFlags;
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.*;
-import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.command.PIDCommand;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.drive.MecanumDrive;
-import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.shuffleboard.*;
 import io.github.oblarg.oblog.annotations.*;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -24,6 +17,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+@SuppressWarnings("Duplicates")
 public class Logger {
 
     /**
@@ -224,7 +218,9 @@ public class Logger {
                 if (isBoolean) {
                     Config params = (Config) rawParams;
                     NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValueBoolean())
-                            .withWidget(BuiltInWidgets.kToggleButton.getWidgetName()).getEntry();
+                            .withWidget(BuiltInWidgets.kToggleButton.getWidgetName())
+                            .withPosition(params.columnIndex(), params.rowIndex())
+                            .withSize(params.width(), params.height()).getEntry();
                     nt.addEntryListener(
                             entry,
                             (entryNotification) -> setterRunner.execute(() -> setter.accept((boolean) entryNotification.value.getValue())),
@@ -234,7 +230,9 @@ public class Logger {
                 } else {
                     Config params = (Config) rawParams;
                     NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValueNumeric())
-                            .withWidget(BuiltInWidgets.kTextView.getWidgetName()).getEntry();
+                            .withWidget(BuiltInWidgets.kTextView.getWidgetName())
+                            .withPosition(params.columnIndex(), params.rowIndex())
+                            .withSize(params.width(), params.height()).getEntry();
                     nt.addEntryListener(
                             entry,
                             (entryNotification) -> setterRunner.execute(() -> setter.accept((Number) entryNotification.value.getValue())),
@@ -246,7 +244,9 @@ public class Logger {
             entry(Config.ToggleButton.class, (setter, rawParams, bin, nt, name, isBoolean) -> {
                 Config.ToggleButton params = (Config.ToggleButton) rawParams;
                 NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValue())
-                        .withWidget(BuiltInWidgets.kToggleButton.getWidgetName()).getEntry();
+                        .withWidget(BuiltInWidgets.kToggleButton.getWidgetName())
+                        .withPosition(params.columnIndex(), params.rowIndex())
+                        .withSize(params.width(), params.height()).getEntry();
                 nt.addEntryListener(
                         entry,
                         (entryNotification) -> setterRunner.execute(() -> setter.accept((boolean) entryNotification.value.getValue())),
@@ -257,7 +257,9 @@ public class Logger {
             entry(Config.ToggleSwitch.class, (setter, rawParams, bin, nt, name, isBoolean) -> {
                 Config.ToggleSwitch params = (Config.ToggleSwitch) rawParams;
                 NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValue())
-                        .withWidget(BuiltInWidgets.kToggleSwitch.getWidgetName()).getEntry();
+                        .withWidget(BuiltInWidgets.kToggleSwitch.getWidgetName())
+                        .withPosition(params.columnIndex(), params.rowIndex())
+                        .withSize(params.width(), params.height()).getEntry();
                 nt.addEntryListener(
                         entry,
                         (entryNotification) -> setterRunner.execute(() -> setter.accept((boolean) entryNotification.value.getValue())),
@@ -273,6 +275,8 @@ public class Logger {
                                 "min", params.min(),
                                 "max", params.max(),
                                 "blockIncrement", params.blockIncrement()))
+                        .withPosition(params.columnIndex(), params.rowIndex())
+                        .withSize(params.width(), params.height())
                         .getEntry();
                 nt.addEntryListener(
                         entry,
@@ -288,31 +292,41 @@ public class Logger {
             entry(Config.class,
                     (supplier, rawParams, bin, name) -> {
                         Config params = (Config) rawParams;
-                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get());
+                        bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
+                                .withPosition(params.columnIndex(), params.rowIndex())
+                                .withSize(params.width(), params.height());
                     }),
             entry(Config.Command.class,
                     (supplier, rawParams, bin, name) -> {
                         Config.Command params = (Config.Command) rawParams;
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
-                                .withWidget(BuiltInWidgets.kCommand.getWidgetName());
+                                .withWidget(BuiltInWidgets.kCommand.getWidgetName())
+                                .withPosition(params.columnIndex(), params.rowIndex())
+                                .withSize(params.width(), params.height());
                     }),
             entry(Config.PIDCommand.class,
                     (supplier, rawParams, bin, name) -> {
                         Config.PIDCommand params = (Config.PIDCommand) rawParams;
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
-                                .withWidget(BuiltInWidgets.kPIDCommand.getWidgetName());
+                                .withWidget(BuiltInWidgets.kPIDCommand.getWidgetName())
+                                .withPosition(params.columnIndex(), params.rowIndex())
+                                .withSize(params.width(), params.height());
                     }),
             entry(Config.PIDController.class,
                     (supplier, rawParams, bin, name) -> {
                         Config.PIDController params = (Config.PIDController) rawParams;
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
-                                .withWidget(BuiltInWidgets.kPIDController.getWidgetName());
+                                .withWidget(BuiltInWidgets.kPIDController.getWidgetName())
+                                .withPosition(params.columnIndex(), params.rowIndex())
+                                .withSize(params.width(), params.height());
                     }),
             entry(Config.Relay.class,
                     (supplier, rawParams, bin, name) -> {
                         Config.Relay params = (Config.Relay) rawParams;
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
-                                .withWidget(BuiltInWidgets.kRelay.getWidgetName());
+                                .withWidget(BuiltInWidgets.kRelay.getWidgetName())
+                                .withPosition(params.columnIndex(), params.rowIndex())
+                                .withSize(params.width(), params.height());
                     })
     );
 
@@ -321,10 +335,16 @@ public class Logger {
                     (supplier, rawParams, bin, name) -> {
                         Log params = (Log) rawParams;
                         if (supplier.get() instanceof Sendable) {
-                            bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get());
+                            bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
+                                    .withPosition(params.rowIndex(), params.columnIndex())
+                                    .withSize(params.width(), params.height())
+                                    .withPosition(params.columnIndex(), params.rowIndex())
+                                    .withSize(params.width(), params.height());
                         } else {
                             Logger.registerEntry(
-                                    bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get()).getEntry(),
+                                    bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
+                                            .withPosition(params.columnIndex(), params.rowIndex())
+                                            .withSize(params.width(), params.height()).getEntry(),
                                     supplier);
                         }
                     }),
@@ -338,6 +358,8 @@ public class Logger {
                                                 "min", params.min(),
                                                 "max", params.max(),
                                                 "center", params.center()))
+                                        .withPosition(params.columnIndex(), params.rowIndex())
+                                        .withSize(params.width(), params.height())
                                         .getEntry(),
                                 supplier);
                     }),
@@ -351,6 +373,8 @@ public class Logger {
                                                 "min", params.min(),
                                                 "max", params.max(),
                                                 "showValue", params.showValue()))
+                                        .withPosition(params.columnIndex(), params.rowIndex())
+                                        .withSize(params.width(), params.height())
                                         .getEntry(),
                                 supplier);
                     }),
@@ -362,6 +386,8 @@ public class Logger {
                                         .withWidget(BuiltInWidgets.kGraph.getWidgetName())
                                         .withProperties(Map.of(
                                                 "Visible time", params.visibleTime()))
+                                        .withPosition(params.columnIndex(), params.rowIndex())
+                                        .withSize(params.width(), params.height())
                                         .getEntry(),
                                 supplier);
                     }),
@@ -374,6 +400,8 @@ public class Logger {
                                         .withProperties(Map.of(
                                                 "colorWhenTrue", params.colorWhenTrue(),
                                                 "colorWhenFalse", params.colorWhenFalse()))
+                                        .withPosition(params.columnIndex(), params.rowIndex())
+                                        .withSize(params.width(), params.height())
                                         .getEntry(),
                                 supplier);
                     }),
@@ -388,7 +416,9 @@ public class Logger {
                                             "max", params.max(),
                                             "center", params.center(),
                                             "orientation", params.orientation(),
-                                            "numberOfTickMarks", params.numTicks()));
+                                            "numberOfTickMarks", params.numTicks()))
+                                    .withPosition(params.columnIndex(), params.rowIndex())
+                                    .withSize(params.width(), params.height());
                         } else {
                             Log.VoltageView params = (Log.VoltageView) rawParams;
                             Logger.registerEntry(
@@ -400,6 +430,8 @@ public class Logger {
                                                     "center", params.center(),
                                                     "orientation", params.orientation(),
                                                     "numberOfTickMarks", params.numTicks()))
+                                            .withPosition(params.columnIndex(), params.rowIndex())
+                                            .withSize(params.width(), params.height())
                                             .getEntry(),
                                     supplier);
                         }
@@ -410,13 +442,17 @@ public class Logger {
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kPowerDistributionPanel.getWidgetName())
                                 .withProperties(Map.of(
-                                        "showVoltageAndCurrentValues", params.showVoltageAndCurrent()));
+                                        "showVoltageAndCurrentValues", params.showVoltageAndCurrent()))
+                                .withPosition(params.columnIndex(), params.rowIndex())
+                                .withSize(params.width(), params.height());
                     }),
             entry(Log.Encoder.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.Encoder params = (Log.Encoder) rawParams;
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
-                                .withWidget(BuiltInWidgets.kEncoder.getWidgetName());
+                                .withWidget(BuiltInWidgets.kEncoder.getWidgetName())
+                                .withPosition(params.columnIndex(), params.rowIndex())
+                                .withSize(params.width(), params.height());
                     }),
             entry(Log.SpeedController.class,
                     (supplier, rawParams, bin, name) -> {
@@ -424,7 +460,9 @@ public class Logger {
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kSpeedController.getWidgetName())
                                 .withProperties(Map.of(
-                                        "orientation", params.orientation()));
+                                        "orientation", params.orientation()))
+                                .withPosition(params.columnIndex(), params.rowIndex())
+                                .withSize(params.width(), params.height());
                     }),
             entry(Log.Accelerometer.class,
                     (supplier, rawParams, bin, name) -> {
@@ -436,7 +474,9 @@ public class Logger {
                                         "max", params.max(),
                                         "showText", params.showValue(),
                                         "precision", params.precision(),
-                                        "showTickMarks", params.showTicks()));
+                                        "showTickMarks", params.showTicks()))
+                                .withPosition(params.columnIndex(), params.rowIndex())
+                                .withSize(params.width(), params.height());
                     }),
             entry(Log.ThreeAxisAccelerometer.class,
                     (supplier, rawParams, bin, name) -> {
@@ -447,7 +487,9 @@ public class Logger {
                                         "range", params.range(),
                                         "showValue", params.showValue(),
                                         "precision", params.precision(),
-                                        "showTickMarks", params.showTicks()));
+                                        "showTickMarks", params.showTicks()))
+                                .withPosition(params.columnIndex(), params.rowIndex())
+                                .withSize(params.width(), params.height());
                     }),
             entry(Log.Gyro.class,
                     (supplier, rawParams, bin, name) -> {
@@ -457,7 +499,9 @@ public class Logger {
                                 .withProperties(Map.of(
                                         "majorTickSpacing", params.majorTickSpacing(),
                                         "startingAngle", params.startingAngle(),
-                                        "showTickMarkRing", params.showTicks()));
+                                        "showTickMarkRing", params.showTicks()))
+                                .withPosition(params.columnIndex(), params.rowIndex())
+                                .withSize(params.width(), params.height());
                     }),
             entry(Log.DifferentialDrive.class,
                     (supplier, rawParams, bin, name) -> {
@@ -467,7 +511,9 @@ public class Logger {
                                 .withProperties(Map.of(
                                         "numberOfWheels", params.numWheels(),
                                         "wheelDiameter", params.wheelDiameter(),
-                                        "showVelocityVectors", params.showVel()));
+                                        "showVelocityVectors", params.showVel()))
+                                .withPosition(params.columnIndex(), params.rowIndex())
+                                .withSize(params.width(), params.height());
                     }),
             entry(Log.MecanumDrive.class,
                     (supplier, rawParams, bin, name) -> {
@@ -475,7 +521,9 @@ public class Logger {
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kMecanumDrive.getWidgetName())
                                 .withProperties(Map.of(
-                                        "showVelocityVectors", params.showVel()));
+                                        "showVelocityVectors", params.showVel()))
+                                .withPosition(params.columnIndex(), params.rowIndex())
+                                .withSize(params.width(), params.height());
                     }),
             entry(Log.CameraStream.class,
                     (supplier, rawParams, bin, name) -> {
@@ -487,13 +535,17 @@ public class Logger {
                                         "showCrosshair", params.showCrosshairs(),
                                         "crosshairColor", params.crosshairColor(),
                                         "showControls", params.showControls(),
-                                        "rotation", params.rotation()));
+                                        "rotation", params.rotation()))
+                                .withPosition(params.columnIndex(), params.rowIndex())
+                                .withSize(params.width(), params.height());
                     }),
             entry(Log.ToString.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.ToString params = (Log.ToString) rawParams;
                         Logger.registerEntry(
                                 bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get().toString())
+                                        .withPosition(params.columnIndex(), params.rowIndex())
+                                        .withSize(params.width(), params.height())
                                         .getEntry(),
                                 () -> supplier.get().toString());
                     })
@@ -602,7 +654,9 @@ public class Logger {
                 if (annotation != null) {
                     ShuffleboardContainerWrapper list = bin.getLayout(
                             annotation.name().equals("NO_NAME") ? method.getName() : (annotation).name(),
-                            BuiltInLayouts.kList);
+                            BuiltInLayouts.kList)
+                            .withPosition(annotation.columnIndex(), annotation.rowIndex())
+                            .withSize(annotation.width(), annotation.height());
                     int numParams = method.getParameterCount();
                     List<Object> values = new ArrayList<>(numParams);
                     for (int i = 0; i < numParams; i++) {
@@ -718,6 +772,10 @@ public class Logger {
                         bin = parentContainer;
                     } else {
                         bin = parentContainer.getLayout(loggable.configureLogName(), loggable.configureLayoutType())
+                                .withSize(loggable.configureLayoutSize()[0],
+                                        loggable.configureLayoutSize()[1])
+                                .withPosition(loggable.configureLayoutPosition()[0],
+                                        loggable.configureLayoutPosition()[1])
                                 .withProperties(loggable.configureLayoutProperties());
                     }
                 }
@@ -732,8 +790,16 @@ public class Logger {
                 if (parentContainer == null) {
                     bin = shuffleboard.getTab(separate ? loggable.configureLogName() + ": Config" : loggable.configureLogName());
                 } else {
-                    bin = parentContainer.getLayout(loggable.configureLogName(), loggable.configureLayoutType())
-                            .withProperties(loggable.configureLayoutProperties());
+                    if (loggable.skipLayout()) {
+                        bin = parentContainer;
+                    } else {
+                        bin = parentContainer.getLayout(loggable.configureLogName(), loggable.configureLayoutType())
+                                .withSize(loggable.configureLayoutSize()[0],
+                                        loggable.configureLayoutSize()[1])
+                                .withPosition(loggable.configureLayoutPosition()[0],
+                                        loggable.configureLayoutPosition()[1])
+                                .withProperties(loggable.configureLayoutProperties());
+                    }
                 }
 
                 configFieldsAndMethods(loggable,

@@ -29,4 +29,16 @@ class WrappedSimpleWidget implements SimpleWidgetWrapper {
         widget = widget.withWidget(widgetType);
         return this;
     }
+
+    @Override
+    public SimpleWidgetWrapper withPosition(int columnIndex, int rowIndex) {
+        widget.withPosition(columnIndex, rowIndex);
+        return this;
+    }
+
+    @Override
+    public SimpleWidgetWrapper withSize(int width, int height) {
+        widget.withSize(width, height);
+        return this;
+    }
 }

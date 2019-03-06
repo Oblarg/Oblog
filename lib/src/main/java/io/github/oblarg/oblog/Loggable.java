@@ -40,6 +40,25 @@ public interface Loggable {
     }
 
     /**
+     * Set the size of the layout of this object in shuffleboard if it is located directly within a tab.
+     *
+     * @return A two-element array specifying the width and height of the layout (e.g. {4,3} would be 4-wide, 3-high).
+     */
+    default int[] configureLayoutSize() {
+        return new int[]{-1, -1};
+    }
+
+    /**
+     * Set the position of this layout of this object in shuffleboard if it is located directly within a tab.
+     *
+     * @return A two-element array specifying the column and row index of the layout (e.g. {4,3} would be column 4,
+     * row 3).
+     */
+    default int[] configureLayoutPosition() {
+        return new int[]{-1, -1};
+    }
+
+    /**
      * Set the properties of the layout of the object in Shuffleboard if it is not a root (roots define their own
      * tabs, instead).
      *
@@ -52,6 +71,8 @@ public interface Loggable {
     /**
      * Override to add custom logging not supported through the standard {@link Log} options.  Called by the logger
      * on each io.github.oblarg.oblog.Loggable after the handling of annotated fields and methods.
+     *
+     * @param container The ShuffleboardContainer corresponding to this object, in which widgets can be placed.
      */
     default void addCustomLogging(ShuffleboardContainerWrapper container) {
     }

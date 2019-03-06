@@ -8,7 +8,7 @@ import java.util.Map;
 
 class NTLayout implements ShuffleboardLayoutWrapper {
 
-    NetworkTable table;
+    private NetworkTable table;
 
     NTLayout(NetworkTable table) {
         this.table = table;
@@ -32,5 +32,15 @@ class NTLayout implements ShuffleboardLayoutWrapper {
     @Override
     public ComplexWidgetWrapper add(String title, Sendable defaultValue) {
         return new NTComplexWidget(table, title, defaultValue);
+    }
+
+    @Override
+    public ShuffleboardLayoutWrapper withSize(int width, int height) {
+        return this;
+    }
+
+    @Override
+    public ShuffleboardLayoutWrapper withPosition(int columnIndex, int rowIndex) {
+        return this;
     }
 }

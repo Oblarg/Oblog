@@ -26,4 +26,14 @@ class NTComplexWidget implements ComplexWidgetWrapper {
     public ComplexWidgetWrapper withWidget(String widgetType) {
         return this;
     }
+
+    @Override
+    public ComplexWidgetWrapper withPosition(int columnIndex, int rowIndex) {
+        return this;
+    }
+
+    @Override
+    public ComplexWidgetWrapper withSize(int width, int height) {
+        return this;
+    }
 }

@@ -36,11 +36,17 @@ class ShuffleboardMocks {
         when(mockedLayout.add(any(), any(Object.class))).thenReturn(mockedSimpleWidget);
         when(mockedLayout.add(any(), any(Sendable.class))).thenReturn(mockedComplexWidget);
         when(mockedLayout.withProperties(any())).thenReturn(mockedLayout);
+        when(mockedLayout.withPosition(anyInt(), anyInt())).thenReturn(mockedLayout);
+        when(mockedLayout.withSize(anyInt(), anyInt())).thenReturn(mockedLayout);
         when(mockedSimpleWidget.withProperties(any())).thenReturn(mockedSimpleWidget);
         when(mockedSimpleWidget.withWidget(any())).thenReturn(mockedSimpleWidget);
+        when(mockedSimpleWidget.withPosition(anyInt(), anyInt())).thenReturn(mockedSimpleWidget);
+        when(mockedSimpleWidget.withSize(anyInt(), anyInt())).thenReturn(mockedSimpleWidget);
         when(mockedSimpleWidget.getEntry()).thenReturn(newMockEntry(mockedEntries));
         when(mockedComplexWidget.withProperties(any())).thenReturn(mockedComplexWidget);
         when(mockedComplexWidget.withWidget(any())).thenReturn(mockedComplexWidget);
+        when(mockedComplexWidget.withPosition(anyInt(), anyInt())).thenReturn(mockedComplexWidget);
+        when(mockedComplexWidget.withSize(anyInt(), anyInt())).thenReturn(mockedComplexWidget);
         when(mockedNTInstance.addEntryListener(any(NetworkTableEntry.class), any(), eq(EntryListenerFlags.kUpdate))).thenAnswer(
                 new Answer() {
                     public Object answer(InvocationOnMock invocation) {

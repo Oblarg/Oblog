@@ -18,6 +18,30 @@ public @interface Log {
      */
     String name() default "NO_NAME";
 
+    /**
+         * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int rowIndex() default -1;
+
+        /**
+         * @return The column in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int columnIndex() default -1;
+
+        /**
+         * @return The width of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int width() default -1;
+
+        /**
+         * @return The height of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int height() default -1;
+
 
     /**
      * Displays a number with a view-only bar.
@@ -56,6 +80,30 @@ public @interface Log {
          * @return The center value of the number bar.
          */
         double center() default 0;
+
+        /**
+         * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int rowIndex() default -1;
+
+        /**
+         * @return The column in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int columnIndex() default -1;
+
+        /**
+         * @return The width of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int width() default -1;
+
+        /**
+         * @return The height of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int height() default -1;
     }
 
     /**
@@ -96,6 +144,30 @@ public @interface Log {
          * @return Whether or not to display the numeric value.
          */
         boolean showValue() default true;
+
+        /**
+         * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int rowIndex() default -1;
+
+        /**
+         * @return The column in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int columnIndex() default -1;
+
+        /**
+         * @return The width of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int width() default -1;
+
+        /**
+         * @return The height of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int height() default -1;
     }
 
     /**
@@ -127,6 +199,30 @@ public @interface Log {
          * @return Window length of past data displayed in the graph.
          */
         double visibleTime() default 30;
+
+        /**
+         * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int rowIndex() default -1;
+
+        /**
+         * @return The column in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int columnIndex() default -1;
+
+        /**
+         * @return The width of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int width() default -1;
+
+        /**
+         * @return The height of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int height() default -1;
     }
 
     /**
@@ -163,6 +259,30 @@ public @interface Log {
          * @return The color of the box when false.
          */
         String colorWhenFalse() default "red";
+
+        /**
+         * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int rowIndex() default -1;
+
+        /**
+         * @return The column in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int columnIndex() default -1;
+
+        /**
+         * @return The width of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int width() default -1;
+
+        /**
+         * @return The height of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int height() default -1;
     }
 
     /**
@@ -217,6 +337,30 @@ public @interface Log {
          * @return Number of tick marks
          */
         int numTicks() default 5;
+
+        /**
+         * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int rowIndex() default -1;
+
+        /**
+         * @return The column in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int columnIndex() default -1;
+
+        /**
+         * @return The width of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int width() default -1;
+
+        /**
+         * @return The height of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int height() default -1;
     }
 
     /**
@@ -245,6 +389,30 @@ public @interface Log {
          * @return Whether to show the voltage and current values.
          */
         boolean showVoltageAndCurrent() default true;
+
+        /**
+         * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int rowIndex() default -1;
+
+        /**
+         * @return The column in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int columnIndex() default -1;
+
+        /**
+         * @return The width of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int width() default -1;
+
+        /**
+         * @return The height of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int height() default -1;
     }
 
     /**
@@ -263,6 +431,30 @@ public @interface Log {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int rowIndex() default -1;
+
+        /**
+         * @return The column in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int columnIndex() default -1;
+
+        /**
+         * @return The width of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int width() default -1;
+
+        /**
+         * @return The height of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int height() default -1;
     }
 
     /**
@@ -303,6 +495,30 @@ public @interface Log {
          * @return The orientation of the bar.  Either "HORIZONTAL" or "VERTICAL".
          */
         String orientation() default "HORIZONTAL";
+
+        /**
+         * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int rowIndex() default -1;
+
+        /**
+         * @return The column in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int columnIndex() default -1;
+
+        /**
+         * @return The width of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int width() default -1;
+
+        /**
+         * @return The height of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int height() default -1;
     }
 
 
@@ -361,6 +577,30 @@ public @interface Log {
          * @return Whether to show the tick marks on the number bars.
          */
         boolean showTicks() default false;
+
+        /**
+         * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int rowIndex() default -1;
+
+        /**
+         * @return The column in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int columnIndex() default -1;
+
+        /**
+         * @return The width of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int width() default -1;
+
+        /**
+         * @return The height of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int height() default -1;
     }
 
     /**
@@ -411,6 +651,30 @@ public @interface Log {
          * @return Whether to show the tick marks on the number bars.
          */
         boolean showTicks() default false;
+
+        /**
+         * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int rowIndex() default -1;
+
+        /**
+         * @return The column in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int columnIndex() default -1;
+
+        /**
+         * @return The width of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int width() default -1;
+
+        /**
+         * @return The height of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int height() default -1;
     }
 
     /**
@@ -453,6 +717,30 @@ public @interface Log {
          * @return Whether to show the tick marks.
          */
         boolean showTicks() default true;
+
+        /**
+         * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int rowIndex() default -1;
+
+        /**
+         * @return The column in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int columnIndex() default -1;
+
+        /**
+         * @return The width of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int width() default -1;
+
+        /**
+         * @return The height of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int height() default -1;
     }
 
     /**
@@ -495,6 +783,30 @@ public @interface Log {
          * @return Whether to show the velocity vectors.
          */
         boolean showVel() default true;
+
+        /**
+         * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int rowIndex() default -1;
+
+        /**
+         * @return The column in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int columnIndex() default -1;
+
+        /**
+         * @return The width of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int width() default -1;
+
+        /**
+         * @return The height of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int height() default -1;
     }
 
     /**
@@ -524,6 +836,30 @@ public @interface Log {
          * @return Whether to show the velocity vectors.
          */
         boolean showVel() default true;
+
+        /**
+         * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int rowIndex() default -1;
+
+        /**
+         * @return The column in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int columnIndex() default -1;
+
+        /**
+         * @return The width of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int width() default -1;
+
+        /**
+         * @return The height of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int height() default -1;
     }
 
     /**
@@ -574,6 +910,30 @@ public @interface Log {
          * @return Rotate the displayed image.  Must be one of: "NONE", "QUARTER_CW", "QUARTER_CCW", "HALF".
          */
         String rotation() default "NONE";
+
+        /**
+         * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int rowIndex() default -1;
+
+        /**
+         * @return The column in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int columnIndex() default -1;
+
+        /**
+         * @return The width of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int width() default -1;
+
+        /**
+         * @return The height of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int height() default -1;
     }
 
 
@@ -588,6 +948,30 @@ public @interface Log {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int rowIndex() default -1;
+
+        /**
+         * @return The column in which this widget should be placed.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int columnIndex() default -1;
+
+        /**
+         * @return The width of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int width() default -1;
+
+        /**
+         * @return The height of this widget.  WARNING: If position/size is specified for one widget
+         * in an object, it should be specified for all widgets in that object to avoid overlaps.
+         */
+        int height() default -1;
     }
 
     /**

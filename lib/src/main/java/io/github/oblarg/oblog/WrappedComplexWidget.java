@@ -23,4 +23,16 @@ class WrappedComplexWidget implements ComplexWidgetWrapper {
         widget = widget.withWidget(widgetType);
         return this;
     }
+
+    @Override
+    public ComplexWidgetWrapper withPosition(int columnIndex, int rowIndex) {
+        widget.withPosition(columnIndex, rowIndex);
+        return this;
+    }
+
+    @Override
+    public ComplexWidgetWrapper withSize(int width, int height) {
+        widget.withSize(width, height);
+        return this;
+    }
 }

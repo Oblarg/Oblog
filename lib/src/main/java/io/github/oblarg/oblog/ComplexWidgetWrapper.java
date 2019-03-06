@@ -10,4 +10,8 @@ public interface ComplexWidgetWrapper {
     ComplexWidgetWrapper withProperties(Map<String, Object> properties);
 
     ComplexWidgetWrapper withWidget(String widgetType);
+
+    ComplexWidgetWrapper withPosition(int columnIndex, int rowIndex);
+
+    ComplexWidgetWrapper withSize(int width, int height);
 }
