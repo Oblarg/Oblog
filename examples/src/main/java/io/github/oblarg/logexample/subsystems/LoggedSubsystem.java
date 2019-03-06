@@ -47,7 +47,9 @@ public class LoggedSubsystem extends Subsystem implements Loggable {
     }
 
     @Config(columnIndex = 1, rowIndex = 2, width = 1, height = 3)
-    public void setPID(double p, double i, double d) {
+    public void setPID(@Config.NumberSlider(defaultValue = 1) double p,
+                       double i,
+                       double d) {
         kP = p;
         kI = i;
         kD = d;
