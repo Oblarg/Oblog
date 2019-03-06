@@ -60,10 +60,6 @@ Oblog's API is mostly self-explanatory.  However, a few important caveats should
   "configureLogName" method to provide a unique, programmatically-generated name for the object's tab or layout.  Failure to do so will result
   in a namespace collision and a crash.  An example of this is provided in the "examples" folder, in which two instances of the same LoggableCommand
   are present in Robot.java.
-* Oblog does *not* currently provide for specifying the sizes or positions of layouts or widgets - they will have to be 
-  manually resized and located.  This is due to current limitations of the Shuffleboard API - if some widgets are given specified sizes/positions
-  and others are not, there is no way of preventing widgets from overlapping/covering each other up on the Shuffleboard.  Support for this 
-  thus seems more likely to cause more problems than it will solve, and will not be included until/unless the Shuffleboard API changes.
   
 
 Contributing to Oblog
