@@ -22,7 +22,7 @@ public class IntegerConfigTester {
         Logger.configureLoggingTest(Logger.LogType.CONFIG, rootContainer, mocks.getMockedShuffleboard(), mocks.getMockedNTInstance());
 
         verify(mocks.getMockedShuffleboard()).getTab("TestConfigInteger: Config");
-        verify(mocks.getMockedContainer()).add("setI", 0);
+        verify(mocks.getMockedContainer()).add("setI", 0.0d);
 
         verify(mocks.getMockedNTInstance()).addEntryListener(any(NetworkTableEntry.class), any(), eq(EntryListenerFlags.kUpdate));
 
