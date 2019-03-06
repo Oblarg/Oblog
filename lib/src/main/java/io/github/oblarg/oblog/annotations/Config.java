@@ -17,7 +17,7 @@ import java.lang.annotation.Target;
  * widgets - there is no support for specifying per-argument widget types.  If more detailed control is desired, write
  * individual setters.
  */
-@Target({ElementType.FIELD, ElementType.METHOD})
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Config {
     /**
@@ -76,7 +76,7 @@ public @interface Config {
      * <td>How much to move the slider by with the arrow keys</td></tr>
      * </table>
      */
-    @Target({ElementType.METHOD})
+    @Target({ElementType.METHOD, ElementType.PARAMETER})
     @Retention(RetentionPolicy.RUNTIME)
     @interface NumberSlider {
         /**
@@ -138,7 +138,7 @@ public @interface Config {
      * </ul>
      * <br>This widget has no custom properties.
      */
-    @Target({ElementType.METHOD})
+    @Target({ElementType.METHOD, ElementType.PARAMETER})
     @Retention(RetentionPolicy.RUNTIME)
     @interface ToggleButton {
         /**
@@ -185,7 +185,7 @@ public @interface Config {
      * </ul>
      * <br>This widget has no custom properties.
      */
-    @Target({ElementType.METHOD})
+    @Target({ElementType.METHOD, ElementType.PARAMETER})
     @Retention(RetentionPolicy.RUNTIME)
     @interface ToggleSwitch {
         /**

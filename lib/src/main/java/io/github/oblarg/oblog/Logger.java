@@ -568,21 +568,15 @@ public class Logger {
             entry(Boolean.class, (value) -> value)
     );
 
-    private static final Map<Class, Object> setterDefaults = Map.ofEntries(
-            entry(Integer.TYPE, 0),
-            entry(Integer.class, 0),
-            entry(Double.TYPE, 0.),
-            entry(Double.class, 0.),
-            entry(Float.TYPE, 0.f),
-            entry(Float.class, 0.f),
-            entry(Long.TYPE, 0L),
-            entry(Long.class, 0L),
-            entry(Short.TYPE, (short) 0),
-            entry(Short.class, (short) 0),
-            entry(Byte.TYPE, (byte) 0),
-            entry(Byte.class, (byte) 0),
-            entry(Boolean.TYPE, false),
-            entry(Boolean.class, false)
+    private static final Map<Class, Function<Annotation, Object>> setterDefaultsNumeric = Map.ofEntries(
+            entry(Config.class, (params) -> ((Config) params).defaultValueNumeric()),
+            entry(Config.NumberSlider.class, (params) -> ((Config.NumberSlider) params).defaultValue())
+    );
+
+    private static final Map<Class, Function<Annotation, Object>> setterDefaultsBoolean = Map.ofEntries(
+            entry(Config.class, (params) -> ((Config) params).defaultValueBoolean()),
+            entry(Config.ToggleButton.class, (params) -> ((Config.ToggleButton) params).defaultValue()),
+            entry(Config.ToggleSwitch.class, (params) -> ((Config.ToggleSwitch) params).defaultValue())
     );
 
     private static void configFieldsAndMethods(Object loggable,
@@ -660,12 +654,19 @@ public class Logger {
                     int numParams = method.getParameterCount();
                     List<Object> values = new ArrayList<>(numParams);
                     for (int i = 0; i < numParams; i++) {
-                        values.add(setterDefaults.get(method.getParameters()[i].getType()));
+                        Parameter parameter = method.getParameters()[i];
+                        Annotation paramAnnotation = getParameterAnnotation(parameter);
+                        if (parameter.getType().equals(Boolean.TYPE) || parameter.getType().equals(Boolean.class)) {
+                            values.add(setterDefaultsBoolean.get(paramAnnotation.annotationType()).apply(paramAnnotation));
+                        } else {
+                            values.add(setterDefaultsNumeric.get(paramAnnotation.annotationType()).apply(paramAnnotation));
+                        }
                     }
                     for (int i = 0; i < numParams; i++) {
                         final int ii = i;
                         Parameter parameter = method.getParameters()[i];
-                        SetterProcessor process = configSetterHandler.get(Config.class);
+                        Annotation paramAnnotation = getParameterAnnotation(parameter);
+                        SetterProcessor process = configSetterHandler.get(paramAnnotation.annotationType());
                         process.processSetter(
                                 (value) -> {
                                     values.set(ii, setterCaster.get(parameter.getType()).apply(value));
@@ -675,7 +676,7 @@ public class Logger {
                                         e.printStackTrace();
                                     }
                                 },
-                                getDefaultConfig(),
+                                paramAnnotation,
                                 list,
                                 nt,
                                 parameter.getName(),
@@ -947,16 +948,28 @@ public class Logger {
 
     private static Config getDefaultConfig() {
 
-        class defaultHolder {
+        class DefaultHolder {
             @Config
             private int defaultField;
         }
 
         try {
-            return defaultHolder.class.getDeclaredField("defaultField").getAnnotation(Config.class);
+            return DefaultHolder.class.getDeclaredField("defaultField").getAnnotation(Config.class);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private static Annotation getParameterAnnotation(Parameter parameter) {
+        Annotation annotation = getDefaultConfig();
+
+        for (Annotation a : parameter.getAnnotations()) {
+            if (configSetterHandler.containsKey(a.annotationType())) {
+                annotation = a;
+            }
+        }
+
+        return annotation;
     }
 }
