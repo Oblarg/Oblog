@@ -568,12 +568,12 @@ public class Logger {
             entry(Boolean.class, (value) -> value)
     );
 
-    private static final Map<Class, Function<Annotation, Object>> setterDefaultsNumeric = Map.ofEntries(
+    private static final Map<Class<? extends Annotation>, Function<Annotation, Object>> setterDefaultsNumeric = Map.ofEntries(
             entry(Config.class, (params) -> ((Config) params).defaultValueNumeric()),
             entry(Config.NumberSlider.class, (params) -> ((Config.NumberSlider) params).defaultValue())
     );
 
-    private static final Map<Class, Function<Annotation, Object>> setterDefaultsBoolean = Map.ofEntries(
+    private static final Map<Class<? extends Annotation>, Function<Annotation, Object>> setterDefaultsBoolean = Map.ofEntries(
             entry(Config.class, (params) -> ((Config) params).defaultValueBoolean()),
             entry(Config.ToggleButton.class, (params) -> ((Config.ToggleButton) params).defaultValue()),
             entry(Config.ToggleSwitch.class, (params) -> ((Config.ToggleSwitch) params).defaultValue())
@@ -657,9 +657,11 @@ public class Logger {
                         Parameter parameter = method.getParameters()[i];
                         Annotation paramAnnotation = getParameterAnnotation(parameter);
                         if (parameter.getType().equals(Boolean.TYPE) || parameter.getType().equals(Boolean.class)) {
-                            values.add(setterDefaultsBoolean.get(paramAnnotation.annotationType()).apply(paramAnnotation));
+                            values.add(setterCaster.get(parameter.getType())
+                                    .apply(setterDefaultsBoolean.get(paramAnnotation.annotationType()).apply(paramAnnotation)));
                         } else {
-                            values.add(setterDefaultsNumeric.get(paramAnnotation.annotationType()).apply(paramAnnotation));
+                            values.add(setterCaster.get(parameter.getType())
+                                    .apply(setterDefaultsNumeric.get(paramAnnotation.annotationType()).apply(paramAnnotation)));
                         }
                     }
                     for (int i = 0; i < numParams; i++) {
