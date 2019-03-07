@@ -4,7 +4,7 @@
 
 #To use this script, ensure that R is installed on your machine and has been added to the PATH.
 #Then, move this script and the associated .bat file into the directory of the shuffleboard recordings.
-#Finally, run the .bat file.  If nothing happens, run it as an administrator (Windows sucks).
+#Finally, run the .bat (or .sh) file.  If nothing happens, run it as an administrator (Windows sucks).
 
 #Warning: This script will fill *all* .csv files in the directory.  Be sure there are no other
 #.csv files located in the directory that you do not want modified.
