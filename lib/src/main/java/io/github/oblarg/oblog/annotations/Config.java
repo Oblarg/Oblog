@@ -59,6 +59,24 @@ public @interface Config {
      */
     int height() default -1;
 
+    /**
+     * @return The type of layout to use if the annotation target is a multi-parameter setter.  Must be either
+     * "listLayout" or "gridLayout."
+     */
+    String multiArgLayoutType() default "listLayout";
+
+    /**
+     * @return The number of grid columns if the annotation target is a multi-parameter setter and the layout type is
+     * set to grid.
+     */
+    int numGridColumns() default 3;
+
+    /**
+     * @return The number of grid rows if the annotation target is a multi-parameter setter and the layout type is
+     * set to grid.
+     */
+    int numGridRows() default 3;
+
 
     /**
      * Displays a setter with a controllable slider.

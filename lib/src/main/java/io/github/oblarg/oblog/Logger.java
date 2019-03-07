@@ -648,9 +648,13 @@ public class Logger {
                 if (annotation != null) {
                     ShuffleboardContainerWrapper list = bin.getLayout(
                             annotation.name().equals("NO_NAME") ? method.getName() : (annotation).name(),
-                            BuiltInLayouts.kList)
+                            annotation.multiArgLayoutType().equals("listLayout") ? BuiltInLayouts.kList : BuiltInLayouts.kGrid)
                             .withPosition(annotation.columnIndex(), annotation.rowIndex())
-                            .withSize(annotation.width(), annotation.height());
+                            .withSize(annotation.width(), annotation.height())
+                            .withProperties(Map.ofEntries(
+                                    entry("numberOfColumns", annotation.numGridColumns()),
+                                    entry("numberOfRows", annotation.numGridRows())
+                            ));
                     int numParams = method.getParameterCount();
                     List<Object> values = new ArrayList<>(numParams);
                     for (int i = 0; i < numParams; i++) {
