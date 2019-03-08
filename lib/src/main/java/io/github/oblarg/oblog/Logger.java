@@ -568,15 +568,21 @@ public class Logger {
             entry(Boolean.class, (value) -> value)
     );
 
-    private static final Map<Class<? extends Annotation>, Function<Annotation, Object>> setterDefaultsNumeric = Map.ofEntries(
-            entry(Config.class, (params) -> ((Config) params).defaultValueNumeric()),
-            entry(Config.NumberSlider.class, (params) -> ((Config.NumberSlider) params).defaultValue())
-    );
-
-    private static final Map<Class<? extends Annotation>, Function<Annotation, Object>> setterDefaultsBoolean = Map.ofEntries(
-            entry(Config.class, (params) -> ((Config) params).defaultValueBoolean()),
-            entry(Config.ToggleButton.class, (params) -> ((Config.ToggleButton) params).defaultValue()),
-            entry(Config.ToggleSwitch.class, (params) -> ((Config.ToggleSwitch) params).defaultValue())
+    private static final Map<Class, Object> setterDefaults = Map.ofEntries(
+            entry(Integer.TYPE, 0),
+            entry(Integer.class, 0),
+            entry(Double.TYPE, 0.),
+            entry(Double.class, 0.),
+            entry(Float.TYPE, 0.f),
+            entry(Float.class, 0.f),
+            entry(Long.TYPE, 0L),
+            entry(Long.class, 0L),
+            entry(Short.TYPE, (short) 0),
+            entry(Short.class, (short) 0),
+            entry(Byte.TYPE, (byte) 0),
+            entry(Byte.class, (byte) 0),
+            entry(Boolean.TYPE, false),
+            entry(Boolean.class, false)
     );
 
     private static void configFieldsAndMethods(Object loggable,
@@ -659,14 +665,8 @@ public class Logger {
                     List<Object> values = new ArrayList<>(numParams);
                     for (int i = 0; i < numParams; i++) {
                         Parameter parameter = method.getParameters()[i];
-                        Annotation paramAnnotation = getParameterAnnotation(parameter);
-                        if (parameter.getType().equals(Boolean.TYPE) || parameter.getType().equals(Boolean.class)) {
-                            values.add(setterCaster.get(parameter.getType())
-                                    .apply(setterDefaultsBoolean.get(paramAnnotation.annotationType()).apply(paramAnnotation)));
-                        } else {
-                            values.add(setterCaster.get(parameter.getType())
-                                    .apply(setterDefaultsNumeric.get(paramAnnotation.annotationType()).apply(paramAnnotation)));
-                        }
+                        values.add(setterCaster.get(parameter.getType())
+                                .apply(setterDefaults.get(parameter.getType())));
                     }
                     for (int i = 0; i < numParams; i++) {
                         final int ii = i;
