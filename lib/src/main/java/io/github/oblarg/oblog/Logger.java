@@ -138,7 +138,7 @@ public class Logger {
                 new HashSet<>(Collections.singletonList(toLog)));
 
         for (Field field : rootContainer.getClass().getDeclaredFields()) {
-            if (isLoggableClassOrArrayOrCollection(field) && isIncluded(field, logType)) {
+            if (isLoggableClassOrArrayOrCollection(field, rootContainer) && isIncluded(field, logType)) {
                 field.setAccessible(true);
                 if (field.getType().isArray()) {
                     Loggable[] toLogs;
@@ -843,30 +843,34 @@ public class Logger {
 
         for (Field field : loggableClass.getDeclaredFields()) {
 
-            if (isLoggableClassOrArrayOrCollection(field) && isIncluded(field, logType)) {
+            if (isLoggableClassOrArrayOrCollection(field, loggable) && isIncluded(field, logType)) {
                 field.setAccessible(true);
                 if (!loggedFields.contains(field) && !isAncestor(field, loggable, ancestors)) {
                     loggedFields.add(field);
                     if (field.getType().isArray()) {
-                        Loggable[] toLogs;
+                        List<Loggable> toLogs = new ArrayList<>();
                         try {
-                            toLogs = (Loggable[]) field.get(loggable);
+                            for (Object obj : (Object[]) field.get(loggable)){
+                                if (obj instanceof Loggable) {
+                                    toLogs.add((Loggable) obj);
+                                }
+                            }
                         } catch (IllegalAccessException e) {
                             e.printStackTrace();
-                            toLogs = new Loggable[0];
                         }
                         for (Loggable toLog : toLogs) {
-                            {
                                 log.accept(toLog);
-                            }
                         }
                     } else if (Collection.class.isAssignableFrom(field.getType())) {
-                        Collection<Loggable> toLogs;
+                        List<Loggable> toLogs = new ArrayList<>();
                         try {
-                            toLogs = (Collection) field.get(loggable);
+                            for (Object obj : (Collection) field.get(loggable)){
+                                if (obj instanceof Loggable) {
+                                    toLogs.add((Loggable) obj);
+                                }
+                            }
                         } catch (IllegalAccessException e) {
                             e.printStackTrace();
-                            toLogs = new HashSet<>();
                         }
                         for (Loggable toLog : toLogs) {
                             log.accept(toLog);
@@ -919,12 +923,17 @@ public class Logger {
         }
     }
 
-    private static boolean isLoggableClassOrArrayOrCollection(Field field) {
-        return Loggable.class.isAssignableFrom(field.getType()) ||
-                (field.getType().isArray() && Loggable.class.isAssignableFrom(field.getType().getComponentType())) ||
-                (Collection.class.isAssignableFrom(field.getType()) &&
-                        Loggable.class.isAssignableFrom(
-                                (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]));
+    private static boolean isLoggableClassOrArrayOrCollection(Field field, Object container) {
+        field.setAccessible(true);
+        Object object = null;
+        try {
+            object = field.get(container);
+        } catch (IllegalAccessException e){
+            e.printStackTrace();
+        }
+        return Loggable.class.isAssignableFrom(object.getClass()) ||
+                object.getClass().isArray() ||
+                Collection.class.isAssignableFrom(object.getClass());
     }
 
     private static boolean isIncluded(Field field, LogType logType) {
