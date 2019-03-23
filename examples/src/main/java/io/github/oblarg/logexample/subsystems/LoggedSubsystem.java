@@ -26,9 +26,6 @@ public class LoggedSubsystem extends Subsystem implements Loggable {
     @Log(columnIndex = 0, rowIndex = 2)
     private double exampleValue = 1;
 
-    @Log
-    private double[] exampleArray = {3.5, 4.7};
-
     //Example of logged getter.
     @Log(columnIndex = 2, rowIndex = 0)
     private double exampleGetter() {

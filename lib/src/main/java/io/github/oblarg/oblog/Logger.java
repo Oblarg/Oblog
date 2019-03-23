@@ -710,58 +710,24 @@ public class Logger {
             field.setAccessible(true);
             registeredFields.add(field);
 
-            if (field.getType().equals(Array.class)) {
-                Log annotation = field.getAnnotation(Log.class);
-                if (annotation == null) {
-                    continue;
-                }
-                ShuffleboardContainerWrapper list = bin.getLayout(
-                        annotation.name().equals("NO_NAME") ? field.getName() : annotation.name(),
-                        BuiltInLayouts.kList)
-                        .withPosition(annotation.columnIndex(), annotation.rowIndex())
-                        .withSize(annotation.width(), annotation.height());
-                Object[] objs;
-                try {
-                    objs = (Object[]) field.get(loggable);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                    objs = null;
-                }
-                for (int i = 0; i < objs.length; i++) {
-                    int ii = i;
-                    logHandler.get(Log.class).processField(
+
+            for (Annotation annotation : field.getAnnotations()) {
+                FieldProcessor process = logHandler.get(annotation.annotationType());
+                if (process != null) {
+                    process.processField(
                             () -> {
                                 try {
-                                    return ((Object[]) field.get(loggable))[ii];
+                                    return field.get(loggable);
                                 } catch (IllegalAccessException e) {
-                                    e.printStackTrace();
                                     return null;
                                 }
                             },
-                            getDefaultLog(),
-                            list,
-                            Integer.toString(ii)
-                    );
-                }
-            } else {
-
-                for (Annotation annotation : field.getAnnotations()) {
-                    FieldProcessor process = logHandler.get(annotation.annotationType());
-                    if (process != null) {
-                        process.processField(
-                                () -> {
-                                    try {
-                                        return field.get(loggable);
-                                    } catch (IllegalAccessException e) {
-                                        return null;
-                                    }
-                                },
-                                annotation,
-                                bin,
-                                field.getName());
-                    }
+                            annotation,
+                            bin,
+                            field.getName());
                 }
             }
+
         }
 
         for (Method method : methods) {
@@ -773,51 +739,24 @@ public class Logger {
             method.setAccessible(true);
             registeredMethods.add(method);
 
-            if (method.getReturnType().equals(Array.class)) {
-                Log annotation = method.getAnnotation(Log.class);
-                if (annotation == null) {
-                    continue;
-                }
-                ShuffleboardContainerWrapper list = bin.getLayout(
-                        annotation.name().equals("NO_NAME") ? method.getName() : annotation.name(),
-                        BuiltInLayouts.kList)
-                        .withPosition(annotation.columnIndex(), annotation.rowIndex())
-                        .withSize(annotation.width(), annotation.height());
-                for (int i = 0; i < method.getParameterTypes().length; i++) {
-                    int ii = i;
-                    logHandler.get(Log.class).processField(
+            for (Annotation annotation : method.getAnnotations()) {
+
+                FieldProcessor process = logHandler.get(annotation.annotationType());
+                if (process != null) {
+                    process.processField(
                             () -> {
                                 try {
-                                    return ((Object[]) method.invoke(loggable))[ii];
+                                    return method.invoke(loggable);
                                 } catch (IllegalAccessException | InvocationTargetException e) {
                                     e.printStackTrace();
                                     return null;
                                 }
                             },
-                            getDefaultLog(),
-                            list,
-                            Integer.toString(ii)
-                    );
+                            annotation,
+                            bin,
+                            method.getName());
                 }
-            } else {
-                for (Annotation annotation : method.getAnnotations()) {
 
-                    FieldProcessor process = logHandler.get(annotation.annotationType());
-                    if (process != null) {
-                        process.processField(
-                                () -> {
-                                    try {
-                                        return method.invoke(loggable);
-                                    } catch (IllegalAccessException | InvocationTargetException e) {
-                                        e.printStackTrace();
-                                        return null;
-                                    }
-                                },
-                                annotation,
-                                bin,
-                                method.getName());
-                    }
-                }
             }
         }
 
@@ -925,7 +864,7 @@ public class Logger {
             if (field.getType().isArray()) {
                 List<Loggable> toLogs = new ArrayList<>();
                 try {
-                    if (!(field.get(loggable).getClass().getComponentType() instanceof Object)) {
+                    if (!Object.class.isAssignableFrom(field.get(loggable).getClass().getComponentType())) {
                         continue;
                     }
                     for (Object obj : (Object[]) field.get(loggable)) {
