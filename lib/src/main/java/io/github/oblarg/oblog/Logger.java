@@ -653,7 +653,7 @@ public class Logger {
                 Config annotation = method.getAnnotation(Config.class);
                 if (annotation != null) {
                     ShuffleboardContainerWrapper list = bin.getLayout(
-                            annotation.name().equals("NO_NAME") ? method.getName() : (annotation).name(),
+                            annotation.name().equals("NO_NAME") ? method.getName() : annotation.name(),
                             annotation.multiArgLayoutType().equals("listLayout") ? BuiltInLayouts.kList : BuiltInLayouts.kGrid)
                             .withPosition(annotation.columnIndex(), annotation.rowIndex())
                             .withSize(annotation.width(), annotation.height())
@@ -704,51 +704,59 @@ public class Logger {
         Set<Method> methods = Set.of(loggableClass.getDeclaredMethods());
 
         for (Field field : fields) {
+            if (registeredFields.contains(field)) {
+                continue;
+            }
             field.setAccessible(true);
-            if (!registeredFields.contains(field)) {
-                registeredFields.add(field);
-                for (Annotation annotation : field.getAnnotations()) {
-                    FieldProcessor process = logHandler.get(annotation.annotationType());
-                    if (process != null) {
-                        process.processField(
-                                () -> {
-                                    try {
-                                        return field.get(loggable);
-                                    } catch (IllegalAccessException e) {
-                                        return null;
-                                    }
-                                },
-                                annotation,
-                                bin,
-                                field.getName());
-                    }
+            registeredFields.add(field);
+
+
+            for (Annotation annotation : field.getAnnotations()) {
+                FieldProcessor process = logHandler.get(annotation.annotationType());
+                if (process != null) {
+                    process.processField(
+                            () -> {
+                                try {
+                                    return field.get(loggable);
+                                } catch (IllegalAccessException e) {
+                                    return null;
+                                }
+                            },
+                            annotation,
+                            bin,
+                            field.getName());
                 }
             }
+
         }
 
         for (Method method : methods) {
-            if (!method.getReturnType().equals(Void.TYPE)
-                    && method.getParameterTypes().length == 0
-                    && !registeredMethods.contains(method)) {
-                method.setAccessible(true);
-                registeredMethods.add(method);
-                for (Annotation annotation : method.getAnnotations()) {
-                    FieldProcessor process = logHandler.get(annotation.annotationType());
-                    if (process != null) {
-                        process.processField(
-                                () -> {
-                                    try {
-                                        return method.invoke(loggable);
-                                    } catch (IllegalAccessException | InvocationTargetException e) {
-                                        e.printStackTrace();
-                                        return null;
-                                    }
-                                },
-                                annotation,
-                                bin,
-                                method.getName());
-                    }
+
+            if (method.getReturnType().equals(Void.TYPE) || registeredMethods.contains(method)) {
+                continue;
+            }
+
+            method.setAccessible(true);
+            registeredMethods.add(method);
+
+            for (Annotation annotation : method.getAnnotations()) {
+
+                FieldProcessor process = logHandler.get(annotation.annotationType());
+                if (process != null) {
+                    process.processField(
+                            () -> {
+                                try {
+                                    return method.invoke(loggable);
+                                } catch (IllegalAccessException | InvocationTargetException e) {
+                                    e.printStackTrace();
+                                    return null;
+                                }
+                            },
+                            annotation,
+                            bin,
+                            method.getName());
                 }
+
             }
         }
 
@@ -843,49 +851,56 @@ public class Logger {
 
         for (Field field : loggableClass.getDeclaredFields()) {
 
-            if (isLoggableClassOrArrayOrCollection(field, loggable) && isIncluded(field, logType)) {
-                field.setAccessible(true);
-                if (!loggedFields.contains(field) && !isAncestor(field, loggable, ancestors)) {
-                    loggedFields.add(field);
-                    if (field.getType().isArray()) {
-                        List<Loggable> toLogs = new ArrayList<>();
-                        try {
-                            for (Object obj : (Object[]) field.get(loggable)){
-                                if (obj instanceof Loggable) {
-                                    toLogs.add((Loggable) obj);
-                                }
-                            }
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
-                        for (Loggable toLog : toLogs) {
-                                log.accept(toLog);
-                        }
-                    } else if (Collection.class.isAssignableFrom(field.getType())) {
-                        List<Loggable> toLogs = new ArrayList<>();
-                        try {
-                            for (Object obj : (Collection) field.get(loggable)){
-                                if (obj instanceof Loggable) {
-                                    toLogs.add((Loggable) obj);
-                                }
-                            }
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
-                        for (Loggable toLog : toLogs) {
-                            log.accept(toLog);
-                        }
-                    } else {
-                        Loggable toLog;
-                        try {
-                            toLog = (Loggable) field.get(loggable);
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                            toLog = null;
-                        }
-                        log.accept(toLog);
+            if (!isLoggableClassOrArrayOrCollection(field, loggable)
+                    || !isIncluded(field, logType)
+                    || loggedFields.contains(field)
+                    || isAncestor(field, loggable, ancestors)) {
+                continue;
+            }
+
+            field.setAccessible(true);
+            loggedFields.add(field);
+
+            if (field.getType().isArray()) {
+                List<Loggable> toLogs = new ArrayList<>();
+                try {
+                    if (!Object.class.isAssignableFrom(field.get(loggable).getClass().getComponentType())) {
+                        continue;
                     }
+                    for (Object obj : (Object[]) field.get(loggable)) {
+                        if (obj instanceof Loggable) {
+                            toLogs.add((Loggable) obj);
+                        }
+                    }
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
                 }
+                for (Loggable toLog : toLogs) {
+                    log.accept(toLog);
+                }
+            } else if (Collection.class.isAssignableFrom(field.getType())) {
+                List<Loggable> toLogs = new ArrayList<>();
+                try {
+                    for (Object obj : (Collection) field.get(loggable)) {
+                        if (obj instanceof Loggable) {
+                            toLogs.add((Loggable) obj);
+                        }
+                    }
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                for (Loggable toLog : toLogs) {
+                    log.accept(toLog);
+                }
+            } else {
+                Loggable toLog;
+                try {
+                    toLog = (Loggable) field.get(loggable);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                    toLog = null;
+                }
+                log.accept(toLog);
             }
         }
 
@@ -928,7 +943,7 @@ public class Logger {
         Object object = null;
         try {
             object = field.get(container);
-        } catch (IllegalAccessException e){
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
         return Loggable.class.isAssignableFrom(object.getClass()) ||
@@ -974,6 +989,22 @@ public class Logger {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private static Log getDefaultLog() {
+
+        class DefaultHolder {
+            @Log
+            private int defaultField;
+        }
+
+        try {
+            return DefaultHolder.class.getDeclaredField("defaultField").getAnnotation(Log.class);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+            return null;
+        }
+
     }
 
     private static Annotation getParameterAnnotation(Parameter parameter) {
