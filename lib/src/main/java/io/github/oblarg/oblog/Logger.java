@@ -912,49 +912,56 @@ public class Logger {
 
         for (Field field : loggableClass.getDeclaredFields()) {
 
-            if (isLoggableClassOrArrayOrCollection(field, loggable) && isIncluded(field, logType)) {
-                field.setAccessible(true);
-                if (!loggedFields.contains(field) && !isAncestor(field, loggable, ancestors)) {
-                    loggedFields.add(field);
-                    if (field.getType().isArray()) {
-                        List<Loggable> toLogs = new ArrayList<>();
-                        try {
-                            for (Object obj : (Object[]) field.get(loggable)) {
-                                if (obj instanceof Loggable) {
-                                    toLogs.add((Loggable) obj);
-                                }
-                            }
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
-                        for (Loggable toLog : toLogs) {
-                            log.accept(toLog);
-                        }
-                    } else if (Collection.class.isAssignableFrom(field.getType())) {
-                        List<Loggable> toLogs = new ArrayList<>();
-                        try {
-                            for (Object obj : (Collection) field.get(loggable)) {
-                                if (obj instanceof Loggable) {
-                                    toLogs.add((Loggable) obj);
-                                }
-                            }
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
-                        for (Loggable toLog : toLogs) {
-                            log.accept(toLog);
-                        }
-                    } else {
-                        Loggable toLog;
-                        try {
-                            toLog = (Loggable) field.get(loggable);
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                            toLog = null;
-                        }
-                        log.accept(toLog);
+            if (!isLoggableClassOrArrayOrCollection(field, loggable)
+                    || !isIncluded(field, logType)
+                    || loggedFields.contains(field)
+                    || isAncestor(field, loggable, ancestors)) {
+                continue;
+            }
+
+            field.setAccessible(true);
+            loggedFields.add(field);
+
+            if (field.getType().isArray()) {
+                List<Loggable> toLogs = new ArrayList<>();
+                try {
+                    if (!(field.get(loggable).getClass().getComponentType() instanceof Object)) {
+                        continue;
                     }
+                    for (Object obj : (Object[]) field.get(loggable)) {
+                        if (obj instanceof Loggable) {
+                            toLogs.add((Loggable) obj);
+                        }
+                    }
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
                 }
+                for (Loggable toLog : toLogs) {
+                    log.accept(toLog);
+                }
+            } else if (Collection.class.isAssignableFrom(field.getType())) {
+                List<Loggable> toLogs = new ArrayList<>();
+                try {
+                    for (Object obj : (Collection) field.get(loggable)) {
+                        if (obj instanceof Loggable) {
+                            toLogs.add((Loggable) obj);
+                        }
+                    }
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                for (Loggable toLog : toLogs) {
+                    log.accept(toLog);
+                }
+            } else {
+                Loggable toLog;
+                try {
+                    toLog = (Loggable) field.get(loggable);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                    toLog = null;
+                }
+                log.accept(toLog);
             }
         }
 
