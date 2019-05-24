@@ -206,26 +206,26 @@ public class Logger {
 
   private static SetterRunner setterRunner = new SetterRunner();
 
+  /**
+   * Functional interface for lambdas that process class fields.
+   */
   @FunctionalInterface
   private interface FieldProcessor {
     void processField(Supplier<Object> supplier, Annotation params, ShuffleboardContainerWrapper bin, String name);
   }
 
-  @FunctionalInterface
-  private interface BooleanSetterProcessor {
-    void processBooleanSetter(Consumer<Boolean> setter, Annotation params, ShuffleboardContainerWrapper bin, NetworkTableInstance nt, String name);
-  }
-
-  @FunctionalInterface
-  private interface NumericSetterProcessor {
-    void processNumericSetter(Consumer<Number> setter, Annotation params, ShuffleboardContainerWrapper bin, NetworkTableInstance nt, String name);
-  }
-
+  /**
+   * Functional interface for lambdas that process setters.
+   */
   @FunctionalInterface
   private interface SetterProcessor {
     void processSetter(Consumer<Object> setter, Annotation params, ShuffleboardContainerWrapper bin, NetworkTableInstance nt, String name, boolean isBoolean);
   }
 
+  /**
+   * Maps config annotations to the appropriate methods for processing their annotated setters.  Acts essentially
+   * as a switch statement on the annotation type.
+   */
   private static final Map<Class<? extends Annotation>, SetterProcessor> configSetterHandler = Map.ofEntries(
       entry(Config.class, (setter, rawParams, bin, nt, name, isBoolean) -> {
         if (isBoolean) {
@@ -310,7 +310,10 @@ public class Logger {
       })
   );
 
-
+  /**
+   * Maps config annotations to the appropriate methods for processing their annotated fields.  Acts essentially as a
+   * switch statement on the annotation type.
+   */
   private static final Map<Class<? extends Annotation>, FieldProcessor> configFieldHandler = Map.ofEntries(
       entry(Config.class,
           (supplier, rawParams, bin, name) -> {
@@ -363,6 +366,10 @@ public class Logger {
           })
   );
 
+  /**
+   * Maps log annotations to the appropriate method for processing their annotated fields.  Acts essentially as a switch
+   * statement on the annotation type,
+   */
   private static final Map<Class<? extends Annotation>, FieldProcessor> logHandler = Map.ofEntries(
       entry(Log.class,
           (supplier, rawParams, bin, name) -> {
@@ -638,6 +645,9 @@ public class Logger {
           })
   );
 
+  /**
+   * Maps various classes to the correct method for casting to that class.
+   */
   private static final Map<Class, Function<Object, Object>> setterCaster = Map.ofEntries(
       entry(Integer.TYPE, (value) -> ((Number) value).intValue()),
       entry(Integer.class, (value) -> ((Number) value).intValue()),
@@ -655,6 +665,9 @@ public class Logger {
       entry(Boolean.class, (value) -> value)
   );
 
+  /**
+   * Maps various classes to their default Shuffleboard values.
+   */
   private static final Map<Class, Object> setterDefaults = Map.ofEntries(
       entry(Integer.TYPE, 0),
       entry(Integer.class, 0),
@@ -672,6 +685,16 @@ public class Logger {
       entry(Boolean.class, false)
   );
 
+  /**
+   * Performs data binding for declared fields and methods of the given class based on the present config annotations.
+   *
+   * @param loggable          The object to configure
+   * @param loggableClass     The class to configure - necessary because the algorithm recurses on subclasses
+   * @param bin               The shuffleboard container to place widgets in
+   * @param nt                The networktable instance
+   * @param registeredFields  The list of already-processed fields, to avoid double-processing during recursion
+   * @param registeredMethods The list of already-processed methods, to avoid double-processing during recursion
+   */
   private static void configFieldsAndMethods(Object loggable,
                                              Class loggableClass,
                                              ShuffleboardContainerWrapper bin,
@@ -682,15 +705,19 @@ public class Logger {
     Set<Field> fields = Set.of(loggableClass.getDeclaredFields());
     Set<Method> methods = Set.of(loggableClass.getDeclaredMethods());
 
+    // Process fields; configurable fields are all Sendables
     for (Field field : fields) {
       field.setAccessible(true);
-      //System.out.println(loggableClass + " " + field.getName() + " " + registeredFields.contains(field));
       if (!registeredFields.contains(field)) {
         registeredFields.add(field);
+        // Look for all config annotation types
         for (Class type : configFieldHandler.keySet()) {
+          // Get all annotations of each type
           for (Annotation annotation : field.getAnnotationsByType(type)) {
+            // Get appropriate processing method for the annotation type
             FieldProcessor process = configFieldHandler.get(annotation.annotationType());
             if (process != null) {
+              // Process the field
               process.processField(
                   () -> {
                     try {
@@ -708,17 +735,23 @@ public class Logger {
       }
     }
 
+    // Process methods...
     for (Method method : methods) {
+      // First handle setters that take single arguments of a valid type
       if (method.getReturnType().equals(Void.TYPE) &&
           method.getParameterTypes().length == 1 &&
           setterCaster.containsKey(method.getParameterTypes()[0]) &&
           !registeredMethods.contains(method)) {
         method.setAccessible(true);
         registeredMethods.add(method);
+        // Look for all config annotation types
         for (Class type : configSetterHandler.keySet()) {
+          // Get all annotations of each type
           for (Annotation annotation : method.getAnnotationsByType(type)) {
+            // Get correct processing method for the given type
             SetterProcessor process = configSetterHandler.get(annotation.annotationType());
             if (process != null) {
+              // Process the setter
               process.processSetter(
                   (value) -> {
                     try {
@@ -735,14 +768,17 @@ public class Logger {
             }
           }
         }
+        // Now handle multi-arg setters
       } else if (method.getReturnType().equals(Void.TYPE) &&
           method.getParameterTypes().length > 1 &&
           containsKeys(setterCaster, List.of((Object[]) method.getParameterTypes())) &&
           !registeredMethods.contains(method)) {
         method.setAccessible(true);
         registeredMethods.add(method);
+        // Multi-arg setters only use the default Config annotation
         for (Config annotation : method.getAnnotationsByType(Config.class)) {
           if (annotation != null) {
+            // Make a layout since we'll have one widget for each arg
             ShuffleboardContainerWrapper list = bin.getLayout(
                 annotation.name().equals("NO_NAME") ? method.getName() : annotation.name(),
                 annotation.multiArgLayoutType().equals("listLayout") ? BuiltInLayouts.kList : BuiltInLayouts.kGrid)
@@ -753,17 +789,23 @@ public class Logger {
                     entry("numberOfRows", annotation.numGridRows())
                 ));
             int numParams = method.getParameterCount();
+            // Create persistent list of params that can be shared by all listeners, since the method requires
+            // all arguments every time it is called
             List<Object> values = new ArrayList<>(numParams);
+            // Populate with default values for each type
             for (int i = 0; i < numParams; i++) {
               Parameter parameter = method.getParameters()[i];
               values.add(setterCaster.get(parameter.getType())
                   .apply(setterDefaults.get(parameter.getType())));
             }
+            // Set up the listener method for each arg
             for (int i = 0; i < numParams; i++) {
               final int ii = i;
               Parameter parameter = method.getParameters()[i];
+              // Get annotations on each arg; returns a default annotation if not present
               Annotation paramAnnotation = getParameterAnnotation(parameter);
               SetterProcessor process = configSetterHandler.get(paramAnnotation.annotationType());
+              // Process the setter
               process.processSetter(
                   (value) -> {
                     values.set(ii, setterCaster.get(parameter.getType()).apply(value));
@@ -785,7 +827,16 @@ public class Logger {
     }
   }
 
-
+  /**
+   * Performs logging for declared fields and methods of the given class based on the present log annotations.
+   *
+   * @param loggable          The object to configure
+   * @param loggableClass     The class to configure - necessary because the algorithm recurses on subclasses
+   * @param bin               The shuffleboard container to place widgets in
+   * @param nt                The networktable instance
+   * @param registeredFields  The list of already-processed fields, to avoid double-processing during recursion
+   * @param registeredMethods The list of already-processed methods, to avoid double-processing during recursion
+   */
   private static void logFieldsAndMethods(Object loggable,
                                           Class loggableClass,
                                           ShuffleboardContainerWrapper bin,
@@ -795,6 +846,7 @@ public class Logger {
     Set<Field> fields = Set.of(loggableClass.getDeclaredFields());
     Set<Method> methods = Set.of(loggableClass.getDeclaredMethods());
 
+    // Process fields...
     for (Field field : fields) {
       if (registeredFields.contains(field)) {
         continue;
@@ -802,10 +854,14 @@ public class Logger {
       field.setAccessible(true);
       registeredFields.add(field);
 
+      // Look for all log annotation types
       for (Class type : logHandler.keySet()) {
+        // Get all annotations of each type
         for (Annotation annotation : field.getAnnotationsByType(type)) {
+          // Get appropriate processing method for the given annotation type
           FieldProcessor process = logHandler.get(annotation.annotationType());
           if (process != null) {
+            // Process the field with the defined getter
             process.processField(
                 () -> {
                   try {
@@ -820,22 +876,26 @@ public class Logger {
           }
         }
       }
-
     }
 
+    // Process methods...
     for (Method method : methods) {
 
+      // Only look at getters
       if (method.getReturnType().equals(Void.TYPE) || registeredMethods.contains(method)) {
         continue;
       }
 
       method.setAccessible(true);
       registeredMethods.add(method);
+      // Look for all log annotation types
       for (Class type : logHandler.keySet()) {
+        // Get all annotations of each type
         for (Annotation annotation : method.getAnnotationsByType(type)) {
-
+          // Get appropriate processor for the given annotation type
           FieldProcessor process = logHandler.get(annotation.annotationType());
           if (process != null) {
+            // Process the getter (uses "processField" because the requirements are the same)
             process.processField(
                 () -> {
                   try {
@@ -849,13 +909,27 @@ public class Logger {
                 bin,
                 method.getName());
           }
-
         }
       }
     }
-
   }
 
+  /**
+   * Configures logging and config for the given Loggable class.  Recurses first on all loggable children, and then on
+   * superclass (if superclass is loggable).
+   *
+   * @param logType           The type of logging to perform (log or config)
+   * @param separate          Whether log and config should be given separate tabs
+   * @param loggable          The object to configure logging on
+   * @param loggableClass     The class of the object being configured (necessary due to superclass recursion)
+   * @param loggedFields      A list of all previously-handled Loggable fields, to avoid double-counting during recursion
+   * @param registeredFields  A list of all previously-handled annotated fields, to avoid double-counting during recursion
+   * @param registeredMethods A list of all previously-handled annotated methods, to avoid double-counting during recursion
+   * @param shuffleboard      The shuffleboard instance (wrapped to support NT-only mode)
+   * @param nt                The networktable instance
+   * @param parentContainer   The container of this loggable's parent in the graph of loggable objects
+   * @param ancestors         A list of ancestors, to detect cyclic references of loggables
+   */
   private static void logLoggable(LogType logType,
                                   boolean separate,
                                   Loggable loggable,
@@ -870,15 +944,18 @@ public class Logger {
 
     ancestors.add(loggable);
 
+    // Set up the container depending on the logging type and log the fields and methods
     ShuffleboardContainerWrapper bin;
-
     switch (logType) {
       case LOG:
+        // Tab if there is no parent container (i.e. the loggable is in the rootcontainer)
         if (parentContainer == null) {
           bin = shuffleboard.getTab(separate ? loggable.configureLogName() + ": Log" : loggable.configureLogName());
         } else {
+          // Place stuff directly in parent container if layout is skipped
           if (loggable.skipLayout()) {
             bin = parentContainer;
+            // Else define a layout in the parent container
           } else {
             bin = parentContainer.getLayout(loggable.configureLogName(), loggable.configureLayoutType())
                 .withSize(loggable.configureLayoutSize()[0],
@@ -889,6 +966,7 @@ public class Logger {
           }
         }
 
+        // Log fields and methods in the correct container
         logFieldsAndMethods(loggable,
             loggableClass,
             bin,
@@ -896,11 +974,14 @@ public class Logger {
             registeredMethods);
         break;
       case CONFIG:
+        // Tab if there is no parent container (i.e. the loggable is in the rootcontainer)
         if (parentContainer == null) {
           bin = shuffleboard.getTab(separate ? loggable.configureLogName() + ": Config" : loggable.configureLogName());
         } else {
+          // Place stuff directly in parent container if layout is skipped
           if (loggable.skipLayout()) {
             bin = parentContainer;
+            // Else define a layout in the parent container
           } else {
             bin = parentContainer.getLayout(loggable.configureLogName(), loggable.configureLayoutType())
                 .withSize(loggable.configureLayoutSize()[0],
@@ -911,6 +992,7 @@ public class Logger {
           }
         }
 
+        // Config fields and methods in the correct container
         configFieldsAndMethods(loggable,
             loggableClass,
             bin,
@@ -923,12 +1005,12 @@ public class Logger {
         break;
     }
 
-    //only call on the actual class, to avoid multiple calls if overridden
-
+    // Call custom logging method if not recursing on a superclass
     if (loggableClass == loggable.getClass()) {
       loggable.addCustomLogging(bin);
     }
 
+    // Set up call for recursion on Loggable fields with parameters from current Loggable
     Consumer<Loggable> log = (toLog) -> logLoggable(logType,
         separate,
         toLog,
@@ -941,10 +1023,9 @@ public class Logger {
         bin,
         new HashSet<>(ancestors));
 
-    //recurse on Loggable fields
-
+    // Recurse on Loggable fields
     for (Field field : loggableClass.getDeclaredFields()) {
-
+      // Only proceed if loggable, included, not already logged, and does not cause a cycle
       if (!isLoggableClassOrArrayOrCollection(field, loggable)
           || !isIncluded(field, logType)
           || loggedFields.contains(field)
@@ -955,12 +1036,15 @@ public class Logger {
       field.setAccessible(true);
       loggedFields.add(field);
 
+      // Handle arrays elementwise...
       if (field.getType().isArray()) {
         List<Loggable> toLogs = new ArrayList<>();
         try {
+          // Skip if primitive array
           if (!Object.class.isAssignableFrom(field.get(loggable).getClass().getComponentType())) {
             continue;
           }
+          // Include all elements whose runtime class is Loggable
           for (Object obj : (Object[]) field.get(loggable)) {
             if (obj instanceof Loggable) {
               toLogs.add((Loggable) obj);
@@ -969,12 +1053,15 @@ public class Logger {
         } catch (IllegalAccessException e) {
           e.printStackTrace();
         }
+        // Recurse on all valid elements
         for (Loggable toLog : toLogs) {
           log.accept(toLog);
         }
+        // Handle collections similarly
       } else if (Collection.class.isAssignableFrom(field.getType())) {
         List<Loggable> toLogs = new ArrayList<>();
         try {
+          // Include all elements whose runtime class is Loggable
           for (Object obj : (Collection) field.get(loggable)) {
             if (obj instanceof Loggable) {
               toLogs.add((Loggable) obj);
@@ -983,10 +1070,12 @@ public class Logger {
         } catch (IllegalAccessException e) {
           e.printStackTrace();
         }
+        // Recurse on all valid elements
         for (Loggable toLog : toLogs) {
           log.accept(toLog);
         }
       } else {
+        // If not array or collection, object itself is loggable
         Loggable toLog;
         try {
           toLog = (Loggable) field.get(loggable);
@@ -994,11 +1083,12 @@ public class Logger {
           e.printStackTrace();
           toLog = null;
         }
+        // Recurse on field
         log.accept(toLog);
       }
     }
 
-    //recurse on superclass
+    // Recurse on superclass
 
     if (Loggable.class.isAssignableFrom(loggableClass.getSuperclass())) {
       logLoggable(
@@ -1016,6 +1106,15 @@ public class Logger {
     }
   }
 
+  /**
+   * Checks if a field is in the given list of ancestors, printing a warning if it is as this means there is a cyclic
+   * reference of loggables.
+   *
+   * @param field     The field to check
+   * @param loggable  The class containing the field
+   * @param ancestors The list of ancestors to check against
+   * @return Whether the field is in the list of ancestors
+   */
   private static boolean isAncestor(Field field, Object loggable, Set<Object> ancestors) {
     try {
       boolean b = ancestors.contains(field.get(loggable));
@@ -1032,11 +1131,19 @@ public class Logger {
     }
   }
 
-  private static boolean isLoggableClassOrArrayOrCollection(Field field, Object container) {
+  /**
+   * Checks if a given field is a Loggable class, or else an array or collection (as these might contain Loggable
+   * elements).  Check is performed on the runtime class.
+   *
+   * @param field    The field to check
+   * @param loggable The class containing the field
+   * @return Whether the field is Loggable, or else an array or collection
+   */
+  private static boolean isLoggableClassOrArrayOrCollection(Field field, Object loggable) {
     field.setAccessible(true);
     Object object = null;
     try {
-      object = field.get(container);
+      object = field.get(loggable);
     } catch (IllegalAccessException e) {
       e.printStackTrace();
     }
@@ -1045,6 +1152,13 @@ public class Logger {
         Collection.class.isAssignableFrom(object.getClass());
   }
 
+  /**
+   * Checks whether the given field is included for the specified logging type
+   *
+   * @param field   The field to check
+   * @param logType The type of logging being performed
+   * @return Whether the field is included
+   */
   private static boolean isIncluded(Field field, LogType logType) {
     boolean included = true;
     switch (logType) {
@@ -1062,6 +1176,13 @@ public class Logger {
     return included;
   }
 
+  /**
+   * Checks whether a map contains all of the given keys.
+   *
+   * @param map  The map to check
+   * @param keys The keys that should be contained
+   * @return Whether the map contains keys
+   */
   private static boolean containsKeys(Map map, List<Object> keys) {
     boolean containsKeys = true;
     for (Object key : keys) {
@@ -1070,6 +1191,11 @@ public class Logger {
     return containsKeys;
   }
 
+  /**
+   * Returns a "defaulted" config annotation, because Java is gross and doesn't include a built-in way to do this.
+   *
+   * @return A "defaulted" instance of the Config annotation
+   */
   private static Config getDefaultConfig() {
 
     class DefaultHolder {
@@ -1085,6 +1211,11 @@ public class Logger {
     }
   }
 
+  /**
+   * Returns a "defaulted" log annotation, because Java is gross and doesn't include a built-in way to do this.
+   *
+   * @return A "defaulted" instance of the Log annotation
+   */
   private static Log getDefaultLog() {
 
     class DefaultHolder {
@@ -1101,6 +1232,12 @@ public class Logger {
 
   }
 
+  /**
+   * Gets a config annotation from a parameter.  Returns a "defaulted" annotation if none is present.
+   *
+   * @param parameter The parameter to get the annotation from
+   * @return The Config annotation; default if none present
+   */
   private static Annotation getParameterAnnotation(Parameter parameter) {
     Annotation annotation = getDefaultConfig();
 
@@ -1113,6 +1250,15 @@ public class Logger {
     return annotation;
   }
 
+  /**
+   * Gets a new supplier from calling the given method name on the output of the provided supplier.  If methodName is
+   * "DEFAULT", the original supplier is provided.
+   *
+   * @param supplier   The original supplier
+   * @param methodName The name of the method to call on the output of the original supplier; "DEFAULT" if no method
+   *                   should be called
+   * @return The updated supplier
+   */
   private static Supplier<Object> getFromMethod(Supplier<Object> supplier, String methodName) {
     if (methodName.equals("DEFAULT")) {
       return supplier;
