@@ -2,14 +2,13 @@ package io.github.oblarg.oblog.annotations;
 
 import io.github.oblarg.oblog.Loggable;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
+import java.util.List;
 
 /**
  * Displays a value as its default widget type on Shuffleboard.  Provides no configuration options.
  */
+@Repeatable(Log.Logs.class)
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Log {
@@ -17,6 +16,14 @@ public @interface Log {
      * @return The name of the value on Shuffleboard; defaults to field or method name.
      */
     String name() default "NO_NAME";
+
+    /**
+     * @return The name of the tab in which to place this widget, if the default inferred tab/layout is not desired.
+     * Users should be careful to avoid namespace collisions if the default tab is not used.  Note that Log and
+     * config annotations can be repeated to place widgets on multiple tabs.  Note also that this feature is NOT
+     * currently supported for NT-only mode!
+     */
+    String tabName() default "DEFAULT";
 
     /**
      * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
@@ -49,6 +56,11 @@ public @interface Log {
      */
     int height() default -1;
 
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD, ElementType.METHOD})
+    @interface Logs {
+        Log[] value();
+    }
 
     /**
      * Displays a number with a view-only bar.
@@ -65,6 +77,7 @@ public @interface Log {
      * <tr><td>Center</td><td>Number</td><td>0</td><td>The center ("zero") value of the bar</td></tr>
      * </table>
      */
+    @Repeatable(NumberBars.class)
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface NumberBar {
@@ -72,6 +85,14 @@ public @interface Log {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return The name of the tab in which to place this widget, if the default inferred tab/layout is not desired.
+         * Users should be careful to avoid namespace collisions if the default tab is not used.  Note that Log and
+         * config annotations can be repeated to place widgets on multiple tabs.  Note also that this feature is NOT
+         * currently supported for NT-only mode!
+         */
+        String tabName() default "DEFAULT";
 
         /**
          * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
@@ -120,6 +141,12 @@ public @interface Log {
         int height() default -1;
     }
 
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD, ElementType.METHOD})
+    @interface NumberBars {
+        NumberBar[] value();
+    }
+
     /**
      * Displays a number with a view-only dial. Displayed values are rounded to the nearest integer.
      * <br>Supported types:
@@ -136,6 +163,7 @@ public @interface Log {
      * <td>Whether or not to show the value as text</td></tr>
      * </table>
      */
+    @Repeatable(Dials.class)
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface Dial {
@@ -143,6 +171,13 @@ public @interface Log {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return The name of the tab in which to place this widget, if the default inferred tab/layout is not desired.
+         * Users should be careful to avoid namespace collisions if the default tab is not used.  Note that Log and
+         * config annotations can be repeated to place widgets on multiple tabs.
+         */
+        String tabName() default "DEFAULT";
 
         /**
          * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
@@ -191,6 +226,12 @@ public @interface Log {
         int height() default -1;
     }
 
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD, ElementType.METHOD})
+    @interface Dials {
+        Dial[] value();
+    }
+
     /**
      * Displays a number with a graph. <strong>NOTE:</strong> graphs can be taxing on the computer
      * running the dashboard. Keep the number of visible data points to a minimum. Making the widget
@@ -208,6 +249,7 @@ public @interface Log {
      * <td>How long, in seconds, should past data be visible for</td></tr>
      * </table>
      */
+    @Repeatable(Graphs.class)
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface Graph {
@@ -215,6 +257,13 @@ public @interface Log {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return The name of the tab in which to place this widget, if the default inferred tab/layout is not desired.
+         * Users should be careful to avoid namespace collisions if the default tab is not used.  Note that Log and
+         * config annotations can be repeated to place widgets on multiple tabs.
+         */
+        String tabName() default "DEFAULT";
 
         /**
          * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
@@ -253,6 +302,12 @@ public @interface Log {
         int height() default -1;
     }
 
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD, ElementType.METHOD})
+    @interface Graphs {
+        Graph[] value();
+    }
+
     /**
      * Displays a boolean value as a large colored box.
      * <br>Supported types:
@@ -270,6 +325,7 @@ public @interface Log {
      * <td>Can be specified as a string or a number</td></tr>
      * </table>
      */
+    @Repeatable(BooleanBoxes.class)
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface BooleanBox {
@@ -277,6 +333,13 @@ public @interface Log {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return The name of the tab in which to place this widget, if the default inferred tab/layout is not desired.
+         * Users should be careful to avoid namespace collisions if the default tab is not used.  Note that Log and
+         * config annotations can be repeated to place widgets on multiple tabs.
+         */
+        String tabName() default "DEFAULT";
 
         /**
          * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
@@ -320,6 +383,12 @@ public @interface Log {
         int height() default -1;
     }
 
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD, ElementType.METHOD})
+    @interface BooleanBoxes {
+        BooleanBox[] value();
+    }
+
     /**
      * Displays an analog input or a raw number with a number bar.
      * <br>Supported types:
@@ -340,6 +409,7 @@ public @interface Log {
      * <td>The number of discrete ticks on the bar</td></tr>
      * </table>
      */
+    @Repeatable(VoltageViews.class)
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface VoltageView {
@@ -347,6 +417,13 @@ public @interface Log {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return The name of the tab in which to place this widget, if the default inferred tab/layout is not desired.
+         * Users should be careful to avoid namespace collisions if the default tab is not used.  Note that Log and
+         * config annotations can be repeated to place widgets on multiple tabs.
+         */
+        String tabName() default "DEFAULT";
 
         /**
          * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
@@ -405,6 +482,12 @@ public @interface Log {
         int height() default -1;
     }
 
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD, ElementType.METHOD})
+    @interface VoltageViews {
+        VoltageView[] value();
+    }
+
     /**
      * Displays a {@link edu.wpi.first.wpilibj.PowerDistributionPanel PowerDistributionPanel}.
      * <br>Supported types:
@@ -419,6 +502,7 @@ public @interface Log {
      * <td>Whether or not to display the voltage and current draw</td></tr>
      * </table>
      */
+    @Repeatable(PDPs.class)
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface PDP {
@@ -426,6 +510,13 @@ public @interface Log {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return The name of the tab in which to place this widget, if the default inferred tab/layout is not desired.
+         * Users should be careful to avoid namespace collisions if the default tab is not used.  Note that Log and
+         * config annotations can be repeated to place widgets on multiple tabs.
+         */
+        String tabName() default "DEFAULT";
 
         /**
          * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
@@ -464,6 +555,12 @@ public @interface Log {
         int height() default -1;
     }
 
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD, ElementType.METHOD})
+    @interface PDPs {
+        PDP[] value();
+    }
+
     /**
      * Displays an {@link edu.wpi.first.wpilibj.Encoder} displaying its speed, total travelled
      * distance, and its distance per tick.
@@ -473,6 +570,7 @@ public @interface Log {
      * </ul>
      * <br>This widget has no custom properties.
      */
+    @Repeatable(Encoders.class)
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface Encoder {
@@ -480,6 +578,13 @@ public @interface Log {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return The name of the tab in which to place this widget, if the default inferred tab/layout is not desired.
+         * Users should be careful to avoid namespace collisions if the default tab is not used.  Note that Log and
+         * config annotations can be repeated to place widgets on multiple tabs.
+         */
+        String tabName() default "DEFAULT";
 
         /**
          * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
@@ -513,6 +618,12 @@ public @interface Log {
         int height() default -1;
     }
 
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD, ElementType.METHOD})
+    @interface Encoders {
+        Encoder[] value();
+    }
+
     /**
      * Displays a {@link edu.wpi.first.wpilibj.SpeedController SpeedController}. The speed controller
      * will be controllable from the dashboard when test mode is enabled, but will otherwise be
@@ -539,6 +650,7 @@ public @interface Log {
      * <td>One of {@code ["HORIZONTAL", "VERTICAL"]}</td></tr>
      * </table>
      */
+    @Repeatable(SpeedControllers.class)
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface SpeedController {
@@ -546,6 +658,13 @@ public @interface Log {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return The name of the tab in which to place this widget, if the default inferred tab/layout is not desired.
+         * Users should be careful to avoid namespace collisions if the default tab is not used.  Note that Log and
+         * config annotations can be repeated to place widgets on multiple tabs.
+         */
+        String tabName() default "DEFAULT";
 
         /**
          * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
@@ -584,6 +703,11 @@ public @interface Log {
         int height() default -1;
     }
 
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD, ElementType.METHOD})
+    @interface SpeedControllers {
+        SpeedController[] value();
+    }
 
     /**
      * Displays an accelerometer with a number bar displaying the magnitude of the acceleration and
@@ -608,6 +732,7 @@ public @interface Log {
      * <td>Show or hide the tick marks on the number bars</td></tr>
      * </table>
      */
+    @Repeatable(Accelerometers.class)
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface Accelerometer {
@@ -615,6 +740,13 @@ public @interface Log {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return The name of the tab in which to place this widget, if the default inferred tab/layout is not desired.
+         * Users should be careful to avoid namespace collisions if the default tab is not used.  Note that Log and
+         * config annotations can be repeated to place widgets on multiple tabs.
+         */
+        String tabName() default "DEFAULT";
 
         /**
          * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
@@ -673,6 +805,12 @@ public @interface Log {
         int height() default -1;
     }
 
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD, ElementType.METHOD})
+    @interface Accelerometers {
+        Accelerometer[] value();
+    }
+
     /**
      * Displays a 3-axis accelerometer with a number bar for each axis' acceleration.
      * <br>Supported types:
@@ -694,6 +832,7 @@ public @interface Log {
      * <td>Show or hide the tick marks on the number bars</td></tr>
      * </table>
      */
+    @Repeatable(ThreeAxisAccelerometers.class)
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface ThreeAxisAccelerometer {
@@ -701,6 +840,13 @@ public @interface Log {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return The name of the tab in which to place this widget, if the default inferred tab/layout is not desired.
+         * Users should be careful to avoid namespace collisions if the default tab is not used.  Note that Log and
+         * config annotations can be repeated to place widgets on multiple tabs.
+         */
+        String tabName() default "DEFAULT";
 
         /**
          * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
@@ -754,6 +900,12 @@ public @interface Log {
         int height() default -1;
     }
 
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD, ElementType.METHOD})
+    @interface ThreeAxisAccelerometers {
+        ThreeAxisAccelerometer[] value();
+    }
+
     /**
      * Displays a gyro with a dial from 0 to 360 degrees.
      * <br>Supported types:
@@ -772,6 +924,7 @@ public @interface Log {
      * <tr><td>Show tick mark ring</td><td>Boolean</td><td>true</td></tr>
      * </table>
      */
+    @Repeatable(Gyros.class)
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface Gyro {
@@ -779,6 +932,13 @@ public @interface Log {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return The name of the tab in which to place this widget, if the default inferred tab/layout is not desired.
+         * Users should be careful to avoid namespace collisions if the default tab is not used.  Note that Log and
+         * config annotations can be repeated to place widgets on multiple tabs.
+         */
+        String tabName() default "DEFAULT";
 
         /**
          * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
@@ -827,6 +987,12 @@ public @interface Log {
         int height() default -1;
     }
 
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD, ElementType.METHOD})
+    @interface Gyros {
+        Gyro[] value();
+    }
+
     /**
      * Displays a differential drive with a widget that displays the speed of each side of the
      * drivebase and a vector for the direction and rotation of the drivebase. The widget will be
@@ -845,6 +1011,7 @@ public @interface Log {
      * <tr><td>Show velocity vectors</td><td>Boolean</td><td>true</td></tr>
      * </table>
      */
+    @Repeatable(DifferentialDrives.class)
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface DifferentialDrive {
@@ -852,6 +1019,13 @@ public @interface Log {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return The name of the tab in which to place this widget, if the default inferred tab/layout is not desired.
+         * Users should be careful to avoid namespace collisions if the default tab is not used.  Note that Log and
+         * config annotations can be repeated to place widgets on multiple tabs.
+         */
+        String tabName() default "DEFAULT";
 
         /**
          * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
@@ -900,6 +1074,12 @@ public @interface Log {
         int height() default -1;
     }
 
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD, ElementType.METHOD})
+    @interface DifferentialDrives {
+        DifferentialDrive[] value();
+    }
+
     /**
      * Displays a mecanum drive with a widget that displays the speed of each wheel, and vectors for
      * the direction and rotation of the drivebase. The widget will be controllable if the robot is
@@ -915,6 +1095,7 @@ public @interface Log {
      * <tr><td>Show velocity vectors</td><td>Boolean</td><td>true</td></tr>
      * </table>
      */
+    @Repeatable(MecanumDrives.class)
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface MecanumDrive {
@@ -922,6 +1103,13 @@ public @interface Log {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return The name of the tab in which to place this widget, if the default inferred tab/layout is not desired.
+         * Users should be careful to avoid namespace collisions if the default tab is not used.  Note that Log and
+         * config annotations can be repeated to place widgets on multiple tabs.
+         */
+        String tabName() default "DEFAULT";
 
         /**
          * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
@@ -960,6 +1148,12 @@ public @interface Log {
         int height() default -1;
     }
 
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD, ElementType.METHOD})
+    @interface MecanumDrives {
+        MecanumDrive[] value();
+    }
+
     /**
      * Displays a camera stream.
      * <br>Supported types:
@@ -981,6 +1175,7 @@ public @interface Log {
      * </td></tr>
      * </table>
      */
+    @Repeatable(CameraStreams.class)
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface CameraStream {
@@ -988,6 +1183,13 @@ public @interface Log {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return The name of the tab in which to place this widget, if the default inferred tab/layout is not desired.
+         * Users should be careful to avoid namespace collisions if the default tab is not used.  Note that Log and
+         * config annotations can be repeated to place widgets on multiple tabs.
+         */
+        String tabName() default "DEFAULT";
 
         /**
          * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
@@ -1041,10 +1243,17 @@ public @interface Log {
         int height() default -1;
     }
 
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD, ElementType.METHOD})
+    @interface CameraStreams {
+        CameraStream[] value();
+    }
+
     /**
      * Logs an object as the value returned by its toString method.  Useful for logging object types not natively supported by
      * Shuffleboard without having to implement {@link edu.wpi.first.wpilibj.Sendable}.
      */
+    @Repeatable(ToStrings.class)
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.METHOD})
     @interface ToString {
@@ -1052,6 +1261,13 @@ public @interface Log {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return The name of the tab in which to place this widget, if the default inferred tab/layout is not desired.
+         * Users should be careful to avoid namespace collisions if the default tab is not used.  Note that Log and
+         * config annotations can be repeated to place widgets on multiple tabs.
+         */
+        String tabName() default "DEFAULT";
 
         /**
          * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
@@ -1083,6 +1299,12 @@ public @interface Log {
          * in an object, it should be specified for all widgets in that object to avoid overlaps.
          */
         int height() default -1;
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD, ElementType.METHOD})
+    @interface ToStrings {
+        ToString[] value();
     }
 
     /**
