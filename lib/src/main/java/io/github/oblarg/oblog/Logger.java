@@ -138,6 +138,7 @@ public class Logger {
         break;
     }
 
+    // Set up method to be called on Loggables
     Consumer<Loggable> log = (toLog) -> logLoggable(logType,
         separate,
         toLog,
@@ -150,34 +151,50 @@ public class Logger {
         null,
         new HashSet<>(Collections.singletonList(toLog)));
 
+    // Check all fields of the rootcontainer
     for (Field field : rootContainer.getClass().getDeclaredFields()) {
       if (isLoggableClassOrArrayOrCollection(field, rootContainer) && isIncluded(field, logType)) {
         field.setAccessible(true);
+        // Handle arrays elementwise...
         if (field.getType().isArray()) {
-          Loggable[] toLogs;
+          List<Loggable> toLogs = new ArrayList<>();
           try {
-            toLogs = (Loggable[]) field.get(rootContainer);
-          } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            toLogs = new Loggable[0];
-          }
-          for (Loggable toLog : toLogs) {
-            {
-              log.accept(toLog);
+            // Skip if primitive array
+            if (!Object.class.isAssignableFrom(field.get(rootContainer).getClass().getComponentType())) {
+              continue;
             }
-          }
-        } else if (Collection.class.isAssignableFrom(field.getType())) {
-          Collection<Loggable> toLogs;
-          try {
-            toLogs = (Collection) field.get(rootContainer);
+            // Include all elements whose runtime class is Loggable
+            for (Object obj : (Object[]) field.get(rootContainer)) {
+              if (obj instanceof Loggable) {
+                toLogs.add((Loggable) obj);
+              }
+            }
           } catch (IllegalAccessException e) {
             e.printStackTrace();
-            toLogs = new HashSet<>();
           }
+          // Proceed on all valid elements
+          for (Loggable toLog : toLogs) {
+            log.accept(toLog);
+          }
+          // Handle collections similarly
+        } else if (Collection.class.isAssignableFrom(field.getType())) {
+          List<Loggable> toLogs = new ArrayList<>();
+          try {
+            // Include all elements whose runtime class is Loggable
+            for (Object obj : (Collection) field.get(rootContainer)) {
+              if (obj instanceof Loggable) {
+                toLogs.add((Loggable) obj);
+              }
+            }
+          } catch (IllegalAccessException e) {
+            e.printStackTrace();
+          }
+          // Proceed on all valid elements
           for (Loggable toLog : toLogs) {
             log.accept(toLog);
           }
         } else {
+          // If not array or collection, object itself is loggable
           Loggable toLog;
           try {
             toLog = (Loggable) field.get(rootContainer);
@@ -185,6 +202,7 @@ public class Logger {
             e.printStackTrace();
             toLog = null;
           }
+          // Proceed on field
           log.accept(toLog);
         }
       }
