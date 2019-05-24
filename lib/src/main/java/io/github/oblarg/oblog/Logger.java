@@ -347,6 +347,8 @@ public class Logger {
             entry(Log.class,
                     (supplier, rawParams, bin, name) -> {
                         Log params = (Log) rawParams;
+                        bin = params.tabName().equals("DEFAULT") ? bin :
+                                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
                         if (getFromMethod(supplier, params.methodName()).get() instanceof Sendable) {
                             bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
                                     (Sendable) getFromMethod(supplier, params.methodName()).get())
@@ -366,6 +368,8 @@ public class Logger {
             entry(Log.NumberBar.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.NumberBar params = (Log.NumberBar) rawParams;
+                        bin = params.tabName().equals("DEFAULT") ? bin :
+                                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
                         Logger.registerEntry(
                                 bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
                                         getFromMethod(supplier, params.methodName()).get())
@@ -382,6 +386,8 @@ public class Logger {
             entry(Log.Dial.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.Dial params = (Log.Dial) rawParams;
+                        bin = params.tabName().equals("DEFAULT") ? bin :
+                                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
                         Logger.registerEntry(
                                 bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
                                         getFromMethod(supplier, params.methodName()).get())
@@ -398,6 +404,8 @@ public class Logger {
             entry(Log.Graph.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.Graph params = (Log.Graph) rawParams;
+                        bin = params.tabName().equals("DEFAULT") ? bin :
+                                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
                         Logger.registerEntry(
                                 bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
                                         getFromMethod(supplier, params.methodName()).get())
@@ -412,6 +420,8 @@ public class Logger {
             entry(Log.BooleanBox.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.BooleanBox params = (Log.BooleanBox) rawParams;
+                        bin = params.tabName().equals("DEFAULT") ? bin :
+                                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
                         Logger.registerEntry(
                                 bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
                                         getFromMethod(supplier, params.methodName()).get())
@@ -428,6 +438,8 @@ public class Logger {
                     (supplier, rawParams, bin, name) -> {
                         if (supplier.get() instanceof AnalogInput) {
                             Log.VoltageView params = (Log.VoltageView) rawParams;
+                            bin = params.tabName().equals("DEFAULT") ? bin :
+                                    new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
                             supplier = getFromMethod(supplier, params.methodName());
                             bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                     .withWidget(BuiltInWidgets.kVoltageView.getWidgetName())
@@ -441,6 +453,8 @@ public class Logger {
                                     .withSize(params.width(), params.height());
                         } else {
                             Log.VoltageView params = (Log.VoltageView) rawParams;
+                            bin = params.tabName().equals("DEFAULT") ? bin :
+                                    new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
                             final Supplier<Object> supplierFinal = supplier;
                             Logger.registerEntry(
                                     bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
@@ -461,6 +475,8 @@ public class Logger {
             entry(Log.PDP.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.PDP params = (Log.PDP) rawParams;
+                        bin = params.tabName().equals("DEFAULT") ? bin :
+                                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
                         supplier = getFromMethod(supplier, params.methodName());
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kPowerDistributionPanel.getWidgetName())
@@ -472,6 +488,8 @@ public class Logger {
             entry(Log.Encoder.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.Encoder params = (Log.Encoder) rawParams;
+                        bin = params.tabName().equals("DEFAULT") ? bin :
+                                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
                         supplier = getFromMethod(supplier, params.methodName());
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kEncoder.getWidgetName())
@@ -481,6 +499,8 @@ public class Logger {
             entry(Log.SpeedController.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.SpeedController params = (Log.SpeedController) rawParams;
+                        bin = params.tabName().equals("DEFAULT") ? bin :
+                                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
                         supplier = getFromMethod(supplier, params.methodName());
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kSpeedController.getWidgetName())
@@ -492,6 +512,8 @@ public class Logger {
             entry(Log.Accelerometer.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.Accelerometer params = (Log.Accelerometer) rawParams;
+                        bin = params.tabName().equals("DEFAULT") ? bin :
+                                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
                         supplier = getFromMethod(supplier, params.methodName());
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kAccelerometer.getWidgetName())
@@ -507,6 +529,8 @@ public class Logger {
             entry(Log.ThreeAxisAccelerometer.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.ThreeAxisAccelerometer params = (Log.ThreeAxisAccelerometer) rawParams;
+                        bin = params.tabName().equals("DEFAULT") ? bin :
+                                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
                         supplier = getFromMethod(supplier, params.methodName());
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.k3AxisAccelerometer.getWidgetName())
@@ -521,6 +545,8 @@ public class Logger {
             entry(Log.Gyro.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.Gyro params = (Log.Gyro) rawParams;
+                        bin = params.tabName().equals("DEFAULT") ? bin :
+                                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
                         supplier = getFromMethod(supplier, params.methodName());
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kGyro.getWidgetName())
@@ -534,6 +560,8 @@ public class Logger {
             entry(Log.DifferentialDrive.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.DifferentialDrive params = (Log.DifferentialDrive) rawParams;
+                        bin = params.tabName().equals("DEFAULT") ? bin :
+                                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
                         supplier = getFromMethod(supplier, params.methodName());
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kDifferentialDrive.getWidgetName())
@@ -547,6 +575,8 @@ public class Logger {
             entry(Log.MecanumDrive.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.MecanumDrive params = (Log.MecanumDrive) rawParams;
+                        bin = params.tabName().equals("DEFAULT") ? bin :
+                                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
                         supplier = getFromMethod(supplier, params.methodName());
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kMecanumDrive.getWidgetName())
@@ -558,6 +588,8 @@ public class Logger {
             entry(Log.CameraStream.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.CameraStream params = (Log.CameraStream) rawParams;
+                        bin = params.tabName().equals("DEFAULT") ? bin :
+                                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
                         supplier = getFromMethod(supplier, params.methodName());
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
                                 SendableCameraWrapper.wrap((VideoSource) supplier.get()))
@@ -573,6 +605,8 @@ public class Logger {
             entry(Log.ToString.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.ToString params = (Log.ToString) rawParams;
+                        bin = params.tabName().equals("DEFAULT") ? bin :
+                                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
                         final Supplier supplierFinal = supplier;
                         Logger.registerEntry(
                                 bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
@@ -633,20 +667,22 @@ public class Logger {
             //System.out.println(loggableClass + " " + field.getName() + " " + registeredFields.contains(field));
             if (!registeredFields.contains(field)) {
                 registeredFields.add(field);
-                for (Annotation annotation : field.getAnnotations()) {
-                    FieldProcessor process = configFieldHandler.get(annotation.annotationType());
-                    if (process != null) {
-                        process.processField(
-                                () -> {
-                                    try {
-                                        return field.get(loggable);
-                                    } catch (IllegalAccessException e) {
-                                        return null;
-                                    }
-                                },
-                                annotation,
-                                bin,
-                                field.getName());
+                for (Class type : configFieldHandler.keySet()) {
+                    for (Annotation annotation : field.getAnnotationsByType(type)) {
+                        FieldProcessor process = configFieldHandler.get(annotation.annotationType());
+                        if (process != null) {
+                            process.processField(
+                                    () -> {
+                                        try {
+                                            return field.get(loggable);
+                                        } catch (IllegalAccessException e) {
+                                            return null;
+                                        }
+                                    },
+                                    annotation,
+                                    bin,
+                                    field.getName());
+                        }
                     }
                 }
             }
@@ -659,22 +695,24 @@ public class Logger {
                     !registeredMethods.contains(method)) {
                 method.setAccessible(true);
                 registeredMethods.add(method);
-                for (Annotation annotation : method.getAnnotations()) {
-                    SetterProcessor process = configSetterHandler.get(annotation.annotationType());
-                    if (process != null) {
-                        process.processSetter(
-                                (value) -> {
-                                    try {
-                                        method.invoke(loggable, setterCaster.get(method.getParameterTypes()[0]).apply(value));
-                                    } catch (IllegalAccessException | InvocationTargetException e) {
-                                        e.printStackTrace();
-                                    }
-                                },
-                                annotation,
-                                bin,
-                                nt,
-                                method.getName(),
-                                method.getParameterTypes()[0].equals(Boolean.TYPE) || method.getParameterTypes()[0].equals(Boolean.class));
+                for (Class type : configSetterHandler.keySet()) {
+                    for (Annotation annotation : method.getAnnotationsByType(type)) {
+                        SetterProcessor process = configSetterHandler.get(annotation.annotationType());
+                        if (process != null) {
+                            process.processSetter(
+                                    (value) -> {
+                                        try {
+                                            method.invoke(loggable, setterCaster.get(method.getParameterTypes()[0]).apply(value));
+                                        } catch (IllegalAccessException | InvocationTargetException e) {
+                                            e.printStackTrace();
+                                        }
+                                    },
+                                    annotation,
+                                    bin,
+                                    nt,
+                                    method.getName(),
+                                    method.getParameterTypes()[0].equals(Boolean.TYPE) || method.getParameterTypes()[0].equals(Boolean.class));
+                        }
                     }
                 }
             } else if (method.getReturnType().equals(Void.TYPE) &&
@@ -683,43 +721,44 @@ public class Logger {
                     !registeredMethods.contains(method)) {
                 method.setAccessible(true);
                 registeredMethods.add(method);
-                Config annotation = method.getAnnotation(Config.class);
-                if (annotation != null) {
-                    ShuffleboardContainerWrapper list = bin.getLayout(
-                            annotation.name().equals("NO_NAME") ? method.getName() : annotation.name(),
-                            annotation.multiArgLayoutType().equals("listLayout") ? BuiltInLayouts.kList : BuiltInLayouts.kGrid)
-                            .withPosition(annotation.columnIndex(), annotation.rowIndex())
-                            .withSize(annotation.width(), annotation.height())
-                            .withProperties(Map.ofEntries(
-                                    entry("numberOfColumns", annotation.numGridColumns()),
-                                    entry("numberOfRows", annotation.numGridRows())
-                            ));
-                    int numParams = method.getParameterCount();
-                    List<Object> values = new ArrayList<>(numParams);
-                    for (int i = 0; i < numParams; i++) {
-                        Parameter parameter = method.getParameters()[i];
-                        values.add(setterCaster.get(parameter.getType())
-                                .apply(setterDefaults.get(parameter.getType())));
-                    }
-                    for (int i = 0; i < numParams; i++) {
-                        final int ii = i;
-                        Parameter parameter = method.getParameters()[i];
-                        Annotation paramAnnotation = getParameterAnnotation(parameter);
-                        SetterProcessor process = configSetterHandler.get(paramAnnotation.annotationType());
-                        process.processSetter(
-                                (value) -> {
-                                    values.set(ii, setterCaster.get(parameter.getType()).apply(value));
-                                    try {
-                                        method.invoke(loggable, values.toArray());
-                                    } catch (IllegalAccessException | InvocationTargetException e) {
-                                        e.printStackTrace();
-                                    }
-                                },
-                                paramAnnotation,
-                                list,
-                                nt,
-                                parameter.getName(),
-                                parameter.getType().equals(Boolean.TYPE) || parameter.getType().equals(Boolean.class));
+                for (Config annotation : method.getAnnotationsByType(Config.class)) {
+                    if (annotation != null) {
+                        ShuffleboardContainerWrapper list = bin.getLayout(
+                                annotation.name().equals("NO_NAME") ? method.getName() : annotation.name(),
+                                annotation.multiArgLayoutType().equals("listLayout") ? BuiltInLayouts.kList : BuiltInLayouts.kGrid)
+                                .withPosition(annotation.columnIndex(), annotation.rowIndex())
+                                .withSize(annotation.width(), annotation.height())
+                                .withProperties(Map.ofEntries(
+                                        entry("numberOfColumns", annotation.numGridColumns()),
+                                        entry("numberOfRows", annotation.numGridRows())
+                                ));
+                        int numParams = method.getParameterCount();
+                        List<Object> values = new ArrayList<>(numParams);
+                        for (int i = 0; i < numParams; i++) {
+                            Parameter parameter = method.getParameters()[i];
+                            values.add(setterCaster.get(parameter.getType())
+                                    .apply(setterDefaults.get(parameter.getType())));
+                        }
+                        for (int i = 0; i < numParams; i++) {
+                            final int ii = i;
+                            Parameter parameter = method.getParameters()[i];
+                            Annotation paramAnnotation = getParameterAnnotation(parameter);
+                            SetterProcessor process = configSetterHandler.get(paramAnnotation.annotationType());
+                            process.processSetter(
+                                    (value) -> {
+                                        values.set(ii, setterCaster.get(parameter.getType()).apply(value));
+                                        try {
+                                            method.invoke(loggable, values.toArray());
+                                        } catch (IllegalAccessException | InvocationTargetException e) {
+                                            e.printStackTrace();
+                                        }
+                                    },
+                                    paramAnnotation,
+                                    list,
+                                    nt,
+                                    parameter.getName(),
+                                    parameter.getType().equals(Boolean.TYPE) || parameter.getType().equals(Boolean.class));
+                        }
                     }
                 }
             }
@@ -743,21 +782,22 @@ public class Logger {
             field.setAccessible(true);
             registeredFields.add(field);
 
-
-            for (Annotation annotation : field.getAnnotations()) {
-                FieldProcessor process = logHandler.get(annotation.annotationType());
-                if (process != null) {
-                    process.processField(
-                            () -> {
-                                try {
-                                    return field.get(loggable);
-                                } catch (IllegalAccessException e) {
-                                    return null;
-                                }
-                            },
-                            annotation,
-                            bin,
-                            field.getName());
+            for (Class type : logHandler.keySet()) {
+                for (Annotation annotation : field.getAnnotationsByType(type)) {
+                    FieldProcessor process = logHandler.get(annotation.annotationType());
+                    if (process != null) {
+                        process.processField(
+                                () -> {
+                                    try {
+                                        return field.get(loggable);
+                                    } catch (IllegalAccessException e) {
+                                        return null;
+                                    }
+                                },
+                                annotation,
+                                bin,
+                                field.getName());
+                    }
                 }
             }
 
@@ -771,25 +811,26 @@ public class Logger {
 
             method.setAccessible(true);
             registeredMethods.add(method);
+            for (Class type : logHandler.keySet()) {
+                for (Annotation annotation : method.getAnnotationsByType(type)) {
 
-            for (Annotation annotation : method.getAnnotations()) {
+                    FieldProcessor process = logHandler.get(annotation.annotationType());
+                    if (process != null) {
+                        process.processField(
+                                () -> {
+                                    try {
+                                        return method.invoke(loggable);
+                                    } catch (IllegalAccessException | InvocationTargetException e) {
+                                        e.printStackTrace();
+                                        return null;
+                                    }
+                                },
+                                annotation,
+                                bin,
+                                method.getName());
+                    }
 
-                FieldProcessor process = logHandler.get(annotation.annotationType());
-                if (process != null) {
-                    process.processField(
-                            () -> {
-                                try {
-                                    return method.invoke(loggable);
-                                } catch (IllegalAccessException | InvocationTargetException e) {
-                                    e.printStackTrace();
-                                    return null;
-                                }
-                            },
-                            annotation,
-                            bin,
-                            method.getName());
                 }
-
             }
         }
 
