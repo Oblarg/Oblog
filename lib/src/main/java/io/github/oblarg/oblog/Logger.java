@@ -667,20 +667,22 @@ public class Logger {
             //System.out.println(loggableClass + " " + field.getName() + " " + registeredFields.contains(field));
             if (!registeredFields.contains(field)) {
                 registeredFields.add(field);
-                for (Annotation annotation : field.getAnnotations()) {
-                    FieldProcessor process = configFieldHandler.get(annotation.annotationType());
-                    if (process != null) {
-                        process.processField(
-                                () -> {
-                                    try {
-                                        return field.get(loggable);
-                                    } catch (IllegalAccessException e) {
-                                        return null;
-                                    }
-                                },
-                                annotation,
-                                bin,
-                                field.getName());
+                for (Class type : configFieldHandler.keySet()) {
+                    for (Annotation annotation : field.getAnnotationsByType(type)) {
+                        FieldProcessor process = configFieldHandler.get(annotation.annotationType());
+                        if (process != null) {
+                            process.processField(
+                                    () -> {
+                                        try {
+                                            return field.get(loggable);
+                                        } catch (IllegalAccessException e) {
+                                            return null;
+                                        }
+                                    },
+                                    annotation,
+                                    bin,
+                                    field.getName());
+                        }
                     }
                 }
             }
@@ -693,22 +695,24 @@ public class Logger {
                     !registeredMethods.contains(method)) {
                 method.setAccessible(true);
                 registeredMethods.add(method);
-                for (Annotation annotation : method.getAnnotations()) {
-                    SetterProcessor process = configSetterHandler.get(annotation.annotationType());
-                    if (process != null) {
-                        process.processSetter(
-                                (value) -> {
-                                    try {
-                                        method.invoke(loggable, setterCaster.get(method.getParameterTypes()[0]).apply(value));
-                                    } catch (IllegalAccessException | InvocationTargetException e) {
-                                        e.printStackTrace();
-                                    }
-                                },
-                                annotation,
-                                bin,
-                                nt,
-                                method.getName(),
-                                method.getParameterTypes()[0].equals(Boolean.TYPE) || method.getParameterTypes()[0].equals(Boolean.class));
+                for (Class type : configSetterHandler.keySet()) {
+                    for (Annotation annotation : method.getAnnotationsByType(type)) {
+                        SetterProcessor process = configSetterHandler.get(annotation.annotationType());
+                        if (process != null) {
+                            process.processSetter(
+                                    (value) -> {
+                                        try {
+                                            method.invoke(loggable, setterCaster.get(method.getParameterTypes()[0]).apply(value));
+                                        } catch (IllegalAccessException | InvocationTargetException e) {
+                                            e.printStackTrace();
+                                        }
+                                    },
+                                    annotation,
+                                    bin,
+                                    nt,
+                                    method.getName(),
+                                    method.getParameterTypes()[0].equals(Boolean.TYPE) || method.getParameterTypes()[0].equals(Boolean.class));
+                        }
                     }
                 }
             } else if (method.getReturnType().equals(Void.TYPE) &&
@@ -717,43 +721,44 @@ public class Logger {
                     !registeredMethods.contains(method)) {
                 method.setAccessible(true);
                 registeredMethods.add(method);
-                Config annotation = method.getAnnotation(Config.class);
-                if (annotation != null) {
-                    ShuffleboardContainerWrapper list = bin.getLayout(
-                            annotation.name().equals("NO_NAME") ? method.getName() : annotation.name(),
-                            annotation.multiArgLayoutType().equals("listLayout") ? BuiltInLayouts.kList : BuiltInLayouts.kGrid)
-                            .withPosition(annotation.columnIndex(), annotation.rowIndex())
-                            .withSize(annotation.width(), annotation.height())
-                            .withProperties(Map.ofEntries(
-                                    entry("numberOfColumns", annotation.numGridColumns()),
-                                    entry("numberOfRows", annotation.numGridRows())
-                            ));
-                    int numParams = method.getParameterCount();
-                    List<Object> values = new ArrayList<>(numParams);
-                    for (int i = 0; i < numParams; i++) {
-                        Parameter parameter = method.getParameters()[i];
-                        values.add(setterCaster.get(parameter.getType())
-                                .apply(setterDefaults.get(parameter.getType())));
-                    }
-                    for (int i = 0; i < numParams; i++) {
-                        final int ii = i;
-                        Parameter parameter = method.getParameters()[i];
-                        Annotation paramAnnotation = getParameterAnnotation(parameter);
-                        SetterProcessor process = configSetterHandler.get(paramAnnotation.annotationType());
-                        process.processSetter(
-                                (value) -> {
-                                    values.set(ii, setterCaster.get(parameter.getType()).apply(value));
-                                    try {
-                                        method.invoke(loggable, values.toArray());
-                                    } catch (IllegalAccessException | InvocationTargetException e) {
-                                        e.printStackTrace();
-                                    }
-                                },
-                                paramAnnotation,
-                                list,
-                                nt,
-                                parameter.getName(),
-                                parameter.getType().equals(Boolean.TYPE) || parameter.getType().equals(Boolean.class));
+                for (Config annotation : method.getAnnotationsByType(Config.class)) {
+                    if (annotation != null) {
+                        ShuffleboardContainerWrapper list = bin.getLayout(
+                                annotation.name().equals("NO_NAME") ? method.getName() : annotation.name(),
+                                annotation.multiArgLayoutType().equals("listLayout") ? BuiltInLayouts.kList : BuiltInLayouts.kGrid)
+                                .withPosition(annotation.columnIndex(), annotation.rowIndex())
+                                .withSize(annotation.width(), annotation.height())
+                                .withProperties(Map.ofEntries(
+                                        entry("numberOfColumns", annotation.numGridColumns()),
+                                        entry("numberOfRows", annotation.numGridRows())
+                                ));
+                        int numParams = method.getParameterCount();
+                        List<Object> values = new ArrayList<>(numParams);
+                        for (int i = 0; i < numParams; i++) {
+                            Parameter parameter = method.getParameters()[i];
+                            values.add(setterCaster.get(parameter.getType())
+                                    .apply(setterDefaults.get(parameter.getType())));
+                        }
+                        for (int i = 0; i < numParams; i++) {
+                            final int ii = i;
+                            Parameter parameter = method.getParameters()[i];
+                            Annotation paramAnnotation = getParameterAnnotation(parameter);
+                            SetterProcessor process = configSetterHandler.get(paramAnnotation.annotationType());
+                            process.processSetter(
+                                    (value) -> {
+                                        values.set(ii, setterCaster.get(parameter.getType()).apply(value));
+                                        try {
+                                            method.invoke(loggable, values.toArray());
+                                        } catch (IllegalAccessException | InvocationTargetException e) {
+                                            e.printStackTrace();
+                                        }
+                                    },
+                                    paramAnnotation,
+                                    list,
+                                    nt,
+                                    parameter.getName(),
+                                    parameter.getType().equals(Boolean.TYPE) || parameter.getType().equals(Boolean.class));
+                        }
                     }
                 }
             }

@@ -2,10 +2,7 @@ package io.github.oblarg.oblog.annotations;
 
 import io.github.oblarg.oblog.Loggable;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 
 /**
@@ -17,6 +14,7 @@ import java.lang.annotation.Target;
  * widgets - there is no support for specifying per-argument widget types.  If more detailed control is desired, write
  * individual setters.
  */
+@Repeatable(Config.Configs.class)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Config {
@@ -24,6 +22,14 @@ public @interface Config {
      * @return The name of the value on Shuffleboard; defaults to field or method name.
      */
     String name() default "NO_NAME";
+
+    /**
+     * @return The name of the tab in which to place this widget, if the default inferred tab/layout is not desired.
+     * Users should be careful to avoid namespace collisions if the default tab is not used.  Note that Log and
+     * config annotations can be repeated to place widgets on multiple tabs.  Note also that this feature is NOT
+     * currently supported for NT-only mode!
+     */
+    String tabName() default "DEFAULT";
 
     /**
      * @return The default value for this setter if it is a single-argument boolean setter.
@@ -77,6 +83,11 @@ public @interface Config {
      */
     int numGridRows() default 3;
 
+    @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface Configs {
+        Config[] value();
+    }
 
     /**
      * Displays a setter with a controllable slider.
@@ -94,6 +105,7 @@ public @interface Config {
      * <td>How much to move the slider by with the arrow keys</td></tr>
      * </table>
      */
+    @Repeatable(NumberSliders.class)
     @Target({ElementType.METHOD, ElementType.PARAMETER})
     @Retention(RetentionPolicy.RUNTIME)
     @interface NumberSlider {
@@ -101,6 +113,14 @@ public @interface Config {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return The name of the tab in which to place this widget, if the default inferred tab/layout is not desired.
+         * Users should be careful to avoid namespace collisions if the default tab is not used.  Note that Log and
+         * config annotations can be repeated to place widgets on multiple tabs.  Note also that this feature is NOT
+         * currently supported for NT-only mode!
+         */
+        String tabName() default "DEFAULT";
 
         /**
          * @return The minimum value of the slider.
@@ -147,6 +167,11 @@ public @interface Config {
         int height() default -1;
     }
 
+    @Target({ElementType.METHOD, ElementType.PARAMETER})
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface NumberSliders {
+        NumberSlider[] value();
+    }
 
     /**
      * Displays a boolean with a large interactive toggle button.
@@ -156,6 +181,7 @@ public @interface Config {
      * </ul>
      * <br>This widget has no custom properties.
      */
+    @Repeatable(ToggleButtons.class)
     @Target({ElementType.METHOD, ElementType.PARAMETER})
     @Retention(RetentionPolicy.RUNTIME)
     @interface ToggleButton {
@@ -165,6 +191,14 @@ public @interface Config {
         String name() default "NO_NAME";
 
         /**
+         * @return The name of the tab in which to place this widget, if the default inferred tab/layout is not desired.
+         * Users should be careful to avoid namespace collisions if the default tab is not used.  Note that Log and
+         * config annotations can be repeated to place widgets on multiple tabs.  Note also that this feature is NOT
+         * currently supported for NT-only mode!
+         */
+        String tabName() default "DEFAULT";
+
+        /**
          * @return The default value that the setter will return prior to manipulation on the dashboard.
          */
         boolean defaultValue() default false;
@@ -194,6 +228,11 @@ public @interface Config {
         int height() default -1;
     }
 
+    @Target({ElementType.METHOD, ElementType.PARAMETER})
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface ToggleButtons {
+        ToggleButton[] value();
+    }
 
     /**
      * Displays a boolean with a fixed-size toggle switch.
@@ -203,6 +242,7 @@ public @interface Config {
      * </ul>
      * <br>This widget has no custom properties.
      */
+    @Repeatable(ToggleSwitches.class)
     @Target({ElementType.METHOD, ElementType.PARAMETER})
     @Retention(RetentionPolicy.RUNTIME)
     @interface ToggleSwitch {
@@ -210,6 +250,14 @@ public @interface Config {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return The name of the tab in which to place this widget, if the default inferred tab/layout is not desired.
+         * Users should be careful to avoid namespace collisions if the default tab is not used.  Note that Log and
+         * config annotations can be repeated to place widgets on multiple tabs.  Note also that this feature is NOT
+         * currently supported for NT-only mode!
+         */
+        String tabName() default "DEFAULT";
 
         /**
          * @return The default value that the setter will return prior to manipulation on the dashboard.
@@ -241,6 +289,11 @@ public @interface Config {
         int height() default -1;
     }
 
+    @Target({ElementType.METHOD, ElementType.PARAMETER})
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface ToggleSwitches {
+        ToggleSwitch[] value();
+    }
 
     /**
      * Displays a command with a toggle button. Pressing the button will start the command, and the
@@ -253,6 +306,7 @@ public @interface Config {
      * </ul>
      * <br>This widget has no custom properties.
      */
+    @Repeatable(Commands.class)
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD})
     @interface Command {
@@ -260,6 +314,14 @@ public @interface Config {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return The name of the tab in which to place this widget, if the default inferred tab/layout is not desired.
+         * Users should be careful to avoid namespace collisions if the default tab is not used.  Note that Log and
+         * config annotations can be repeated to place widgets on multiple tabs.  Note also that this feature is NOT
+         * currently supported for NT-only mode!
+         */
+        String tabName() default "DEFAULT";
 
         /**
          * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
@@ -286,6 +348,11 @@ public @interface Config {
         int height() default -1;
     }
 
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD})
+    @interface Commands {
+        Command[] value();
+    }
 
     /**
      * Displays a PID command with a checkbox and an editor for the PIDF constants. Selecting the
@@ -298,6 +365,7 @@ public @interface Config {
      * </ul>
      * <br>This widget has no custom properties.
      */
+    @Repeatable(PIDCommands.class)
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD})
     @interface PIDCommand {
@@ -305,6 +373,14 @@ public @interface Config {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return The name of the tab in which to place this widget, if the default inferred tab/layout is not desired.
+         * Users should be careful to avoid namespace collisions if the default tab is not used.  Note that Log and
+         * config annotations can be repeated to place widgets on multiple tabs.  Note also that this feature is NOT
+         * currently supported for NT-only mode!
+         */
+        String tabName() default "DEFAULT";
 
         /**
          * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
@@ -331,6 +407,11 @@ public @interface Config {
         int height() default -1;
     }
 
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD})
+    @interface PIDCommands {
+        PIDCommand[] value();
+    }
 
     /**
      * Displays a PID controller with an editor for the PIDF constants and a toggle switch for
@@ -341,6 +422,7 @@ public @interface Config {
      * </ul>
      * <br>This widget has no custom properties.
      */
+    @Repeatable(PIDControllers.class)
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD})
     @interface PIDController {
@@ -350,6 +432,14 @@ public @interface Config {
         String name() default "NO_NAME";
 
         /**
+         * @return The name of the tab in which to place this widget, if the default inferred tab/layout is not desired.
+         * Users should be careful to avoid namespace collisions if the default tab is not used.  Note that Log and
+         * config annotations can be repeated to place widgets on multiple tabs.  Note also that this feature is NOT
+         * currently supported for NT-only mode!
+         */
+        String tabName() default "DEFAULT";
+
+        /**
          * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
          * in an object, it should be specified for all widgets in that object to avoid overlaps.
          */
@@ -374,6 +464,11 @@ public @interface Config {
         int height() default -1;
     }
 
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD})
+    @interface PIDControllers {
+        PIDController[] value();
+    }
 
     /**
      * Displays a relay with toggle buttons for each supported mode (off, on, forward, reverse).
@@ -383,6 +478,7 @@ public @interface Config {
      * </ul>
      * <br>This widget has no custom properties.
      */
+    @Repeatable(Relays.class)
     @Target({ElementType.FIELD})
     @Retention(RetentionPolicy.RUNTIME)
     @interface Relay {
@@ -390,6 +486,14 @@ public @interface Config {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return The name of the tab in which to place this widget, if the default inferred tab/layout is not desired.
+         * Users should be careful to avoid namespace collisions if the default tab is not used.  Note that Log and
+         * config annotations can be repeated to place widgets on multiple tabs.  Note also that this feature is NOT
+         * currently supported for NT-only mode!
+         */
+        String tabName() default "DEFAULT";
 
         /**
          * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
@@ -416,6 +520,11 @@ public @interface Config {
         int height() default -1;
     }
 
+    @Target({ElementType.FIELD})
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface Relays {
+        Relay[] value();
+    }
 
     /**
      * Suppresses the config tab/layout corresponding to this {@link Loggable} instance (or all instances of the type).
