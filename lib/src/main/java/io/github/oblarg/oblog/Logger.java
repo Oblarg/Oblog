@@ -1058,7 +1058,7 @@ public class Logger {
         final Method method;
 
         try {
-            method = obj.getClass().getDeclaredMethod(methodName);
+            method = obj.getClass().getMethod(methodName);
         } catch (NoSuchMethodException e) {
             throw new IllegalArgumentException("No method of name " + methodName + " found for object " +
                     obj.getClass().getName() + "!");
