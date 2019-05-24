@@ -19,28 +19,35 @@ public @interface Log {
     String name() default "NO_NAME";
 
     /**
-         * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
-         * in an object, it should be specified for all widgets in that object to avoid overlaps.
-         */
-        int rowIndex() default -1;
+     * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
+     * that will be logged.  Useful if one does not desire to make an entire object Loggable, but still wants to log
+     * a value from it.
+     */
+    String methodName() default "DEFAULT";
 
-        /**
-         * @return The column in which this widget should be placed.  WARNING: If position/size is specified for one widget
-         * in an object, it should be specified for all widgets in that object to avoid overlaps.
-         */
-        int columnIndex() default -1;
+    /**
+     * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
+     * in an object, it should be specified for all widgets in that object to avoid overlaps.
+     */
+    int rowIndex() default -1;
 
-        /**
-         * @return The width of this widget.  WARNING: If position/size is specified for one widget
-         * in an object, it should be specified for all widgets in that object to avoid overlaps.
-         */
-        int width() default -1;
+    /**
+     * @return The column in which this widget should be placed.  WARNING: If position/size is specified for one widget
+     * in an object, it should be specified for all widgets in that object to avoid overlaps.
+     */
+    int columnIndex() default -1;
 
-        /**
-         * @return The height of this widget.  WARNING: If position/size is specified for one widget
-         * in an object, it should be specified for all widgets in that object to avoid overlaps.
-         */
-        int height() default -1;
+    /**
+     * @return The width of this widget.  WARNING: If position/size is specified for one widget
+     * in an object, it should be specified for all widgets in that object to avoid overlaps.
+     */
+    int width() default -1;
+
+    /**
+     * @return The height of this widget.  WARNING: If position/size is specified for one widget
+     * in an object, it should be specified for all widgets in that object to avoid overlaps.
+     */
+    int height() default -1;
 
 
     /**
@@ -65,6 +72,13 @@ public @interface Log {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
+         * that will be logged.  Useful if one does not desire to make an entire object Loggable, but still wants to log
+         * a value from it.
+         */
+        String methodName() default "DEFAULT";
 
         /**
          * @return The minimum value of the number bar.
@@ -129,6 +143,13 @@ public @interface Log {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
+         * that will be logged.  Useful if one does not desire to make an entire object Loggable, but still wants to log
+         * a value from it.
+         */
+        String methodName() default "DEFAULT";
 
         /**
          * @return The minimum value of the dial.
@@ -196,6 +217,13 @@ public @interface Log {
         String name() default "NO_NAME";
 
         /**
+         * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
+         * that will be logged.  Useful if one does not desire to make an entire object Loggable, but still wants to log
+         * a value from it.
+         */
+        String methodName() default "DEFAULT";
+
+        /**
          * @return Window length of past data displayed in the graph.
          */
         double visibleTime() default 30;
@@ -249,6 +277,13 @@ public @interface Log {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
+         * that will be logged.  Useful if one does not desire to make an entire object Loggable, but still wants to log
+         * a value from it.
+         */
+        String methodName() default "DEFAULT";
 
         /**
          * @return The color of the box when true.
@@ -312,6 +347,13 @@ public @interface Log {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
+         * that will be logged.  Useful if one does not desire to make an entire object Loggable, but still wants to log
+         * a value from it.
+         */
+        String methodName() default "DEFAULT";
 
         /**
          * @return The minimum value of the bar.
@@ -386,6 +428,13 @@ public @interface Log {
         String name() default "NO_NAME";
 
         /**
+         * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
+         * that will be logged.  Useful if one does not desire to make an entire object Loggable, but still wants to log
+         * a value from it.
+         */
+        String methodName() default "DEFAULT";
+
+        /**
          * @return Whether to show the voltage and current values.
          */
         boolean showVoltageAndCurrent() default true;
@@ -431,6 +480,13 @@ public @interface Log {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
+         * that will be logged.  Useful if one does not desire to make an entire object Loggable, but still wants to log
+         * a value from it.
+         */
+        String methodName() default "DEFAULT";
 
         /**
          * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
@@ -490,6 +546,13 @@ public @interface Log {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
+         * that will be logged.  Useful if one does not desire to make an entire object Loggable, but still wants to log
+         * a value from it.
+         */
+        String methodName() default "DEFAULT";
 
         /**
          * @return The orientation of the bar.  Either "HORIZONTAL" or "VERTICAL".
@@ -552,6 +615,13 @@ public @interface Log {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
+         * that will be logged.  Useful if one does not desire to make an entire object Loggable, but still wants to log
+         * a value from it.
+         */
+        String methodName() default "DEFAULT";
 
         /**
          * @return The minimum acceleration value to display.
@@ -633,6 +703,13 @@ public @interface Log {
         String name() default "NO_NAME";
 
         /**
+         * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
+         * that will be logged.  Useful if one does not desire to make an entire object Loggable, but still wants to log
+         * a value from it.
+         */
+        String methodName() default "DEFAULT";
+
+        /**
          * @return The range of the accelerometer.
          */
         edu.wpi.first.wpilibj.interfaces.Accelerometer.Range range() default edu.wpi.first.wpilibj.interfaces.Accelerometer.Range.k16G;
@@ -704,6 +781,13 @@ public @interface Log {
         String name() default "NO_NAME";
 
         /**
+         * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
+         * that will be logged.  Useful if one does not desire to make an entire object Loggable, but still wants to log
+         * a value from it.
+         */
+        String methodName() default "DEFAULT";
+
+        /**
          * @return Spacing of the major ticks on the compass.
          */
         double majorTickSpacing() default 45;
@@ -770,6 +854,13 @@ public @interface Log {
         String name() default "NO_NAME";
 
         /**
+         * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
+         * that will be logged.  Useful if one does not desire to make an entire object Loggable, but still wants to log
+         * a value from it.
+         */
+        String methodName() default "DEFAULT";
+
+        /**
          * @return Number of wheels.  Must be a positive, even integer.
          */
         int numWheels() default 4;
@@ -833,6 +924,13 @@ public @interface Log {
         String name() default "NO_NAME";
 
         /**
+         * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
+         * that will be logged.  Useful if one does not desire to make an entire object Loggable, but still wants to log
+         * a value from it.
+         */
+        String methodName() default "DEFAULT";
+
+        /**
          * @return Whether to show the velocity vectors.
          */
         boolean showVel() default true;
@@ -892,6 +990,13 @@ public @interface Log {
         String name() default "NO_NAME";
 
         /**
+         * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
+         * that will be logged.  Useful if one does not desire to make an entire object Loggable, but still wants to log
+         * a value from it.
+         */
+        String methodName() default "DEFAULT";
+
+        /**
          * @return Whether to show the crosshairs.
          */
         boolean showCrosshairs() default true;
@@ -936,7 +1041,6 @@ public @interface Log {
         int height() default -1;
     }
 
-
     /**
      * Logs an object as the value returned by its toString method.  Useful for logging object types not natively supported by
      * Shuffleboard without having to implement {@link edu.wpi.first.wpilibj.Sendable}.
@@ -948,6 +1052,13 @@ public @interface Log {
          * @return The name of the value on Shuffleboard; defaults to field or method name.
          */
         String name() default "NO_NAME";
+
+        /**
+         * @return Optional name of a method to call on the field (or return value of the method) to obtain the actual value
+         * that will be logged.  Useful if one does not desire to make an entire object Loggable, but still wants to log
+         * a value from it.
+         */
+        String methodName() default "DEFAULT";
 
         /**
          * @return The row in which this widget should be placed.  WARNING: If position/size is specified for one widget
