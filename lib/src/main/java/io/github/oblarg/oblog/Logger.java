@@ -347,6 +347,7 @@ public class Logger {
             entry(Log.class,
                     (supplier, rawParams, bin, name) -> {
                         Log params = (Log) rawParams;
+                        supplier = getFromMethod(supplier, params.methodName());
                         if (supplier.get() instanceof Sendable) {
                             bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                     .withPosition(params.rowIndex(), params.columnIndex())
@@ -364,6 +365,7 @@ public class Logger {
             entry(Log.NumberBar.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.NumberBar params = (Log.NumberBar) rawParams;
+                        supplier = getFromMethod(supplier, params.methodName());
                         Logger.registerEntry(
                                 bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
                                         .withWidget(BuiltInWidgets.kNumberBar.getWidgetName())
@@ -379,6 +381,7 @@ public class Logger {
             entry(Log.Dial.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.Dial params = (Log.Dial) rawParams;
+                        supplier = getFromMethod(supplier, params.methodName());
                         Logger.registerEntry(
                                 bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
                                         .withWidget(BuiltInWidgets.kDial.getWidgetName())
@@ -394,6 +397,7 @@ public class Logger {
             entry(Log.Graph.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.Graph params = (Log.Graph) rawParams;
+                        supplier = getFromMethod(supplier, params.methodName());
                         Logger.registerEntry(
                                 bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
                                         .withWidget(BuiltInWidgets.kGraph.getWidgetName())
@@ -407,6 +411,7 @@ public class Logger {
             entry(Log.BooleanBox.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.BooleanBox params = (Log.BooleanBox) rawParams;
+                        supplier = getFromMethod(supplier, params.methodName());
                         Logger.registerEntry(
                                 bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
                                         .withWidget(BuiltInWidgets.kBooleanBox.getWidgetName())
@@ -422,6 +427,7 @@ public class Logger {
                     (supplier, rawParams, bin, name) -> {
                         if (supplier.get() instanceof AnalogInput) {
                             Log.VoltageView params = (Log.VoltageView) rawParams;
+                            supplier = getFromMethod(supplier, params.methodName());
                             bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                     .withWidget(BuiltInWidgets.kVoltageView.getWidgetName())
                                     .withProperties(Map.of(
@@ -434,6 +440,7 @@ public class Logger {
                                     .withSize(params.width(), params.height());
                         } else {
                             Log.VoltageView params = (Log.VoltageView) rawParams;
+                            supplier = getFromMethod(supplier, params.methodName());
                             Logger.registerEntry(
                                     bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
                                             .withWidget(BuiltInWidgets.kVoltageView.getWidgetName())
@@ -452,6 +459,7 @@ public class Logger {
             entry(Log.PDP.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.PDP params = (Log.PDP) rawParams;
+                        supplier = getFromMethod(supplier, params.methodName());
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kPowerDistributionPanel.getWidgetName())
                                 .withProperties(Map.of(
@@ -462,6 +470,7 @@ public class Logger {
             entry(Log.Encoder.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.Encoder params = (Log.Encoder) rawParams;
+                        supplier = getFromMethod(supplier, params.methodName());
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kEncoder.getWidgetName())
                                 .withPosition(params.columnIndex(), params.rowIndex())
@@ -470,6 +479,7 @@ public class Logger {
             entry(Log.SpeedController.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.SpeedController params = (Log.SpeedController) rawParams;
+                        supplier = getFromMethod(supplier, params.methodName());
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kSpeedController.getWidgetName())
                                 .withProperties(Map.of(
@@ -480,6 +490,7 @@ public class Logger {
             entry(Log.Accelerometer.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.Accelerometer params = (Log.Accelerometer) rawParams;
+                        supplier = getFromMethod(supplier, params.methodName());
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kAccelerometer.getWidgetName())
                                 .withProperties(Map.of(
@@ -494,6 +505,7 @@ public class Logger {
             entry(Log.ThreeAxisAccelerometer.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.ThreeAxisAccelerometer params = (Log.ThreeAxisAccelerometer) rawParams;
+                        supplier = getFromMethod(supplier, params.methodName());
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.k3AxisAccelerometer.getWidgetName())
                                 .withProperties(Map.of(
@@ -507,6 +519,7 @@ public class Logger {
             entry(Log.Gyro.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.Gyro params = (Log.Gyro) rawParams;
+                        supplier = getFromMethod(supplier, params.methodName());
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kGyro.getWidgetName())
                                 .withProperties(Map.of(
@@ -519,6 +532,7 @@ public class Logger {
             entry(Log.DifferentialDrive.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.DifferentialDrive params = (Log.DifferentialDrive) rawParams;
+                        supplier = getFromMethod(supplier, params.methodName());
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kDifferentialDrive.getWidgetName())
                                 .withProperties(Map.of(
@@ -531,6 +545,7 @@ public class Logger {
             entry(Log.MecanumDrive.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.MecanumDrive params = (Log.MecanumDrive) rawParams;
+                        supplier = getFromMethod(supplier, params.methodName());
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kMecanumDrive.getWidgetName())
                                 .withProperties(Map.of(
@@ -541,6 +556,7 @@ public class Logger {
             entry(Log.CameraStream.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.CameraStream params = (Log.CameraStream) rawParams;
+                        supplier = getFromMethod(supplier, params.methodName());
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
                                 SendableCameraWrapper.wrap((VideoSource) supplier.get()))
                                 .withWidget(BuiltInWidgets.kCameraStream.getWidgetName())
@@ -555,12 +571,13 @@ public class Logger {
             entry(Log.ToString.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.ToString params = (Log.ToString) rawParams;
+                        final Supplier supplierFinal = getFromMethod(supplier, params.methodName());
                         Logger.registerEntry(
                                 bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get().toString())
                                         .withPosition(params.columnIndex(), params.rowIndex())
                                         .withSize(params.width(), params.height())
                                         .getEntry(),
-                                () -> supplier.get().toString());
+                                () -> supplierFinal.get().toString());
                     })
     );
 
@@ -1030,5 +1047,31 @@ public class Logger {
         }
 
         return annotation;
+    }
+
+    private static Supplier<Object> getFromMethod(Supplier<Object> supplier, String methodName) {
+        if (methodName.equals("DEFAULT")) {
+            return supplier;
+        }
+
+        Object obj = supplier.get();
+        final Method method;
+
+        try {
+            method = obj.getClass().getDeclaredMethod(methodName);
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException("No method of name " + methodName + " found for object " +
+                    obj.getClass().getName() + "!");
+        }
+
+        method.setAccessible(true);
+        return () -> {
+            try {
+                return method.invoke(obj);
+            } catch (InvocationTargetException | IllegalAccessException e) {
+                e.printStackTrace();
+                return null;
+            }
+        };
     }
 }

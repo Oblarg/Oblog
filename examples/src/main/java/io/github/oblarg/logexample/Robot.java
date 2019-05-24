@@ -37,6 +37,8 @@ public class Robot extends TimedRobot {
 
     private LoggedCommand command10Seconds = new LoggedCommand(10);
 
+    @Log(methodName = "getFoo")
+    private UnloggedComponent methodTest = new UnloggedComponent();
 
     @Log
     private static DifferentialDrive drive = new DifferentialDrive(new Victor(1), new Victor(2));
