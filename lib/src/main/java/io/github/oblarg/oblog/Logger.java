@@ -230,6 +230,8 @@ public class Logger {
             entry(Config.class, (setter, rawParams, bin, nt, name, isBoolean) -> {
                 if (isBoolean) {
                     Config params = (Config) rawParams;
+                    bin = params.tabName().equals("DEFAULT") ? bin :
+                            new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
                     NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValueBoolean())
                             .withWidget(BuiltInWidgets.kToggleButton.getWidgetName())
                             .withPosition(params.columnIndex(), params.rowIndex())
@@ -242,6 +244,8 @@ public class Logger {
                     setter.accept(params.defaultValueBoolean());
                 } else {
                     Config params = (Config) rawParams;
+                    bin = params.tabName().equals("DEFAULT") ? bin :
+                            new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
                     NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValueNumeric())
                             .withWidget(BuiltInWidgets.kTextView.getWidgetName())
                             .withPosition(params.columnIndex(), params.rowIndex())
@@ -256,6 +260,8 @@ public class Logger {
             }),
             entry(Config.ToggleButton.class, (setter, rawParams, bin, nt, name, isBoolean) -> {
                 Config.ToggleButton params = (Config.ToggleButton) rawParams;
+                bin = params.tabName().equals("DEFAULT") ? bin :
+                        new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
                 NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValue())
                         .withWidget(BuiltInWidgets.kToggleButton.getWidgetName())
                         .withPosition(params.columnIndex(), params.rowIndex())
@@ -269,6 +275,8 @@ public class Logger {
             }),
             entry(Config.ToggleSwitch.class, (setter, rawParams, bin, nt, name, isBoolean) -> {
                 Config.ToggleSwitch params = (Config.ToggleSwitch) rawParams;
+                bin = params.tabName().equals("DEFAULT") ? bin :
+                        new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
                 NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValue())
                         .withWidget(BuiltInWidgets.kToggleSwitch.getWidgetName())
                         .withPosition(params.columnIndex(), params.rowIndex())
@@ -282,6 +290,8 @@ public class Logger {
             }),
             entry(Config.NumberSlider.class, (setter, rawParams, bin, nt, name, isBoolean) -> {
                 Config.NumberSlider params = (Config.NumberSlider) rawParams;
+                bin = params.tabName().equals("DEFAULT") ? bin :
+                        new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
                 NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValue())
                         .withWidget(BuiltInWidgets.kNumberSlider.getWidgetName())
                         .withProperties(Map.of(
@@ -305,6 +315,8 @@ public class Logger {
             entry(Config.class,
                     (supplier, rawParams, bin, name) -> {
                         Config params = (Config) rawParams;
+                        bin = params.tabName().equals("DEFAULT") ? bin :
+                                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withPosition(params.columnIndex(), params.rowIndex())
                                 .withSize(params.width(), params.height());
@@ -312,6 +324,8 @@ public class Logger {
             entry(Config.Command.class,
                     (supplier, rawParams, bin, name) -> {
                         Config.Command params = (Config.Command) rawParams;
+                        bin = params.tabName().equals("DEFAULT") ? bin :
+                                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kCommand.getWidgetName())
                                 .withPosition(params.columnIndex(), params.rowIndex())
@@ -320,6 +334,8 @@ public class Logger {
             entry(Config.PIDCommand.class,
                     (supplier, rawParams, bin, name) -> {
                         Config.PIDCommand params = (Config.PIDCommand) rawParams;
+                        bin = params.tabName().equals("DEFAULT") ? bin :
+                                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kPIDCommand.getWidgetName())
                                 .withPosition(params.columnIndex(), params.rowIndex())
@@ -328,6 +344,8 @@ public class Logger {
             entry(Config.PIDController.class,
                     (supplier, rawParams, bin, name) -> {
                         Config.PIDController params = (Config.PIDController) rawParams;
+                        bin = params.tabName().equals("DEFAULT") ? bin :
+                                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kPIDController.getWidgetName())
                                 .withPosition(params.columnIndex(), params.rowIndex())
@@ -336,6 +354,8 @@ public class Logger {
             entry(Config.Relay.class,
                     (supplier, rawParams, bin, name) -> {
                         Config.Relay params = (Config.Relay) rawParams;
+                        bin = params.tabName().equals("DEFAULT") ? bin :
+                                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
                         bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
                                 .withWidget(BuiltInWidgets.kRelay.getWidgetName())
                                 .withPosition(params.columnIndex(), params.rowIndex())
