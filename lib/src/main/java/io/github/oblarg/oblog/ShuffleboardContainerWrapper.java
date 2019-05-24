@@ -8,9 +8,9 @@ import edu.wpi.first.wpilibj.shuffleboard.LayoutType;
  * if desired.
  */
 public interface ShuffleboardContainerWrapper {
-    ShuffleboardLayoutWrapper getLayout(String title, LayoutType type);
+  ShuffleboardLayoutWrapper getLayout(String title, LayoutType type);
 
-    SimpleWidgetWrapper add(String title, Object defaultValue);
+  SimpleWidgetWrapper add(String title, Object defaultValue);
 
-    ComplexWidgetWrapper add(String title, Sendable defaultValue);
+  ComplexWidgetWrapper add(String title, Sendable defaultValue);
 }

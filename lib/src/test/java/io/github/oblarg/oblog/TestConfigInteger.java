@@ -5,10 +5,10 @@ import io.github.oblarg.oblog.annotations.Config;
 public class TestConfigInteger implements Loggable {
 
 
-    int i;
+  int i;
 
-    @Config
-    void setI(int i) {
-        this.i = i;
-    }
+  @Config
+  void setI(int i) {
+    this.i = i;
+  }
 }

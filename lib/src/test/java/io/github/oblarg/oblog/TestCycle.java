@@ -4,25 +4,25 @@ import io.github.oblarg.oblog.annotations.Log;
 
 class TestCycleInner implements Loggable {
 
-    TestCycleOuter outer;
+  TestCycleOuter outer;
 
-    @Log
-    String s = "inner";
+  @Log
+  String s = "inner";
 
-    void setOuter(TestCycleOuter outer) {
-        this.outer = outer;
-    }
+  void setOuter(TestCycleOuter outer) {
+    this.outer = outer;
+  }
 
 }
 
 class TestCycleOuter implements Loggable {
 
-    TestCycleInner inner;
+  TestCycleInner inner;
 
-    @Log
-    String s = "outer";
+  @Log
+  String s = "outer";
 
-    void setInner(TestCycleInner inner) {
-        this.inner = inner;
-    }
+  void setInner(TestCycleInner inner) {
+    this.inner = inner;
+  }
 }

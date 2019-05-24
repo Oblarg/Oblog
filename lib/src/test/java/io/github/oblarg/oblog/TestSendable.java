@@ -8,6 +8,6 @@ import io.github.oblarg.oblog.annotations.Log;
 
 class TestSendable implements Loggable {
 
-    @Log.DifferentialDrive
-    private DifferentialDrive drive = mock(DifferentialDrive.class);
+  @Log.DifferentialDrive
+  private DifferentialDrive drive = mock(DifferentialDrive.class);
 }

@@ -4,15 +4,15 @@ import io.github.oblarg.oblog.annotations.Config;
 
 public class LoggedComponentSubclass extends LoggedComponent {
 
-    public LoggedComponentSubclass(int columnIndex, int rowIndex){
-        super(columnIndex, rowIndex);
-    }
+  public LoggedComponentSubclass(int columnIndex, int rowIndex) {
+    super(columnIndex, rowIndex);
+  }
 
-    boolean toggle;
+  boolean toggle;
 
-    @Config.ToggleButton
-    private void setToggle(boolean toggle) {
-        this.toggle = toggle;
-        System.out.println("Toggle set to: " + this.toggle);
-    }
+  @Config.ToggleButton
+  private void setToggle(boolean toggle) {
+    this.toggle = toggle;
+    System.out.println("Toggle set to: " + this.toggle);
+  }
 }

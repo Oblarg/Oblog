@@ -16,23 +16,23 @@ import static org.mockito.Mockito.verify;
 
 public class SendableTester {
 
-    @Test
-    public void testSendable() {
-        List<NetworkTableEntry> mockedEntries = new ArrayList<>();
+  @Test
+  public void testSendable() {
+    List<NetworkTableEntry> mockedEntries = new ArrayList<>();
 
-        TestRootContainer rootContainer = new TestRootContainer();
+    TestRootContainer rootContainer = new TestRootContainer();
 
-        ShuffleboardMocks mocks = new ShuffleboardMocks(mockedEntries);
+    ShuffleboardMocks mocks = new ShuffleboardMocks(mockedEntries);
 
-        Logger.configureLoggingTest(Logger.LogType.LOG, rootContainer, mocks.getMockedShuffleboard(), mocks.getMockedNTInstance());
+    Logger.configureLoggingTest(Logger.LogType.LOG, rootContainer, mocks.getMockedShuffleboard(), mocks.getMockedNTInstance());
 
-        verify(mocks.getMockedShuffleboard()).getTab("TestSendable: Log");
-        verify(mocks.getMockedContainer()).add(eq("drive"), any());
-    }
+    verify(mocks.getMockedShuffleboard()).getTab("TestSendable: Log");
+    verify(mocks.getMockedContainer()).add(eq("drive"), any());
+  }
 
-    private class TestRootContainer {
+  private class TestRootContainer {
 
-        TestSendable test = new TestSendable();
+    TestSendable test = new TestSendable();
 
-    }
+  }
 }

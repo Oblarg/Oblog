@@ -12,39 +12,39 @@ import static org.mockito.Mockito.verify;
 
 public class CyclicDetectionTester {
 
-    @Test
-    public void testCyclic() {
-        List<NetworkTableEntry> mockedEntries = new ArrayList<>();
+  @Test
+  public void testCyclic() {
+    List<NetworkTableEntry> mockedEntries = new ArrayList<>();
 
-        TestRootContainer rootContainer = new TestRootContainer();
+    TestRootContainer rootContainer = new TestRootContainer();
 
-        ShuffleboardMocks mocks = new ShuffleboardMocks(mockedEntries);
-
-
-        Logger.configureLoggingTest(Logger.LogType.LOG, rootContainer, mocks.getMockedShuffleboard(), mocks.getMockedNTInstance());
-        verify(mocks.getMockedShuffleboard()).getTab("TestCycleOuter: Log");
-        verify(mocks.getMockedContainer()).getLayout("TestCycleInner", BuiltInLayouts.kList);
-        verify(mocks.getMockedContainer()).add("s", "outer");
-        verify(mocks.getMockedLayout()).add("s", "inner");
+    ShuffleboardMocks mocks = new ShuffleboardMocks(mockedEntries);
 
 
-        Logger.updateEntries();
+    Logger.configureLoggingTest(Logger.LogType.LOG, rootContainer, mocks.getMockedShuffleboard(), mocks.getMockedNTInstance());
+    verify(mocks.getMockedShuffleboard()).getTab("TestCycleOuter: Log");
+    verify(mocks.getMockedContainer()).getLayout("TestCycleInner", BuiltInLayouts.kList);
+    verify(mocks.getMockedContainer()).add("s", "outer");
+    verify(mocks.getMockedLayout()).add("s", "inner");
 
-        for (NetworkTableEntry entry : mockedEntries) {
-            verify(entry).setValue(any());
-        }
+
+    Logger.updateEntries();
+
+    for (NetworkTableEntry entry : mockedEntries) {
+      verify(entry).setValue(any());
+    }
+  }
+
+  private class TestRootContainer {
+
+    private TestCycleOuter outer = new TestCycleOuter();
+
+    TestRootContainer() {
+      TestCycleInner inner = new TestCycleInner();
+      inner.setOuter(outer);
+      outer.setInner(inner);
     }
 
-    private class TestRootContainer {
-
-        private TestCycleOuter outer = new TestCycleOuter();
-
-        TestRootContainer() {
-            TestCycleInner inner = new TestCycleInner();
-            inner.setOuter(outer);
-            outer.setInner(inner);
-        }
-
-    }
+  }
 }
 

@@ -8,32 +8,32 @@ import java.util.Map;
 
 class NTComplexWidget implements ComplexWidgetWrapper {
 
-    NTComplexWidget(NetworkTable parent, String title, Sendable sendable) {
+  NTComplexWidget(NetworkTable parent, String title, Sendable sendable) {
 
-        SendableBuilderImpl builder = new SendableBuilderImpl();
-        builder.setTable(parent.getSubTable(title));
-        sendable.initSendable(builder);
-        builder.startListeners();
-        builder.updateTable();
-    }
+    SendableBuilderImpl builder = new SendableBuilderImpl();
+    builder.setTable(parent.getSubTable(title));
+    sendable.initSendable(builder);
+    builder.startListeners();
+    builder.updateTable();
+  }
 
-    @Override
-    public ComplexWidgetWrapper withProperties(Map<String, Object> properties) {
-        return this;
-    }
+  @Override
+  public ComplexWidgetWrapper withProperties(Map<String, Object> properties) {
+    return this;
+  }
 
-    @Override
-    public ComplexWidgetWrapper withWidget(String widgetType) {
-        return this;
-    }
+  @Override
+  public ComplexWidgetWrapper withWidget(String widgetType) {
+    return this;
+  }
 
-    @Override
-    public ComplexWidgetWrapper withPosition(int columnIndex, int rowIndex) {
-        return this;
-    }
+  @Override
+  public ComplexWidgetWrapper withPosition(int columnIndex, int rowIndex) {
+    return this;
+  }
 
-    @Override
-    public ComplexWidgetWrapper withSize(int width, int height) {
-        return this;
-    }
+  @Override
+  public ComplexWidgetWrapper withSize(int width, int height) {
+    return this;
+  }
 }

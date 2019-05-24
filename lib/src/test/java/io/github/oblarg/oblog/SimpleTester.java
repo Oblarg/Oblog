@@ -10,37 +10,37 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
 public class SimpleTester {
-    @Test
-    public void testSimple() {
-        List<NetworkTableEntry> mockedEntries = new ArrayList<>();
+  @Test
+  public void testSimple() {
+    List<NetworkTableEntry> mockedEntries = new ArrayList<>();
 
-        TestRootContainer rootContainer = new TestRootContainer();
+    TestRootContainer rootContainer = new TestRootContainer();
 
-        ShuffleboardMocks mocks = new ShuffleboardMocks(mockedEntries);
+    ShuffleboardMocks mocks = new ShuffleboardMocks(mockedEntries);
 
-        Logger.configureLoggingTest(Logger.LogType.LOG, rootContainer, mocks.getMockedShuffleboard(), mocks.getMockedNTInstance());
+    Logger.configureLoggingTest(Logger.LogType.LOG, rootContainer, mocks.getMockedShuffleboard(), mocks.getMockedNTInstance());
 
-        verify(mocks.getMockedShuffleboard()).getTab("TestLoggableBasic1: Log");
-        verify(mocks.getMockedShuffleboard()).getTab("TestLoggableBasic2: Log");
+    verify(mocks.getMockedShuffleboard()).getTab("TestLoggableBasic1: Log");
+    verify(mocks.getMockedShuffleboard()).getTab("TestLoggableBasic2: Log");
 
-        verify(mocks.getMockedContainer()).add("a", 1);
-        verify(mocks.getMockedContainer()).add("getA", 1);
+    verify(mocks.getMockedContainer()).add("a", 1);
+    verify(mocks.getMockedContainer()).add("getA", 1);
 
-        verify(mocks.getMockedContainer()).add("a", 2);
-        verify(mocks.getMockedContainer()).add("getA", 2);
+    verify(mocks.getMockedContainer()).add("a", 2);
+    verify(mocks.getMockedContainer()).add("getA", 2);
 
 
-        Logger.updateEntries();
+    Logger.updateEntries();
 
-        for (NetworkTableEntry entry : mockedEntries) {
-            verify(entry).setValue(any());
-        }
+    for (NetworkTableEntry entry : mockedEntries) {
+      verify(entry).setValue(any());
     }
+  }
 
-    private class TestRootContainer {
+  private class TestRootContainer {
 
-        TestLoggableBasic test1 = new TestLoggableBasic(1);
-        TestLoggableBasic test2 = new TestLoggableBasic(2);
+    TestLoggableBasic test1 = new TestLoggableBasic(1);
+    TestLoggableBasic test2 = new TestLoggableBasic(2);
 
-    }
+  }
 }

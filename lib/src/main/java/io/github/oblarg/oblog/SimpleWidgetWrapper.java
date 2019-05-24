@@ -9,13 +9,13 @@ import java.util.Map;
  * if desired.
  */
 public interface SimpleWidgetWrapper {
-    NetworkTableEntry getEntry();
+  NetworkTableEntry getEntry();
 
-    SimpleWidgetWrapper withProperties(Map<String, Object> properties);
+  SimpleWidgetWrapper withProperties(Map<String, Object> properties);
 
-    SimpleWidgetWrapper withWidget(String widgetType);
+  SimpleWidgetWrapper withWidget(String widgetType);
 
-    SimpleWidgetWrapper withPosition(int columnIndex, int rowIndex);
+  SimpleWidgetWrapper withPosition(int columnIndex, int rowIndex);
 
-    SimpleWidgetWrapper withSize(int width, int height);
+  SimpleWidgetWrapper withSize(int width, int height);
 }

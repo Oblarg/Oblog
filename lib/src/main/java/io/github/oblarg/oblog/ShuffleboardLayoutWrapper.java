@@ -7,7 +7,9 @@ import java.util.Map;
  * if desired.
  */
 public interface ShuffleboardLayoutWrapper extends ShuffleboardContainerWrapper {
-    ShuffleboardLayoutWrapper withProperties(Map<String, Object> properties);
-    ShuffleboardLayoutWrapper withSize(int width, int height);
-    ShuffleboardLayoutWrapper withPosition(int columnIndex, int rowIndex);
+  ShuffleboardLayoutWrapper withProperties(Map<String, Object> properties);
+
+  ShuffleboardLayoutWrapper withSize(int width, int height);
+
+  ShuffleboardLayoutWrapper withPosition(int columnIndex, int rowIndex);
 }

@@ -7,11 +7,11 @@ import java.util.Map;
  * if desired.
  */
 public interface ComplexWidgetWrapper {
-    ComplexWidgetWrapper withProperties(Map<String, Object> properties);
+  ComplexWidgetWrapper withProperties(Map<String, Object> properties);
 
-    ComplexWidgetWrapper withWidget(String widgetType);
+  ComplexWidgetWrapper withWidget(String widgetType);
 
-    ComplexWidgetWrapper withPosition(int columnIndex, int rowIndex);
+  ComplexWidgetWrapper withPosition(int columnIndex, int rowIndex);
 
-    ComplexWidgetWrapper withSize(int width, int height);
+  ComplexWidgetWrapper withSize(int width, int height);
 }

@@ -12,34 +12,34 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.verify;
 
 public class ChildRecursionTester {
-    @Test
-    public void testChildRecursion() {
-        List<NetworkTableEntry> mockedEntries = new ArrayList<>();
+  @Test
+  public void testChildRecursion() {
+    List<NetworkTableEntry> mockedEntries = new ArrayList<>();
 
-        TestRootContainer rootContainer = new TestRootContainer();
+    TestRootContainer rootContainer = new TestRootContainer();
 
-        ShuffleboardMocks mocks = new ShuffleboardMocks(mockedEntries);
+    ShuffleboardMocks mocks = new ShuffleboardMocks(mockedEntries);
 
-        Logger.configureLoggingTest(Logger.LogType.LOG, rootContainer, mocks.getMockedShuffleboard(), mocks.getMockedNTInstance());
+    Logger.configureLoggingTest(Logger.LogType.LOG, rootContainer, mocks.getMockedShuffleboard(), mocks.getMockedNTInstance());
 
-        verify(mocks.getMockedShuffleboard(), atLeastOnce()).getTab("TestLoggableChildren: Log");
-        verify(mocks.getMockedContainer(), atLeastOnce()).getLayout("TestLoggableBasic1", BuiltInLayouts.kList);
-        verify(mocks.getMockedContainer(), atLeastOnce()).getLayout("TestLoggableBasic2", BuiltInLayouts.kList);
+    verify(mocks.getMockedShuffleboard(), atLeastOnce()).getTab("TestLoggableChildren: Log");
+    verify(mocks.getMockedContainer(), atLeastOnce()).getLayout("TestLoggableBasic1", BuiltInLayouts.kList);
+    verify(mocks.getMockedContainer(), atLeastOnce()).getLayout("TestLoggableBasic2", BuiltInLayouts.kList);
 
-        verify(mocks.getMockedLayout()).add("a", 1);
-        verify(mocks.getMockedLayout()).add("a", 2);
+    verify(mocks.getMockedLayout()).add("a", 1);
+    verify(mocks.getMockedLayout()).add("a", 2);
 
 
-        Logger.updateEntries();
+    Logger.updateEntries();
 
-        for (NetworkTableEntry entry : mockedEntries) {
-            verify(entry).setValue(any());
-        }
+    for (NetworkTableEntry entry : mockedEntries) {
+      verify(entry).setValue(any());
     }
+  }
 
-    private class TestRootContainer {
+  private class TestRootContainer {
 
-        TestLoggableChildren ordinaryChildTest = new TestLoggableChildren(1, 2);
+    TestLoggableChildren ordinaryChildTest = new TestLoggableChildren(1, 2);
 
-    }
+  }
 }
