@@ -347,27 +347,28 @@ public class Logger {
             entry(Log.class,
                     (supplier, rawParams, bin, name) -> {
                         Log params = (Log) rawParams;
-                        supplier = getFromMethod(supplier, params.methodName());
-                        if (supplier.get() instanceof Sendable) {
-                            bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
+                        if (getFromMethod(supplier, params.methodName()).get() instanceof Sendable) {
+                            bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                                    (Sendable) getFromMethod(supplier, params.methodName()).get())
                                     .withPosition(params.rowIndex(), params.columnIndex())
                                     .withSize(params.width(), params.height())
                                     .withPosition(params.columnIndex(), params.rowIndex())
                                     .withSize(params.width(), params.height());
                         } else {
                             Logger.registerEntry(
-                                    bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
+                                    bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                                            getFromMethod(supplier, params.methodName()).get())
                                             .withPosition(params.columnIndex(), params.rowIndex())
                                             .withSize(params.width(), params.height()).getEntry(),
-                                    supplier);
+                                    () -> getFromMethod(supplier, params.methodName()).get());
                         }
                     }),
             entry(Log.NumberBar.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.NumberBar params = (Log.NumberBar) rawParams;
-                        supplier = getFromMethod(supplier, params.methodName());
                         Logger.registerEntry(
-                                bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
+                                bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                                        getFromMethod(supplier, params.methodName()).get())
                                         .withWidget(BuiltInWidgets.kNumberBar.getWidgetName())
                                         .withProperties(Map.of(
                                                 "min", params.min(),
@@ -376,14 +377,14 @@ public class Logger {
                                         .withPosition(params.columnIndex(), params.rowIndex())
                                         .withSize(params.width(), params.height())
                                         .getEntry(),
-                                supplier);
+                                () -> getFromMethod(supplier, params.methodName()).get());
                     }),
             entry(Log.Dial.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.Dial params = (Log.Dial) rawParams;
-                        supplier = getFromMethod(supplier, params.methodName());
                         Logger.registerEntry(
-                                bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
+                                bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                                        getFromMethod(supplier, params.methodName()).get())
                                         .withWidget(BuiltInWidgets.kDial.getWidgetName())
                                         .withProperties(Map.of(
                                                 "min", params.min(),
@@ -392,28 +393,28 @@ public class Logger {
                                         .withPosition(params.columnIndex(), params.rowIndex())
                                         .withSize(params.width(), params.height())
                                         .getEntry(),
-                                supplier);
+                                () -> getFromMethod(supplier, params.methodName()).get());
                     }),
             entry(Log.Graph.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.Graph params = (Log.Graph) rawParams;
-                        supplier = getFromMethod(supplier, params.methodName());
                         Logger.registerEntry(
-                                bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
+                                bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                                        getFromMethod(supplier, params.methodName()).get())
                                         .withWidget(BuiltInWidgets.kGraph.getWidgetName())
                                         .withProperties(Map.of(
                                                 "Visible time", params.visibleTime()))
                                         .withPosition(params.columnIndex(), params.rowIndex())
                                         .withSize(params.width(), params.height())
                                         .getEntry(),
-                                supplier);
+                                () -> getFromMethod(supplier, params.methodName()).get());
                     }),
             entry(Log.BooleanBox.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.BooleanBox params = (Log.BooleanBox) rawParams;
-                        supplier = getFromMethod(supplier, params.methodName());
                         Logger.registerEntry(
-                                bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
+                                bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                                        getFromMethod(supplier, params.methodName()).get())
                                         .withWidget(BuiltInWidgets.kBooleanBox.getWidgetName())
                                         .withProperties(Map.of(
                                                 "colorWhenTrue", params.colorWhenTrue(),
@@ -421,7 +422,7 @@ public class Logger {
                                         .withPosition(params.columnIndex(), params.rowIndex())
                                         .withSize(params.width(), params.height())
                                         .getEntry(),
-                                supplier);
+                                () -> getFromMethod(supplier, params.methodName()).get());
                     }),
             entry(Log.VoltageView.class,
                     (supplier, rawParams, bin, name) -> {
@@ -440,9 +441,10 @@ public class Logger {
                                     .withSize(params.width(), params.height());
                         } else {
                             Log.VoltageView params = (Log.VoltageView) rawParams;
-                            supplier = getFromMethod(supplier, params.methodName());
+                            final Supplier<Object> supplierFinal = supplier;
                             Logger.registerEntry(
-                                    bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get())
+                                    bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                                            getFromMethod(supplier, params.methodName()).get())
                                             .withWidget(BuiltInWidgets.kVoltageView.getWidgetName())
                                             .withProperties(Map.of(
                                                     "min", params.min(),
@@ -453,7 +455,7 @@ public class Logger {
                                             .withPosition(params.columnIndex(), params.rowIndex())
                                             .withSize(params.width(), params.height())
                                             .getEntry(),
-                                    supplier);
+                                    () -> getFromMethod(supplierFinal, params.name()));
                         }
                     }),
             entry(Log.PDP.class,
@@ -571,13 +573,14 @@ public class Logger {
             entry(Log.ToString.class,
                     (supplier, rawParams, bin, name) -> {
                         Log.ToString params = (Log.ToString) rawParams;
-                        final Supplier supplierFinal = getFromMethod(supplier, params.methodName());
+                        final Supplier supplierFinal = supplier;
                         Logger.registerEntry(
-                                bin.add((params.name().equals("NO_NAME")) ? name : params.name(), supplier.get().toString())
+                                bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                                        getFromMethod(supplier, params.methodName()).get().toString())
                                         .withPosition(params.columnIndex(), params.rowIndex())
                                         .withSize(params.width(), params.height())
                                         .getEntry(),
-                                () -> supplierFinal.get().toString());
+                                () -> getFromMethod(supplierFinal, params.methodName()).get().toString());
                     })
     );
 
