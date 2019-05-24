@@ -20,6 +20,19 @@ import java.util.function.Supplier;
 @SuppressWarnings("Duplicates")
 public class Logger {
 
+    private static boolean cycleWarningsEnabled = true;
+
+    /**
+     * Enables or disables warnings for cyclic references of loggables.  Kotlin users will likely want to disable these,
+     * as kotlin singletons compile to cycles in the bytecode which cannot be explicitly broken with
+     * {@link Log.Exclude}.
+     *
+     * @param enabled Whether to print a warning on configuration when cyclic references of loggables are detected.
+     */
+    public static void setCycleWarningsEnabled(boolean enabled) {
+        cycleWarningsEnabled = enabled;
+    }
+
     /**
      * Configure shuffleboard logging for the robot.  Should be called after all loggable objects have been
      * instantiated, e.g. at the end of robotInit.  Tabs for logging will be separate from tabs for config.
@@ -910,7 +923,7 @@ public class Logger {
     private static boolean isAncestor(Field field, Object loggable, Set<Object> ancestors) {
         try {
             boolean b = ancestors.contains(field.get(loggable));
-            if (b) {
+            if (b && cycleWarningsEnabled) {
                 System.out.println("CAUTION: Cyclic reference of Loggables detected!  Recursion terminated after one cycle.");
                 System.out.println(field.getName() + " in " + loggable.getClass().getName() +
                         " is itself an ancestor of " + loggable.getClass().getName());
