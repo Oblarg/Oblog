@@ -41,7 +41,6 @@ public class Logger {
    *                      To send an instance of Robot.java to this method from robotInit, call "configureLogging(this)"
    *                      Loggable fields of this object will have their own shuffleboard tabs.
    */
-
   public static void configureLogging(Object rootContainer) {
     configureLogging(LogType.LOG, true, rootContainer, new WrappedShuffleboard(), NetworkTableInstance.getDefault());
   }
@@ -106,6 +105,17 @@ public class Logger {
     entrySupplierMap.put(entry, supplier);
   }
 
+  /**
+   * Configures logging or config for the robot.  Begins at the specified root container and recurses down the tree of
+   * Loggable objects.  The root container itself does have a tab, so that fields located in it can be logged, but is
+   * not required to implement Loggable.
+   *
+   * @param logType       The type of logging to perform (either logging or config)
+   * @param separate      Whether logging and config should be given separate tabs
+   * @param rootContainer The root of the tree of loggable objects.  Does not need to be Loggable itself.
+   * @param shuffleboard  The shuffleboard instance to use; wrapped to allow NT-only mode
+   * @param nt            The networktable instance to use
+   */
   private static void configureLogging(LogType logType,
                                        boolean separate,
                                        Object rootContainer,
