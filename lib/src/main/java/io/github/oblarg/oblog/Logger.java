@@ -163,8 +163,10 @@ public class Logger {
 
     // Check all fields of the rootcontainer
     for (Field field : rootContainer.getClass().getDeclaredFields()) {
+      if (isNull(field, rootContainer)) {
+        continue;
+      }
       if (isLoggableClassOrArrayOrCollection(field, rootContainer) && isIncluded(field, logType)) {
-        field.setAccessible(true);
         // Handle arrays elementwise...
         if (field.getType().isArray()) {
           List<Loggable> toLogs = new ArrayList<>();
@@ -735,29 +737,30 @@ public class Logger {
 
     // Process fields; configurable fields are all Sendables
     for (Field field : fields) {
+      if (isNull(field, loggable) || registeredFields.contains(field)) {
+        continue;
+      }
       field.setAccessible(true);
-      if (!registeredFields.contains(field)) {
-        registeredFields.add(field);
-        // Look for all config annotation types
-        for (Class type : configFieldHandler.keySet()) {
-          // Get all annotations of each type
-          for (Annotation annotation : field.getAnnotationsByType(type)) {
-            // Get appropriate processing method for the annotation type
-            FieldProcessor process = configFieldHandler.get(annotation.annotationType());
-            if (process != null) {
-              // Process the field
-              process.processField(
-                  () -> {
-                    try {
-                      return field.get(loggable);
-                    } catch (IllegalAccessException e) {
-                      return null;
-                    }
-                  },
-                  annotation,
-                  bin,
-                  field.getName());
-            }
+      registeredFields.add(field);
+      // Look for all config annotation types
+      for (Class type : configFieldHandler.keySet()) {
+        // Get all annotations of each type
+        for (Annotation annotation : field.getAnnotationsByType(type)) {
+          // Get appropriate processing method for the annotation type
+          FieldProcessor process = configFieldHandler.get(annotation.annotationType());
+          if (process != null) {
+            // Process the field
+            process.processField(
+                () -> {
+                  try {
+                    return field.get(loggable);
+                  } catch (IllegalAccessException e) {
+                    return null;
+                  }
+                },
+                annotation,
+                bin,
+                field.getName());
           }
         }
       }
@@ -876,7 +879,7 @@ public class Logger {
 
     // Process fields...
     for (Field field : fields) {
-      if (registeredFields.contains(field)) {
+      if (isNull(field, loggable) || registeredFields.contains(field)) {
         continue;
       }
       field.setAccessible(true);
@@ -1311,5 +1314,16 @@ public class Logger {
         return null;
       }
     };
+  }
+
+  private static boolean isNull(Field field, Object obj) {
+    field.setAccessible(true);
+    boolean isNull = true;
+    try {
+      isNull = field.get(obj) == null;
+    } catch (IllegalAccessException e) {
+      e.printStackTrace();
+    }
+    return isNull;
   }
 }
