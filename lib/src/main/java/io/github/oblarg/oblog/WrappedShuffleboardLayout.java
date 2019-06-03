@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 
 import java.util.Map;
 
-import static io.github.oblarg.oblog.Util.nullCheck;
+import static io.github.oblarg.oblog.Util.logErrorCheck;
 
 class WrappedShuffleboardLayout implements ShuffleboardLayoutWrapper {
 
@@ -23,13 +23,13 @@ class WrappedShuffleboardLayout implements ShuffleboardLayoutWrapper {
 
   @Override
   public SimpleWidgetWrapper add(String title, Object defaultValue) {
-    nullCheck(defaultValue, title, layout.getTitle());
+    logErrorCheck(defaultValue, title, layout.getTitle());
     return new WrappedSimpleWidget(layout.add(title, defaultValue));
   }
 
   @Override
   public ComplexWidgetWrapper add(String title, Sendable defaultValue) {
-    nullCheck(defaultValue, title, layout.getTitle());
+    logErrorCheck(defaultValue, title, layout.getTitle());
     return new WrappedComplexWidget(layout.add(title, defaultValue));
   }
 

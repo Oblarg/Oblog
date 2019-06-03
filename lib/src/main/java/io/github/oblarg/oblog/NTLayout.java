@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.shuffleboard.LayoutType;
 
 import java.util.Map;
 
-import static io.github.oblarg.oblog.Util.nullCheck;
+import static io.github.oblarg.oblog.Util.logErrorCheck;
 
 class NTLayout implements ShuffleboardLayoutWrapper {
 
@@ -28,13 +28,13 @@ class NTLayout implements ShuffleboardLayoutWrapper {
 
   @Override
   public SimpleWidgetWrapper add(String title, Object defaultValue) {
-    nullCheck(defaultValue, title, table.getPath());
+    logErrorCheck(defaultValue, title, table.getPath());
     return new NTSimpleWidget(table.getEntry(title), defaultValue);
   }
 
   @Override
   public ComplexWidgetWrapper add(String title, Sendable defaultValue) {
-    nullCheck(defaultValue, title, table.getPath());
+    logErrorCheck(defaultValue, title, table.getPath());
     return new NTComplexWidget(table, title, defaultValue);
   }
 
