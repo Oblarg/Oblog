@@ -24,13 +24,23 @@ class WrappedShuffleboardLayout implements ShuffleboardLayoutWrapper {
   @Override
   public SimpleWidgetWrapper add(String title, Object defaultValue) {
     logErrorCheck(defaultValue, title, layout.getTitle());
-    return new WrappedSimpleWidget(layout.add(title, defaultValue));
+    try {
+      return new WrappedSimpleWidget(layout.add(title, defaultValue));
+    } catch (IllegalArgumentException e) {
+      throw new IllegalArgumentException("Error!  Attempted to log duplicate widget + " + title + " in container " +
+          layout.getTitle());
+    }
   }
 
   @Override
   public ComplexWidgetWrapper add(String title, Sendable defaultValue) {
     logErrorCheck(defaultValue, title, layout.getTitle());
-    return new WrappedComplexWidget(layout.add(title, defaultValue));
+    try {
+      return new WrappedComplexWidget(layout.add(title, defaultValue));
+    } catch (IllegalArgumentException e) {
+      throw new IllegalArgumentException("Error!  Attempted to log duplicate widget + " + title + " in container " +
+          layout.getTitle());
+    }
   }
 
   @Override

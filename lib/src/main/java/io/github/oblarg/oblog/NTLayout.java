@@ -29,13 +29,23 @@ class NTLayout implements ShuffleboardLayoutWrapper {
   @Override
   public SimpleWidgetWrapper add(String title, Object defaultValue) {
     logErrorCheck(defaultValue, title, table.getPath());
-    return new NTSimpleWidget(table.getEntry(title), defaultValue);
+    try {
+      return new NTSimpleWidget(table.getEntry(title), defaultValue);
+    } catch (IllegalArgumentException e) {
+      throw new IllegalArgumentException("Error!  Attempted to log duplicate widget + " + title + " in container " +
+          table.getPath());
+    }
   }
 
   @Override
   public ComplexWidgetWrapper add(String title, Sendable defaultValue) {
     logErrorCheck(defaultValue, title, table.getPath());
-    return new NTComplexWidget(table, title, defaultValue);
+    try {
+      return new NTComplexWidget(table, title, defaultValue);
+    } catch (IllegalArgumentException e) {
+      throw new IllegalArgumentException("Error!  Attempted to log duplicate widget + " + title + " in container " +
+          table.getPath());
+    }
   }
 
   @Override

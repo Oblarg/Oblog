@@ -22,12 +22,22 @@ class WrappedShuffleboardContainer implements ShuffleboardContainerWrapper {
   @Override
   public SimpleWidgetWrapper add(String title, Object defaultValue) {
     logErrorCheck(defaultValue, title, container.getTitle());
-    return new WrappedSimpleWidget(container.add(title, defaultValue));
+    try {
+      return new WrappedSimpleWidget(container.add(title, defaultValue));
+    } catch (IllegalArgumentException e) {
+      throw new IllegalArgumentException("Error!  Attempted to log duplicate widget + " + title + " in container " +
+          container.getTitle());
+    }
   }
 
   @Override
   public ComplexWidgetWrapper add(String title, Sendable defaultValue) {
     logErrorCheck(defaultValue, title, container.getTitle());
-    return new WrappedComplexWidget(container.add(title, defaultValue));
+    try {
+      return new WrappedComplexWidget(container.add(title, defaultValue));
+    } catch (IllegalArgumentException e) {
+      throw new IllegalArgumentException("Error!  Attempted to log duplicate widget + " + title + " in container " +
+          container.getTitle());
+    }
   }
 }
