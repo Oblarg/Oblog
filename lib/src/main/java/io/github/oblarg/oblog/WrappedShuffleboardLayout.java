@@ -27,7 +27,7 @@ class WrappedShuffleboardLayout implements ShuffleboardLayoutWrapper {
     try {
       return new WrappedSimpleWidget(layout.add(title, defaultValue));
     } catch (IllegalArgumentException e) {
-      throw new IllegalArgumentException("Error!  Attempted to log duplicate widget + " + title + " in container " +
+      throw new IllegalArgumentException("Error!  Attempted to log duplicate widget " + title + " in container " +
           layout.getTitle());
     }
   }
@@ -38,7 +38,7 @@ class WrappedShuffleboardLayout implements ShuffleboardLayoutWrapper {
     try {
       return new WrappedComplexWidget(layout.add(title, defaultValue));
     } catch (IllegalArgumentException e) {
-      throw new IllegalArgumentException("Error!  Attempted to log duplicate widget + " + title + " in container " +
+      throw new IllegalArgumentException("Error!  Attempted to log duplicate widget " + title + " in container " +
           layout.getTitle());
     }
   }
