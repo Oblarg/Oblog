@@ -1056,6 +1056,9 @@ public class Logger {
 
     // Recurse on Loggable fields
     for (Field field : loggableClass.getDeclaredFields()) {
+      if (isNull(field, loggable)) {
+        continue;
+      }
       // Only proceed if loggable, included, not already logged, and does not cause a cycle
       if (!isLoggableClassOrArrayOrCollection(field, loggable)
           || !isIncluded(field, logType)
