@@ -4,6 +4,8 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.shuffleboard.LayoutType;
 
+import static io.github.oblarg.oblog.Util.nullCheck;
+
 class NTContainer implements ShuffleboardContainerWrapper {
 
   NetworkTable table;
@@ -19,11 +21,13 @@ class NTContainer implements ShuffleboardContainerWrapper {
 
   @Override
   public SimpleWidgetWrapper add(String title, Object defaultValue) {
+    nullCheck(defaultValue, title, table.getPath());
     return new NTSimpleWidget(table.getEntry(title), defaultValue);
   }
 
   @Override
   public ComplexWidgetWrapper add(String title, Sendable defaultValue) {
+    nullCheck(defaultValue, title, table.getPath());
     return new NTComplexWidget(table, title, defaultValue);
   }
 }

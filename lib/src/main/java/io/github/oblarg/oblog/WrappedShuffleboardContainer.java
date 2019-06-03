@@ -4,6 +4,8 @@ import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.shuffleboard.LayoutType;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
 
+import static io.github.oblarg.oblog.Util.nullCheck;
+
 class WrappedShuffleboardContainer implements ShuffleboardContainerWrapper {
 
   private ShuffleboardContainer container;
@@ -19,11 +21,13 @@ class WrappedShuffleboardContainer implements ShuffleboardContainerWrapper {
 
   @Override
   public SimpleWidgetWrapper add(String title, Object defaultValue) {
+    nullCheck(defaultValue, title, container.getTitle());
     return new WrappedSimpleWidget(container.add(title, defaultValue));
   }
 
   @Override
   public ComplexWidgetWrapper add(String title, Sendable defaultValue) {
+    nullCheck(defaultValue, title, container.getTitle());
     return new WrappedComplexWidget(container.add(title, defaultValue));
   }
 }
