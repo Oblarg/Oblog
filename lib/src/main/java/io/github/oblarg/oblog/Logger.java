@@ -913,7 +913,9 @@ public class Logger {
     for (Method method : methods) {
 
       // Only look at getters
-      if (method.getReturnType().equals(Void.TYPE) || registeredMethods.contains(method)) {
+      if (method.getReturnType().equals(Void.TYPE) ||
+          method.getParameterTypes().length > 0 ||
+          registeredMethods.contains(method)) {
         continue;
       }
 
