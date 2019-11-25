@@ -526,7 +526,7 @@ public class Logger {
                       .withPosition(params.columnIndex(), params.rowIndex())
                       .withSize(params.width(), params.height())
                       .getEntry(),
-                  () -> getFromMethod(supplierFinal, params.name()));
+                  () -> getFromMethod(supplierFinal, params.methodName()));
             }
           }),
       entry(Log.PDP.class,
