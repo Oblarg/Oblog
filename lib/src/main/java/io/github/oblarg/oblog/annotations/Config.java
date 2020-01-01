@@ -300,8 +300,8 @@ public @interface Config {
    * button will automatically release when the command completes.
    * <br>Supported types:
    * <ul>
-   * <li>{@link edu.wpi.first.wpilibj.command.Command}</li>
-   * <li>{@link edu.wpi.first.wpilibj.command.CommandGroup}</li>
+   * <li>{@code Command}</li>
+   * <li>{@code CommandGroup}</li>
    * <li>Any custom subclass of {@code Command} or {@code CommandGroup}</li>
    * </ul>
    * <br>This widget has no custom properties.
@@ -360,7 +360,7 @@ public @interface Config {
    * completes.
    * <br>Supported types:
    * <ul>
-   * <li>{@link edu.wpi.first.wpilibj.command.PIDCommand}</li>
+   * <li>{@code PIDCommand}</li>
    * <li>Any custom subclass of {@code PIDCommand}</li>
    * </ul>
    * <br>This widget has no custom properties.
@@ -418,7 +418,7 @@ public @interface Config {
    * enabling and disabling the controller.
    * <br>Supported types:
    * <ul>
-   * <li>{@link edu.wpi.first.wpilibj.PIDController}</li>
+   * <li>{@code PIDController}</li>
    * </ul>
    * <br>This widget has no custom properties.
    */
@@ -474,7 +474,7 @@ public @interface Config {
    * Displays a relay with toggle buttons for each supported mode (off, on, forward, reverse).
    * <br>Supported types:
    * <ul>
-   * <li>{@link edu.wpi.first.wpilibj.Relay}</li>
+   * <li>{@code Relay}</li>
    * </ul>
    * <br>This widget has no custom properties.
    */

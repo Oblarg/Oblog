@@ -1158,7 +1158,7 @@ public @interface Log {
    * Displays a camera stream.
    * <br>Supported types:
    * <ul>
-   * <li>{@link edu.wpi.cscore.VideoSource} (as long as it is streaming on an MJPEG server)</li>
+   * <li>{@code VideoSource} (as long as it is streaming on an MJPEG server)</li>
    * </ul>
    * <br>Custom properties:
    * <table>
@@ -1251,7 +1251,7 @@ public @interface Log {
 
   /**
    * Logs an object as the value returned by its toString method.  Useful for logging object types not natively supported by
-   * Shuffleboard without having to implement {@link edu.wpi.first.wpilibj.Sendable}.
+   * Shuffleboard without having to implement {@code Sendable}.
    */
   @Repeatable(ToStrings.class)
   @Retention(RetentionPolicy.RUNTIME)
