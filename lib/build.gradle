@@ -21,35 +21,6 @@ dependencies {
     simulation wpi.deps.sim.gui(wpi.platforms.desktop, false)
 }
 
-/* Utils */
-clean {
-}
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-task genJavadoc(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-task deleteDocs(type: Delete) {
-    delete '../docs'
-    followSymlinks = false
-}
-
-task copyDocs(type: Copy, dependsOn: [genJavadoc, deleteDocs]) {
-    from 'build/docs/javadoc'
-    into '../docs'
-}
-
-artifacts {
-    archives sourcesJar
-    archives genJavadoc
-}
-
 compileJava {
     options.compilerArgs << '-parameters'
 }
