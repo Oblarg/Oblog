@@ -1,3 +1,7 @@
 wrapper {
     gradleVersion = '5.0'
 }
+
+subprojects {
+    apply plugin: 'java'
+}
