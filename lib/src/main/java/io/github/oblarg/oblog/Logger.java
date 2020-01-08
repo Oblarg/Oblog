@@ -977,7 +977,6 @@ public class Logger {
                                             Method method,
                                             Class type,
                                             Annotation... annotations) {
-    System.out.println("Handling single-arg setter!");
     for (Annotation annotation : annotations) {
       // Get correct processing method for the given type
       SetterProcessor process = configSetterHandler.get(annotation.annotationType());
