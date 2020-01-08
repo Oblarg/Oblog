@@ -5,7 +5,9 @@ import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.shuffleboard.*;
+
 import io.github.oblarg.oblog.annotations.*;
+
 import edu.wpi.first.networktables.NetworkTableEntry;
 
 import static java.util.Map.entry;
@@ -13,6 +15,7 @@ import static java.util.Map.entry;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -23,67 +26,92 @@ public class Logger {
   private static boolean cycleWarningsEnabled = true;
 
   /**
-   * Enables or disables warnings for cyclic references of loggables.  Kotlin users will likely want to disable these,
+   * Enables or disables warnings for cyclic references of loggables.  Kotlin users will likely
+   * want to disable these,
    * as kotlin singletons compile to cycles in the bytecode which cannot be explicitly broken with
    * {@link Log.Exclude}.
    *
-   * @param enabled Whether to print a warning on configuration when cyclic references of loggables are detected.
+   * @param enabled Whether to print a warning on configuration when cyclic references of
+   *                loggables are detected.
    */
   public static void setCycleWarningsEnabled(boolean enabled) {
     cycleWarningsEnabled = enabled;
   }
 
   /**
-   * Configure shuffleboard logging for the robot.  Should be called after all loggable objects have been
-   * instantiated, e.g. at the end of robotInit.  Tabs for logging will be separate from tabs for config.
+   * Configure shuffleboard logging for the robot.  Should be called after all loggable objects
+   * have been
+   * instantiated, e.g. at the end of robotInit.  Tabs for logging will be separate from tabs for
+   * config.
    *
-   * @param rootContainer The root of the tree of loggable objects - for most teams, this is Robot.java.
-   *                      To send an instance of Robot.java to this method from robotInit, call "configureLogging(this)"
+   * @param rootContainer The root of the tree of loggable objects - for most teams, this is
+   *                      Robot.java.
+   *                      To send an instance of Robot.java to this method from robotInit, call
+   *                      "configureLogging(this)"
    *                      Loggable fields of this object will have their own shuffleboard tabs.
    */
   public static void configureLogging(Object rootContainer) {
-    configureLogging(LogType.LOG, true, rootContainer, new WrappedShuffleboard(), NetworkTableInstance.getDefault());
+    configureLogging(LogType.LOG, true, rootContainer, new WrappedShuffleboard(),
+                     NetworkTableInstance.getDefault());
   }
 
   /**
-   * Configure shuffleboard config for the robot.  Should be called after all loggable objects have been
-   * instantiated, e.g. at the end of robotInit.  Tabs for config will be separate from tabs for logging.
+   * Configure shuffleboard config for the robot.  Should be called after all loggable objects
+   * have been
+   * instantiated, e.g. at the end of robotInit.  Tabs for config will be separate from tabs for
+   * logging.
    *
-   * @param rootContainer The root of the tree of loggable objects - for most teams, this is Robot.java.
-   *                      To send an instance of Robot.java to this method from robotInit, call "configureConfig(this)"
+   * @param rootContainer The root of the tree of loggable objects - for most teams, this is
+   *                      Robot.java.
+   *                      To send an instance of Robot.java to this method from robotInit, call
+   *                      "configureConfig(this)"
    *                      Loggable fields of this object will have their own shuffleboard tabs.
    */
   public static void configureConfig(Object rootContainer) {
-    configureLogging(LogType.CONFIG, true, rootContainer, new WrappedShuffleboard(), NetworkTableInstance.getDefault());
+    configureLogging(LogType.CONFIG, true, rootContainer, new WrappedShuffleboard(),
+                     NetworkTableInstance.getDefault());
   }
 
   /**
-   * Configure shuffleboard logging and config for the robot.  Should be called after all loggable objects have beeen
-   * instantiated, e.g. at the end of robotInit.  Config and logging can either be given separate tabs, or all widgets
+   * Configure shuffleboard logging and config for the robot.  Should be called after all
+   * loggable objects have beeen
+   * instantiated, e.g. at the end of robotInit.  Config and logging can either be given separate
+   * tabs, or all widgets
    * can be placed in the same tabs.
    *
-   * @param rootContainer The root of the tree of loggable objects - for most teams, this is Robot.java.
-   *                      To send an instance of Robot.java to this method from robotInit, call "configureLoggingAndConfig(this)"
+   * @param rootContainer The root of the tree of loggable objects - for most teams, this is
+   *                      Robot.java.
+   *                      To send an instance of Robot.java to this method from robotInit, call
+   *                      "configureLoggingAndConfig(this)"
    *                      Loggable fields of this object will have their own shuffleboard tabs.
-   * @param separate      Whether to generate separate tabs for config and logging.  If true, log widgets will be placed in
-   *                      tabs labeled "Log", and config widgets will be placed in tabs labeled "Config".
+   * @param separate      Whether to generate separate tabs for config and logging.  If true, log
+   *                      widgets will be placed in
+   *                      tabs labeled "Log", and config widgets will be placed in tabs labeled
+   *                      "Config".
    */
   public static void configureLoggingAndConfig(Object rootContainer, boolean separate) {
     WrappedShuffleboard shuffleboard = new WrappedShuffleboard();
-    configureLogging(LogType.LOG, separate, rootContainer, shuffleboard, NetworkTableInstance.getDefault());
-    configureLogging(LogType.CONFIG, separate, rootContainer, shuffleboard, NetworkTableInstance.getDefault());
+    configureLogging(LogType.LOG, separate, rootContainer, shuffleboard,
+                     NetworkTableInstance.getDefault());
+    configureLogging(LogType.CONFIG, separate, rootContainer, shuffleboard,
+                     NetworkTableInstance.getDefault());
   }
 
   /**
-   * Configures logging to send values over NetworkTables, but not to add widgets to Shuffleboard.  Use is the same
+   * Configures logging to send values over NetworkTables, but not to add widgets to Shuffleboard
+   * .  Use is the same
    * as {@link Logger#configureLogging(Object)}.
    *
-   * @param rootContainer The root of the tree of loggable objects - for most teams, this is Robot.java.
-   *                      To send an instance of Robot.java to this method from robotInit, call "configureLogging(this)"
-   * @param rootName      Name of the root NetworkTable.  io.github.oblarg.oblog.Loggable fields of rootContainer will be subtables.
+   * @param rootContainer The root of the tree of loggable objects - for most teams, this is
+   *                      Robot.java.
+   *                      To send an instance of Robot.java to this method from robotInit, call
+   *                      "configureLogging(this)"
+   * @param rootName      Name of the root NetworkTable.  io.github.oblarg.oblog.Loggable fields
+   *                      of rootContainer will be subtables.
    */
   public static void configureLoggingNTOnly(Object rootContainer, String rootName) {
-    configureLogging(LogType.LOG, true, rootContainer, new NTShuffleboard(rootName), NetworkTableInstance.getDefault());
+    configureLogging(LogType.LOG, true, rootContainer, new NTShuffleboard(rootName),
+                     NetworkTableInstance.getDefault());
   }
 
   /**
@@ -95,8 +123,10 @@ public class Logger {
   }
 
   /**
-   * Registers a new entry.  To be called during initial logging configuration for any value that will
-   * change during runtime.  Mostly for internal use, but can be used by advanced users in {@link Loggable#addCustomLogging(ShuffleboardContainerWrapper)}.
+   * Registers a new entry.  To be called during initial logging configuration for any value that
+   * will
+   * change during runtime.  Mostly for internal use, but can be used by advanced users in
+   * {@link Loggable#addCustomLogging(ShuffleboardContainerWrapper)}.
    *
    * @param entry    The entry to be updated.
    * @param supplier The supplier with which to update the entry.
@@ -106,13 +136,16 @@ public class Logger {
   }
 
   /**
-   * Configures logging or config for the robot.  Begins at the specified root container and recurses down the tree of
-   * Loggable objects.  The root container itself does have a tab, so that fields located in it can be logged, but is
+   * Configures logging or config for the robot.  Begins at the specified root container and
+   * recurses down the tree of
+   * Loggable objects.  The root container itself does have a tab, so that fields located in it
+   * can be logged, but is
    * not required to implement Loggable.
    *
    * @param logType       The type of logging to perform (either logging or config)
    * @param separate      Whether logging and config should be given separate tabs
-   * @param rootContainer The root of the tree of loggable objects.  Does not need to be Loggable itself.
+   * @param rootContainer The root of the tree of loggable objects.  Does not need to be Loggable
+   *                      itself.
    * @param shuffleboard  The shuffleboard instance to use; wrapped to allow NT-only mode
    * @param nt            The networktable instance to use
    */
@@ -133,33 +166,34 @@ public class Logger {
     switch (logType) {
       case LOG:
         logFieldsAndMethods(rootContainer,
-            rootContainer.getClass(),
-            bin,
-            new HashSet<>(),
-            new HashSet<>());
+                            rootContainer.getClass(),
+                            bin,
+                            new HashSet<>(),
+                            new HashSet<>());
         break;
       case CONFIG:
         configFieldsAndMethods(rootContainer,
-            rootContainer.getClass(),
-            bin,
-            nt,
-            new HashSet<>(),
-            new HashSet<>());
+                               rootContainer.getClass(),
+                               bin,
+                               nt,
+                               new HashSet<>(),
+                               new HashSet<>());
         break;
     }
 
     // Set up method to be called on Loggables
     Consumer<Loggable> log = (toLog) -> logLoggable(logType,
-        separate,
-        toLog,
-        toLog.getClass(),
-        new HashSet<>(),
-        new HashSet<>(),
-        new HashSet<>(),
-        shuffleboard,
-        nt,
-        null,
-        new HashSet<>(Collections.singletonList(toLog)));
+                                                    separate,
+                                                    toLog,
+                                                    toLog.getClass(),
+                                                    new HashSet<>(),
+                                                    new HashSet<>(),
+                                                    new HashSet<>(),
+                                                    shuffleboard,
+                                                    nt,
+                                                    null,
+                                                    new HashSet<>(
+                                                        Collections.singletonList(toLog)));
 
     // Check all fields of the rootcontainer
     for (Field field : rootContainer.getClass().getDeclaredFields()) {
@@ -172,7 +206,8 @@ public class Logger {
           List<Loggable> toLogs = new ArrayList<>();
           try {
             // Skip if primitive array
-            if (!Object.class.isAssignableFrom(field.get(rootContainer).getClass().getComponentType())) {
+            if (!Object.class
+                .isAssignableFrom(field.get(rootContainer).getClass().getComponentType())) {
               continue;
             }
             // Include all elements whose runtime class is Loggable
@@ -221,7 +256,8 @@ public class Logger {
     }
   }
 
-  static void configureLoggingTest(LogType logType, Object rootContainer, ShuffleboardWrapper shuffleboard, NetworkTableInstance nt) {
+  static void configureLoggingTest(LogType logType, Object rootContainer,
+                                   ShuffleboardWrapper shuffleboard, NetworkTableInstance nt) {
     configureLogging(logType, true, rootContainer, shuffleboard, nt);
   }
 
@@ -241,7 +277,8 @@ public class Logger {
    */
   @FunctionalInterface
   private interface FieldProcessor {
-    void processField(Supplier<Object> supplier, Annotation params, ShuffleboardContainerWrapper bin, String name);
+    void processField(Supplier<Object> supplier, Annotation params,
+                      ShuffleboardContainerWrapper bin, String name);
   }
 
   /**
@@ -249,430 +286,465 @@ public class Logger {
    */
   @FunctionalInterface
   private interface SetterProcessor {
-    void processSetter(Consumer<Object> setter, Annotation params, ShuffleboardContainerWrapper bin, NetworkTableInstance nt, String name, boolean isBoolean);
+    void processSetter(Consumer<Object> setter, Annotation params, ShuffleboardContainerWrapper bin,
+                       NetworkTableInstance nt, String name, boolean isBoolean);
   }
 
   /**
-   * Maps config annotations to the appropriate methods for processing their annotated setters.  Acts essentially
+   * Maps config annotations to the appropriate methods for processing their annotated setters.
+   * Acts essentially
    * as a switch statement on the annotation type.
    */
-  private static final Map<Class<? extends Annotation>, SetterProcessor> configSetterHandler = Map.ofEntries(
-      entry(Config.class, (setter, rawParams, bin, nt, name, isBoolean) -> {
-        if (isBoolean) {
-          Config params = (Config) rawParams;
-          bin = params.tabName().equals("DEFAULT") ? bin :
-              new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-          NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValueBoolean())
-              .withWidget(BuiltInWidgets.kToggleButton.getWidgetName())
-              .withPosition(params.columnIndex(), params.rowIndex())
-              .withSize(params.width(), params.height()).getEntry();
-          nt.addEntryListener(
-              entry,
-              (entryNotification) -> setterRunner.execute(() -> setter.accept((boolean) entryNotification.value.getValue())),
-              EntryListenerFlags.kUpdate
-          );
-          setter.accept(params.defaultValueBoolean());
-        } else {
-          Config params = (Config) rawParams;
-          bin = params.tabName().equals("DEFAULT") ? bin :
-              new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-          NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValueNumeric())
-              .withWidget(BuiltInWidgets.kTextView.getWidgetName())
-              .withPosition(params.columnIndex(), params.rowIndex())
-              .withSize(params.width(), params.height()).getEntry();
-          nt.addEntryListener(
-              entry,
-              (entryNotification) -> setterRunner.execute(() -> setter.accept((Number) entryNotification.value.getValue())),
-              EntryListenerFlags.kUpdate
-          );
-          setter.accept(params.defaultValueNumeric());
-        }
-      }),
-      entry(Config.ToggleButton.class, (setter, rawParams, bin, nt, name, isBoolean) -> {
-        Config.ToggleButton params = (Config.ToggleButton) rawParams;
-        bin = params.tabName().equals("DEFAULT") ? bin :
-            new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-        NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValue())
-            .withWidget(BuiltInWidgets.kToggleButton.getWidgetName())
-            .withPosition(params.columnIndex(), params.rowIndex())
-            .withSize(params.width(), params.height()).getEntry();
-        nt.addEntryListener(
-            entry,
-            (entryNotification) -> setterRunner.execute(() -> setter.accept((boolean) entryNotification.value.getValue())),
-            EntryListenerFlags.kUpdate
-        );
-        setter.accept(params.defaultValue());
-      }),
-      entry(Config.ToggleSwitch.class, (setter, rawParams, bin, nt, name, isBoolean) -> {
-        Config.ToggleSwitch params = (Config.ToggleSwitch) rawParams;
-        bin = params.tabName().equals("DEFAULT") ? bin :
-            new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-        NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValue())
-            .withWidget(BuiltInWidgets.kToggleSwitch.getWidgetName())
-            .withPosition(params.columnIndex(), params.rowIndex())
-            .withSize(params.width(), params.height()).getEntry();
-        nt.addEntryListener(
-            entry,
-            (entryNotification) -> setterRunner.execute(() -> setter.accept((boolean) entryNotification.value.getValue())),
-            EntryListenerFlags.kUpdate
-        );
-        setter.accept(params.defaultValue());
-      }),
-      entry(Config.NumberSlider.class, (setter, rawParams, bin, nt, name, isBoolean) -> {
-        Config.NumberSlider params = (Config.NumberSlider) rawParams;
-        bin = params.tabName().equals("DEFAULT") ? bin :
-            new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-        NetworkTableEntry entry = bin.add((params.name().equals("NO_NAME")) ? name : params.name(), params.defaultValue())
-            .withWidget(BuiltInWidgets.kNumberSlider.getWidgetName())
-            .withProperties(Map.of(
-                "min", params.min(),
-                "max", params.max(),
-                "blockIncrement", params.blockIncrement()))
-            .withPosition(params.columnIndex(), params.rowIndex())
-            .withSize(params.width(), params.height())
-            .getEntry();
-        nt.addEntryListener(
-            entry,
-            (entryNotification) -> setterRunner.execute(() -> setter.accept((Number) entryNotification.value.getValue())),
-            EntryListenerFlags.kUpdate
-        );
-        setter.accept(params.defaultValue());
-      })
-  );
+  private static final Map<Class<? extends Annotation>, SetterProcessor> configSetterHandler =
+      Map.ofEntries(
+          entry(Config.class, (setter, rawParams, bin, nt, name, isBoolean) -> {
+            if (isBoolean) {
+              Config params = (Config) rawParams;
+              bin = params.tabName().equals("DEFAULT") ? bin :
+                  new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
+              NetworkTableEntry entry =
+                  bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                          params.defaultValueBoolean())
+                     .withWidget(BuiltInWidgets.kToggleButton.getWidgetName())
+                     .withPosition(params.columnIndex(), params.rowIndex())
+                     .withSize(params.width(), params.height()).getEntry();
+              nt.addEntryListener(
+                  entry,
+                  (entryNotification) -> setterRunner
+                      .execute(() -> setter.accept((boolean) entryNotification.value.getValue())),
+                  EntryListenerFlags.kUpdate
+              );
+              setter.accept(params.defaultValueBoolean());
+            } else {
+              Config params = (Config) rawParams;
+              bin = params.tabName().equals("DEFAULT") ? bin :
+                  new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
+              NetworkTableEntry entry =
+                  bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                          params.defaultValueNumeric())
+                     .withWidget(BuiltInWidgets.kTextView.getWidgetName())
+                     .withPosition(params.columnIndex(), params.rowIndex())
+                     .withSize(params.width(), params.height()).getEntry();
+              nt.addEntryListener(
+                  entry,
+                  (entryNotification) -> setterRunner
+                      .execute(() -> setter.accept((Number) entryNotification.value.getValue())),
+                  EntryListenerFlags.kUpdate
+              );
+              setter.accept(params.defaultValueNumeric());
+            }
+          }),
+          entry(Config.ToggleButton.class, (setter, rawParams, bin, nt, name, isBoolean) -> {
+            Config.ToggleButton params = (Config.ToggleButton) rawParams;
+            bin = params.tabName().equals("DEFAULT") ? bin :
+                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
+            NetworkTableEntry entry =
+                bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                        params.defaultValue())
+                   .withWidget(BuiltInWidgets.kToggleButton.getWidgetName())
+                   .withPosition(params.columnIndex(), params.rowIndex())
+                   .withSize(params.width(), params.height()).getEntry();
+            nt.addEntryListener(
+                entry,
+                (entryNotification) -> setterRunner
+                    .execute(() -> setter.accept((boolean) entryNotification.value.getValue())),
+                EntryListenerFlags.kUpdate
+            );
+            setter.accept(params.defaultValue());
+          }),
+          entry(Config.ToggleSwitch.class, (setter, rawParams, bin, nt, name, isBoolean) -> {
+            Config.ToggleSwitch params = (Config.ToggleSwitch) rawParams;
+            bin = params.tabName().equals("DEFAULT") ? bin :
+                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
+            NetworkTableEntry entry =
+                bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                        params.defaultValue())
+                   .withWidget(BuiltInWidgets.kToggleSwitch.getWidgetName())
+                   .withPosition(params.columnIndex(), params.rowIndex())
+                   .withSize(params.width(), params.height()).getEntry();
+            nt.addEntryListener(
+                entry,
+                (entryNotification) -> setterRunner
+                    .execute(() -> setter.accept((boolean) entryNotification.value.getValue())),
+                EntryListenerFlags.kUpdate
+            );
+            setter.accept(params.defaultValue());
+          }),
+          entry(Config.NumberSlider.class, (setter, rawParams, bin, nt, name, isBoolean) -> {
+            Config.NumberSlider params = (Config.NumberSlider) rawParams;
+            bin = params.tabName().equals("DEFAULT") ? bin :
+                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
+            NetworkTableEntry entry =
+                bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                        params.defaultValue())
+                   .withWidget(BuiltInWidgets.kNumberSlider.getWidgetName())
+                   .withProperties(Map.of(
+                       "min", params.min(),
+                       "max", params.max(),
+                       "blockIncrement", params.blockIncrement()))
+                   .withPosition(params.columnIndex(), params.rowIndex())
+                   .withSize(params.width(), params.height())
+                   .getEntry();
+            nt.addEntryListener(
+                entry,
+                (entryNotification) -> setterRunner
+                    .execute(() -> setter.accept((Number) entryNotification.value.getValue())),
+                EntryListenerFlags.kUpdate
+            );
+            setter.accept(params.defaultValue());
+          })
+      );
 
   /**
-   * Maps config annotations to the appropriate methods for processing their annotated fields.  Acts essentially as a
+   * Maps config annotations to the appropriate methods for processing their annotated fields.
+   * Acts essentially as a
    * switch statement on the annotation type.
    */
-  private static final Map<Class<? extends Annotation>, FieldProcessor> configFieldHandler = Map.ofEntries(
-      entry(Config.class,
-          (supplier, rawParams, bin, name) -> {
-            Config params = (Config) rawParams;
-            bin = params.tabName().equals("DEFAULT") ? bin :
-                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-            bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
-                .withPosition(params.columnIndex(), params.rowIndex())
-                .withSize(params.width(), params.height());
-          }),
-      entry(Config.Command.class,
-          (supplier, rawParams, bin, name) -> {
-            Config.Command params = (Config.Command) rawParams;
-            bin = params.tabName().equals("DEFAULT") ? bin :
-                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-            bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
-                .withWidget(BuiltInWidgets.kCommand.getWidgetName())
-                .withPosition(params.columnIndex(), params.rowIndex())
-                .withSize(params.width(), params.height());
-          }),
-      entry(Config.PIDCommand.class,
-          (supplier, rawParams, bin, name) -> {
-            Config.PIDCommand params = (Config.PIDCommand) rawParams;
-            bin = params.tabName().equals("DEFAULT") ? bin :
-                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-            bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
-                .withWidget(BuiltInWidgets.kPIDCommand.getWidgetName())
-                .withPosition(params.columnIndex(), params.rowIndex())
-                .withSize(params.width(), params.height());
-          }),
-      entry(Config.PIDController.class,
-          (supplier, rawParams, bin, name) -> {
-            Config.PIDController params = (Config.PIDController) rawParams;
-            bin = params.tabName().equals("DEFAULT") ? bin :
-                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-            bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
-                .withWidget(BuiltInWidgets.kPIDController.getWidgetName())
-                .withPosition(params.columnIndex(), params.rowIndex())
-                .withSize(params.width(), params.height());
-          }),
-      entry(Config.Relay.class,
-          (supplier, rawParams, bin, name) -> {
-            Config.Relay params = (Config.Relay) rawParams;
-            bin = params.tabName().equals("DEFAULT") ? bin :
-                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-            bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
-                .withWidget(BuiltInWidgets.kRelay.getWidgetName())
-                .withPosition(params.columnIndex(), params.rowIndex())
-                .withSize(params.width(), params.height());
-          })
-  );
+  private static final Map<Class<? extends Annotation>, FieldProcessor> configFieldHandler =
+      Map.ofEntries(
+          entry(Config.class,
+                (supplier, rawParams, bin, name) -> {
+                  Config params = (Config) rawParams;
+                  bin = params.tabName().equals("DEFAULT") ? bin :
+                      new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
+                  bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                          (Sendable) supplier.get())
+                     .withPosition(params.columnIndex(), params.rowIndex())
+                     .withSize(params.width(), params.height());
+                }),
+          entry(Config.Command.class,
+                (supplier, rawParams, bin, name) -> {
+                  Config.Command params = (Config.Command) rawParams;
+                  bin = params.tabName().equals("DEFAULT") ? bin :
+                      new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
+                  bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                          (Sendable) supplier.get())
+                     .withWidget(BuiltInWidgets.kCommand.getWidgetName())
+                     .withPosition(params.columnIndex(), params.rowIndex())
+                     .withSize(params.width(), params.height());
+                }),
+          entry(Config.PIDCommand.class,
+                (supplier, rawParams, bin, name) -> {
+                  Config.PIDCommand params = (Config.PIDCommand) rawParams;
+                  bin = params.tabName().equals("DEFAULT") ? bin :
+                      new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
+                  bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                          (Sendable) supplier.get())
+                     .withWidget(BuiltInWidgets.kPIDCommand.getWidgetName())
+                     .withPosition(params.columnIndex(), params.rowIndex())
+                     .withSize(params.width(), params.height());
+                }),
+          entry(Config.PIDController.class,
+                (supplier, rawParams, bin, name) -> {
+                  Config.PIDController params = (Config.PIDController) rawParams;
+                  bin = params.tabName().equals("DEFAULT") ? bin :
+                      new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
+                  bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                          (Sendable) supplier.get())
+                     .withWidget(BuiltInWidgets.kPIDController.getWidgetName())
+                     .withPosition(params.columnIndex(), params.rowIndex())
+                     .withSize(params.width(), params.height());
+                }),
+          entry(Config.Relay.class,
+                (supplier, rawParams, bin, name) -> {
+                  Config.Relay params = (Config.Relay) rawParams;
+                  bin = params.tabName().equals("DEFAULT") ? bin :
+                      new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
+                  bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                          (Sendable) supplier.get())
+                     .withWidget(BuiltInWidgets.kRelay.getWidgetName())
+                     .withPosition(params.columnIndex(), params.rowIndex())
+                     .withSize(params.width(), params.height());
+                })
+      );
 
   /**
-   * Maps log annotations to the appropriate method for processing their annotated fields.  Acts essentially as a switch
+   * Maps log annotations to the appropriate method for processing their annotated fields.  Acts
+   * essentially as a switch
    * statement on the annotation type,
    */
   private static final Map<Class<? extends Annotation>, FieldProcessor> logHandler = Map.ofEntries(
       entry(Log.class,
-          (supplier, rawParams, bin, name) -> {
-            Log params = (Log) rawParams;
-            bin = params.tabName().equals("DEFAULT") ? bin :
-                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-            if (getFromMethod(supplier, params.methodName()).get() instanceof Sendable) {
-              bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
-                  (Sendable) getFromMethod(supplier, params.methodName()).get())
-                  .withPosition(params.rowIndex(), params.columnIndex())
-                  .withSize(params.width(), params.height())
-                  .withPosition(params.columnIndex(), params.rowIndex())
-                  .withSize(params.width(), params.height());
-            } else {
+            (supplier, rawParams, bin, name) -> {
+              Log params = (Log) rawParams;
+              bin = params.tabName().equals("DEFAULT") ? bin :
+                  new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
+              if (getFromMethod(supplier, params.methodName()).get() instanceof Sendable) {
+                bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                        (Sendable) getFromMethod(supplier, params.methodName()).get())
+                   .withPosition(params.rowIndex(), params.columnIndex())
+                   .withSize(params.width(), params.height())
+                   .withPosition(params.columnIndex(), params.rowIndex())
+                   .withSize(params.width(), params.height());
+              } else {
+                Logger.registerEntry(
+                    bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                            getFromMethod(supplier, params.methodName()).get())
+                       .withPosition(params.columnIndex(), params.rowIndex())
+                       .withSize(params.width(), params.height()).getEntry(),
+                    () -> getFromMethod(supplier, params.methodName()).get());
+              }
+            }),
+      entry(Log.NumberBar.class,
+            (supplier, rawParams, bin, name) -> {
+              Log.NumberBar params = (Log.NumberBar) rawParams;
+              bin = params.tabName().equals("DEFAULT") ? bin :
+                  new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
               Logger.registerEntry(
                   bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
-                      getFromMethod(supplier, params.methodName()).get())
-                      .withPosition(params.columnIndex(), params.rowIndex())
-                      .withSize(params.width(), params.height()).getEntry(),
+                          getFromMethod(supplier, params.methodName()).get())
+                     .withWidget(BuiltInWidgets.kNumberBar.getWidgetName())
+                     .withProperties(Map.of(
+                         "min", params.min(),
+                         "max", params.max(),
+                         "center", params.center()))
+                     .withPosition(params.columnIndex(), params.rowIndex())
+                     .withSize(params.width(), params.height())
+                     .getEntry(),
                   () -> getFromMethod(supplier, params.methodName()).get());
-            }
-          }),
-      entry(Log.NumberBar.class,
-          (supplier, rawParams, bin, name) -> {
-            Log.NumberBar params = (Log.NumberBar) rawParams;
-            bin = params.tabName().equals("DEFAULT") ? bin :
-                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-            Logger.registerEntry(
-                bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
-                    getFromMethod(supplier, params.methodName()).get())
-                    .withWidget(BuiltInWidgets.kNumberBar.getWidgetName())
-                    .withProperties(Map.of(
-                        "min", params.min(),
-                        "max", params.max(),
-                        "center", params.center()))
-                    .withPosition(params.columnIndex(), params.rowIndex())
-                    .withSize(params.width(), params.height())
-                    .getEntry(),
-                () -> getFromMethod(supplier, params.methodName()).get());
-          }),
+            }),
       entry(Log.Dial.class,
-          (supplier, rawParams, bin, name) -> {
-            Log.Dial params = (Log.Dial) rawParams;
-            bin = params.tabName().equals("DEFAULT") ? bin :
-                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-            Logger.registerEntry(
-                bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
-                    getFromMethod(supplier, params.methodName()).get())
-                    .withWidget(BuiltInWidgets.kDial.getWidgetName())
-                    .withProperties(Map.of(
-                        "min", params.min(),
-                        "max", params.max(),
-                        "showValue", params.showValue()))
-                    .withPosition(params.columnIndex(), params.rowIndex())
-                    .withSize(params.width(), params.height())
-                    .getEntry(),
-                () -> getFromMethod(supplier, params.methodName()).get());
-          }),
+            (supplier, rawParams, bin, name) -> {
+              Log.Dial params = (Log.Dial) rawParams;
+              bin = params.tabName().equals("DEFAULT") ? bin :
+                  new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
+              Logger.registerEntry(
+                  bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                          getFromMethod(supplier, params.methodName()).get())
+                     .withWidget(BuiltInWidgets.kDial.getWidgetName())
+                     .withProperties(Map.of(
+                         "min", params.min(),
+                         "max", params.max(),
+                         "showValue", params.showValue()))
+                     .withPosition(params.columnIndex(), params.rowIndex())
+                     .withSize(params.width(), params.height())
+                     .getEntry(),
+                  () -> getFromMethod(supplier, params.methodName()).get());
+            }),
       entry(Log.Graph.class,
-          (supplier, rawParams, bin, name) -> {
-            Log.Graph params = (Log.Graph) rawParams;
-            bin = params.tabName().equals("DEFAULT") ? bin :
-                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-            Logger.registerEntry(
-                bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
-                    getFromMethod(supplier, params.methodName()).get())
-                    .withWidget(BuiltInWidgets.kGraph.getWidgetName())
-                    .withProperties(Map.of(
-                        "Visible time", params.visibleTime()))
-                    .withPosition(params.columnIndex(), params.rowIndex())
-                    .withSize(params.width(), params.height())
-                    .getEntry(),
-                () -> getFromMethod(supplier, params.methodName()).get());
-          }),
+            (supplier, rawParams, bin, name) -> {
+              Log.Graph params = (Log.Graph) rawParams;
+              bin = params.tabName().equals("DEFAULT") ? bin :
+                  new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
+              Logger.registerEntry(
+                  bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                          getFromMethod(supplier, params.methodName()).get())
+                     .withWidget(BuiltInWidgets.kGraph.getWidgetName())
+                     .withProperties(Map.of(
+                         "Visible time", params.visibleTime()))
+                     .withPosition(params.columnIndex(), params.rowIndex())
+                     .withSize(params.width(), params.height())
+                     .getEntry(),
+                  () -> getFromMethod(supplier, params.methodName()).get());
+            }),
       entry(Log.BooleanBox.class,
-          (supplier, rawParams, bin, name) -> {
-            Log.BooleanBox params = (Log.BooleanBox) rawParams;
-            bin = params.tabName().equals("DEFAULT") ? bin :
-                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-            Logger.registerEntry(
-                bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
-                    getFromMethod(supplier, params.methodName()).get())
-                    .withWidget(BuiltInWidgets.kBooleanBox.getWidgetName())
-                    .withProperties(Map.of(
-                        "colorWhenTrue", params.colorWhenTrue(),
-                        "colorWhenFalse", params.colorWhenFalse()))
-                    .withPosition(params.columnIndex(), params.rowIndex())
-                    .withSize(params.width(), params.height())
-                    .getEntry(),
-                () -> getFromMethod(supplier, params.methodName()).get());
-          }),
+            (supplier, rawParams, bin, name) -> {
+              Log.BooleanBox params = (Log.BooleanBox) rawParams;
+              bin = params.tabName().equals("DEFAULT") ? bin :
+                  new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
+              Logger.registerEntry(
+                  bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                          getFromMethod(supplier, params.methodName()).get())
+                     .withWidget(BuiltInWidgets.kBooleanBox.getWidgetName())
+                     .withProperties(Map.of(
+                         "colorWhenTrue", params.colorWhenTrue(),
+                         "colorWhenFalse", params.colorWhenFalse()))
+                     .withPosition(params.columnIndex(), params.rowIndex())
+                     .withSize(params.width(), params.height())
+                     .getEntry(),
+                  () -> getFromMethod(supplier, params.methodName()).get());
+            }),
       entry(Log.VoltageView.class,
-          (supplier, rawParams, bin, name) -> {
-            if (supplier.get() instanceof AnalogInput) {
-              Log.VoltageView params = (Log.VoltageView) rawParams;
+            (supplier, rawParams, bin, name) -> {
+              if (supplier.get() instanceof AnalogInput) {
+                Log.VoltageView params = (Log.VoltageView) rawParams;
+                bin = params.tabName().equals("DEFAULT") ? bin :
+                    new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
+                supplier = getFromMethod(supplier, params.methodName());
+                bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                        (Sendable) supplier.get())
+                   .withWidget(BuiltInWidgets.kVoltageView.getWidgetName())
+                   .withProperties(Map.of(
+                       "min", params.min(),
+                       "max", params.max(),
+                       "center", params.center(),
+                       "orientation", params.orientation(),
+                       "numberOfTickMarks", params.numTicks()))
+                   .withPosition(params.columnIndex(), params.rowIndex())
+                   .withSize(params.width(), params.height());
+              } else {
+                Log.VoltageView params = (Log.VoltageView) rawParams;
+                bin = params.tabName().equals("DEFAULT") ? bin :
+                    new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
+                final Supplier<Object> supplierFinal = supplier;
+                Logger.registerEntry(
+                    bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                            getFromMethod(supplier, params.methodName()).get())
+                       .withWidget(BuiltInWidgets.kVoltageView.getWidgetName())
+                       .withProperties(Map.of(
+                           "min", params.min(),
+                           "max", params.max(),
+                           "center", params.center(),
+                           "orientation", params.orientation(),
+                           "numberOfTickMarks", params.numTicks()))
+                       .withPosition(params.columnIndex(), params.rowIndex())
+                       .withSize(params.width(), params.height())
+                       .getEntry(),
+                    () -> getFromMethod(supplierFinal, params.methodName()).get());
+              }
+            }),
+      entry(Log.PDP.class,
+            (supplier, rawParams, bin, name) -> {
+              Log.PDP params = (Log.PDP) rawParams;
               bin = params.tabName().equals("DEFAULT") ? bin :
                   new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
               supplier = getFromMethod(supplier, params.methodName());
-              bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
-                  .withWidget(BuiltInWidgets.kVoltageView.getWidgetName())
-                  .withProperties(Map.of(
-                      "min", params.min(),
-                      "max", params.max(),
-                      "center", params.center(),
-                      "orientation", params.orientation(),
-                      "numberOfTickMarks", params.numTicks()))
-                  .withPosition(params.columnIndex(), params.rowIndex())
-                  .withSize(params.width(), params.height());
-            } else {
-              Log.VoltageView params = (Log.VoltageView) rawParams;
+              bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                      (Sendable) supplier.get())
+                 .withWidget(BuiltInWidgets.kPowerDistributionPanel.getWidgetName())
+                 .withProperties(Map.of(
+                     "showVoltageAndCurrentValues", params.showVoltageAndCurrent()))
+                 .withPosition(params.columnIndex(), params.rowIndex())
+                 .withSize(params.width(), params.height());
+            }),
+      entry(Log.Encoder.class,
+            (supplier, rawParams, bin, name) -> {
+              Log.Encoder params = (Log.Encoder) rawParams;
               bin = params.tabName().equals("DEFAULT") ? bin :
                   new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-              final Supplier<Object> supplierFinal = supplier;
+              supplier = getFromMethod(supplier, params.methodName());
+              bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                      (Sendable) supplier.get())
+                 .withWidget(BuiltInWidgets.kEncoder.getWidgetName())
+                 .withPosition(params.columnIndex(), params.rowIndex())
+                 .withSize(params.width(), params.height());
+            }),
+      entry(Log.SpeedController.class,
+            (supplier, rawParams, bin, name) -> {
+              Log.SpeedController params = (Log.SpeedController) rawParams;
+              bin = params.tabName().equals("DEFAULT") ? bin :
+                  new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
+              supplier = getFromMethod(supplier, params.methodName());
+              bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                      (Sendable) supplier.get())
+                 .withWidget(BuiltInWidgets.kSpeedController.getWidgetName())
+                 .withProperties(Map.of(
+                     "orientation", params.orientation()))
+                 .withPosition(params.columnIndex(), params.rowIndex())
+                 .withSize(params.width(), params.height());
+            }),
+      entry(Log.Accelerometer.class,
+            (supplier, rawParams, bin, name) -> {
+              Log.Accelerometer params = (Log.Accelerometer) rawParams;
+              bin = params.tabName().equals("DEFAULT") ? bin :
+                  new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
+              supplier = getFromMethod(supplier, params.methodName());
+              bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                      (Sendable) supplier.get())
+                 .withWidget(BuiltInWidgets.kAccelerometer.getWidgetName())
+                 .withProperties(Map.of(
+                     "min", params.min(),
+                     "max", params.max(),
+                     "showText", params.showValue(),
+                     "precision", params.precision(),
+                     "showTickMarks", params.showTicks()))
+                 .withPosition(params.columnIndex(), params.rowIndex())
+                 .withSize(params.width(), params.height());
+            }),
+      entry(Log.ThreeAxisAccelerometer.class,
+            (supplier, rawParams, bin, name) -> {
+              Log.ThreeAxisAccelerometer params = (Log.ThreeAxisAccelerometer) rawParams;
+              bin = params.tabName().equals("DEFAULT") ? bin :
+                  new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
+              supplier = getFromMethod(supplier, params.methodName());
+              bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                      (Sendable) supplier.get())
+                 .withWidget(BuiltInWidgets.k3AxisAccelerometer.getWidgetName())
+                 .withProperties(Map.of(
+                     "range", params.range(),
+                     "showValue", params.showValue(),
+                     "precision", params.precision(),
+                     "showTickMarks", params.showTicks()))
+                 .withPosition(params.columnIndex(), params.rowIndex())
+                 .withSize(params.width(), params.height());
+            }),
+      entry(Log.Gyro.class,
+            (supplier, rawParams, bin, name) -> {
+              Log.Gyro params = (Log.Gyro) rawParams;
+              bin = params.tabName().equals("DEFAULT") ? bin :
+                  new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
+              supplier = getFromMethod(supplier, params.methodName());
+              bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                      (Sendable) supplier.get())
+                 .withWidget(BuiltInWidgets.kGyro.getWidgetName())
+                 .withProperties(Map.of(
+                     "majorTickSpacing", params.majorTickSpacing(),
+                     "startingAngle", params.startingAngle(),
+                     "showTickMarkRing", params.showTicks()))
+                 .withPosition(params.columnIndex(), params.rowIndex())
+                 .withSize(params.width(), params.height());
+            }),
+      entry(Log.DifferentialDrive.class,
+            (supplier, rawParams, bin, name) -> {
+              Log.DifferentialDrive params = (Log.DifferentialDrive) rawParams;
+              bin = params.tabName().equals("DEFAULT") ? bin :
+                  new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
+              supplier = getFromMethod(supplier, params.methodName());
+              bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                      (Sendable) supplier.get())
+                 .withWidget(BuiltInWidgets.kDifferentialDrive.getWidgetName())
+                 .withProperties(Map.of(
+                     "numberOfWheels", params.numWheels(),
+                     "wheelDiameter", params.wheelDiameter(),
+                     "showVelocityVectors", params.showVel()))
+                 .withPosition(params.columnIndex(), params.rowIndex())
+                 .withSize(params.width(), params.height());
+            }),
+      entry(Log.MecanumDrive.class,
+            (supplier, rawParams, bin, name) -> {
+              Log.MecanumDrive params = (Log.MecanumDrive) rawParams;
+              bin = params.tabName().equals("DEFAULT") ? bin :
+                  new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
+              supplier = getFromMethod(supplier, params.methodName());
+              bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                      (Sendable) supplier.get())
+                 .withWidget(BuiltInWidgets.kMecanumDrive.getWidgetName())
+                 .withProperties(Map.of(
+                     "showVelocityVectors", params.showVel()))
+                 .withPosition(params.columnIndex(), params.rowIndex())
+                 .withSize(params.width(), params.height());
+            }),
+      entry(Log.CameraStream.class,
+            (supplier, rawParams, bin, name) -> {
+              Log.CameraStream params = (Log.CameraStream) rawParams;
+              bin = params.tabName().equals("DEFAULT") ? bin :
+                  new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
+              supplier = getFromMethod(supplier, params.methodName());
+              bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
+                      SendableCameraWrapper.wrap((VideoSource) supplier.get()))
+                 .withWidget(BuiltInWidgets.kCameraStream.getWidgetName())
+                 .withProperties(Map.of(
+                     "showCrosshair", params.showCrosshairs(),
+                     "crosshairColor", params.crosshairColor(),
+                     "showControls", params.showControls(),
+                     "rotation", params.rotation()))
+                 .withPosition(params.columnIndex(), params.rowIndex())
+                 .withSize(params.width(), params.height());
+            }),
+      entry(Log.ToString.class,
+            (supplier, rawParams, bin, name) -> {
+              Log.ToString params = (Log.ToString) rawParams;
+              bin = params.tabName().equals("DEFAULT") ? bin :
+                  new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
+              final Supplier supplierFinal = supplier;
               Logger.registerEntry(
                   bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
-                      getFromMethod(supplier, params.methodName()).get())
-                      .withWidget(BuiltInWidgets.kVoltageView.getWidgetName())
-                      .withProperties(Map.of(
-                          "min", params.min(),
-                          "max", params.max(),
-                          "center", params.center(),
-                          "orientation", params.orientation(),
-                          "numberOfTickMarks", params.numTicks()))
-                      .withPosition(params.columnIndex(), params.rowIndex())
-                      .withSize(params.width(), params.height())
-                      .getEntry(),
-                  () -> getFromMethod(supplierFinal, params.methodName()).get());
-            }
-          }),
-      entry(Log.PDP.class,
-          (supplier, rawParams, bin, name) -> {
-            Log.PDP params = (Log.PDP) rawParams;
-            bin = params.tabName().equals("DEFAULT") ? bin :
-                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-            supplier = getFromMethod(supplier, params.methodName());
-            bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
-                .withWidget(BuiltInWidgets.kPowerDistributionPanel.getWidgetName())
-                .withProperties(Map.of(
-                    "showVoltageAndCurrentValues", params.showVoltageAndCurrent()))
-                .withPosition(params.columnIndex(), params.rowIndex())
-                .withSize(params.width(), params.height());
-          }),
-      entry(Log.Encoder.class,
-          (supplier, rawParams, bin, name) -> {
-            Log.Encoder params = (Log.Encoder) rawParams;
-            bin = params.tabName().equals("DEFAULT") ? bin :
-                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-            supplier = getFromMethod(supplier, params.methodName());
-            bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
-                .withWidget(BuiltInWidgets.kEncoder.getWidgetName())
-                .withPosition(params.columnIndex(), params.rowIndex())
-                .withSize(params.width(), params.height());
-          }),
-      entry(Log.SpeedController.class,
-          (supplier, rawParams, bin, name) -> {
-            Log.SpeedController params = (Log.SpeedController) rawParams;
-            bin = params.tabName().equals("DEFAULT") ? bin :
-                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-            supplier = getFromMethod(supplier, params.methodName());
-            bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
-                .withWidget(BuiltInWidgets.kSpeedController.getWidgetName())
-                .withProperties(Map.of(
-                    "orientation", params.orientation()))
-                .withPosition(params.columnIndex(), params.rowIndex())
-                .withSize(params.width(), params.height());
-          }),
-      entry(Log.Accelerometer.class,
-          (supplier, rawParams, bin, name) -> {
-            Log.Accelerometer params = (Log.Accelerometer) rawParams;
-            bin = params.tabName().equals("DEFAULT") ? bin :
-                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-            supplier = getFromMethod(supplier, params.methodName());
-            bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
-                .withWidget(BuiltInWidgets.kAccelerometer.getWidgetName())
-                .withProperties(Map.of(
-                    "min", params.min(),
-                    "max", params.max(),
-                    "showText", params.showValue(),
-                    "precision", params.precision(),
-                    "showTickMarks", params.showTicks()))
-                .withPosition(params.columnIndex(), params.rowIndex())
-                .withSize(params.width(), params.height());
-          }),
-      entry(Log.ThreeAxisAccelerometer.class,
-          (supplier, rawParams, bin, name) -> {
-            Log.ThreeAxisAccelerometer params = (Log.ThreeAxisAccelerometer) rawParams;
-            bin = params.tabName().equals("DEFAULT") ? bin :
-                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-            supplier = getFromMethod(supplier, params.methodName());
-            bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
-                .withWidget(BuiltInWidgets.k3AxisAccelerometer.getWidgetName())
-                .withProperties(Map.of(
-                    "range", params.range(),
-                    "showValue", params.showValue(),
-                    "precision", params.precision(),
-                    "showTickMarks", params.showTicks()))
-                .withPosition(params.columnIndex(), params.rowIndex())
-                .withSize(params.width(), params.height());
-          }),
-      entry(Log.Gyro.class,
-          (supplier, rawParams, bin, name) -> {
-            Log.Gyro params = (Log.Gyro) rawParams;
-            bin = params.tabName().equals("DEFAULT") ? bin :
-                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-            supplier = getFromMethod(supplier, params.methodName());
-            bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
-                .withWidget(BuiltInWidgets.kGyro.getWidgetName())
-                .withProperties(Map.of(
-                    "majorTickSpacing", params.majorTickSpacing(),
-                    "startingAngle", params.startingAngle(),
-                    "showTickMarkRing", params.showTicks()))
-                .withPosition(params.columnIndex(), params.rowIndex())
-                .withSize(params.width(), params.height());
-          }),
-      entry(Log.DifferentialDrive.class,
-          (supplier, rawParams, bin, name) -> {
-            Log.DifferentialDrive params = (Log.DifferentialDrive) rawParams;
-            bin = params.tabName().equals("DEFAULT") ? bin :
-                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-            supplier = getFromMethod(supplier, params.methodName());
-            bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
-                .withWidget(BuiltInWidgets.kDifferentialDrive.getWidgetName())
-                .withProperties(Map.of(
-                    "numberOfWheels", params.numWheels(),
-                    "wheelDiameter", params.wheelDiameter(),
-                    "showVelocityVectors", params.showVel()))
-                .withPosition(params.columnIndex(), params.rowIndex())
-                .withSize(params.width(), params.height());
-          }),
-      entry(Log.MecanumDrive.class,
-          (supplier, rawParams, bin, name) -> {
-            Log.MecanumDrive params = (Log.MecanumDrive) rawParams;
-            bin = params.tabName().equals("DEFAULT") ? bin :
-                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-            supplier = getFromMethod(supplier, params.methodName());
-            bin.add((params.name().equals("NO_NAME")) ? name : params.name(), (Sendable) supplier.get())
-                .withWidget(BuiltInWidgets.kMecanumDrive.getWidgetName())
-                .withProperties(Map.of(
-                    "showVelocityVectors", params.showVel()))
-                .withPosition(params.columnIndex(), params.rowIndex())
-                .withSize(params.width(), params.height());
-          }),
-      entry(Log.CameraStream.class,
-          (supplier, rawParams, bin, name) -> {
-            Log.CameraStream params = (Log.CameraStream) rawParams;
-            bin = params.tabName().equals("DEFAULT") ? bin :
-                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-            supplier = getFromMethod(supplier, params.methodName());
-            bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
-                SendableCameraWrapper.wrap((VideoSource) supplier.get()))
-                .withWidget(BuiltInWidgets.kCameraStream.getWidgetName())
-                .withProperties(Map.of(
-                    "showCrosshair", params.showCrosshairs(),
-                    "crosshairColor", params.crosshairColor(),
-                    "showControls", params.showControls(),
-                    "rotation", params.rotation()))
-                .withPosition(params.columnIndex(), params.rowIndex())
-                .withSize(params.width(), params.height());
-          }),
-      entry(Log.ToString.class,
-          (supplier, rawParams, bin, name) -> {
-            Log.ToString params = (Log.ToString) rawParams;
-            bin = params.tabName().equals("DEFAULT") ? bin :
-                new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-            final Supplier supplierFinal = supplier;
-            Logger.registerEntry(
-                bin.add((params.name().equals("NO_NAME")) ? name : params.name(),
-                    getFromMethod(supplier, params.methodName()).get().toString())
-                    .withPosition(params.columnIndex(), params.rowIndex())
-                    .withSize(params.width(), params.height())
-                    .getEntry(),
-                () -> getFromMethod(supplierFinal, params.methodName()).get().toString());
-          })
+                          getFromMethod(supplier, params.methodName()).get().toString())
+                     .withPosition(params.columnIndex(), params.rowIndex())
+                     .withSize(params.width(), params.height())
+                     .getEntry(),
+                  () -> getFromMethod(supplierFinal, params.methodName()).get().toString());
+            })
   );
 
   /**
@@ -716,14 +788,18 @@ public class Logger {
   );
 
   /**
-   * Performs data binding for declared fields and methods of the given class based on the present config annotations.
+   * Performs data binding for declared fields and methods of the given class based on the
+   * present config annotations.
    *
    * @param loggable          The object to configure
-   * @param loggableClass     The class to configure - necessary because the algorithm recurses on subclasses
+   * @param loggableClass     The class to configure - necessary because the algorithm recurses
+   *                          on subclasses
    * @param bin               The shuffleboard container to place widgets in
    * @param nt                The networktable instance
-   * @param registeredFields  The list of already-processed fields, to avoid double-processing during recursion
-   * @param registeredMethods The list of already-processed methods, to avoid double-processing during recursion
+   * @param registeredFields  The list of already-processed fields, to avoid double-processing
+   *                          during recursion
+   * @param registeredMethods The list of already-processed methods, to avoid double-processing
+   *                          during recursion
    */
   private static void configFieldsAndMethods(Object loggable,
                                              Class loggableClass,
@@ -735,17 +811,32 @@ public class Logger {
     Set<Field> fields = Set.of(loggableClass.getDeclaredFields());
     Set<Method> methods = Set.of(loggableClass.getDeclaredMethods());
 
-    // Process fields; configurable fields are all Sendables
+    // Process fields; configurable fields are all Sendables or have the methodName parameter
+    // of their annotation set
     for (Field field : fields) {
       if (isNull(field, loggable) || registeredFields.contains(field)) {
         continue;
       }
       field.setAccessible(true);
       registeredFields.add(field);
-      // Look for all config annotation types
+      // Look for all setter config annotation types (should have methodName set)
+      for (Class type : configSetterHandler.keySet()) {
+        // Get all annotations of each type
+        for (Annotation annotation : field.getAnnotationsByType(type)) {
+          // Handle the setter
+          handleMethodNameAnnotation(loggable, bin, nt, field, annotation);
+        }
+      }
+      // Look for all Sendable config annotation types
       for (Class type : configFieldHandler.keySet()) {
         // Get all annotations of each type
         for (Annotation annotation : field.getAnnotationsByType(type)) {
+          // Exclude all plain Config annotations that have methodName defined
+          if (annotation instanceof Config) {
+            if (((Config) annotation).methodName() != "DEFAULT") {
+              continue;
+            }
+          }
           // Get appropriate processing method for the annotation type
           FieldProcessor process = configFieldHandler.get(annotation.annotationType());
           if (process != null) {
@@ -777,27 +868,8 @@ public class Logger {
         registeredMethods.add(method);
         // Look for all config annotation types
         for (Class type : configSetterHandler.keySet()) {
-          // Get all annotations of each type
-          for (Annotation annotation : method.getAnnotationsByType(type)) {
-            // Get correct processing method for the given type
-            SetterProcessor process = configSetterHandler.get(annotation.annotationType());
-            if (process != null) {
-              // Process the setter
-              process.processSetter(
-                  (value) -> {
-                    try {
-                      method.invoke(loggable, setterCaster.get(method.getParameterTypes()[0]).apply(value));
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                      e.printStackTrace();
-                    }
-                  },
-                  annotation,
-                  bin,
-                  nt,
-                  method.getName(),
-                  method.getParameterTypes()[0].equals(Boolean.TYPE) || method.getParameterTypes()[0].equals(Boolean.class));
-            }
-          }
+          // Handle for all annotations of each type
+          handleSingleArgSetter(loggable, bin, nt, method, type, method.getAnnotationsByType(type));
         }
         // Now handle multi-arg setters
       } else if (method.getReturnType().equals(Void.TYPE) &&
@@ -807,66 +879,199 @@ public class Logger {
         method.setAccessible(true);
         registeredMethods.add(method);
         // Multi-arg setters only use the default Config annotation
-        for (Config annotation : method.getAnnotationsByType(Config.class)) {
-          if (annotation != null) {
-            // Make a layout since we'll have one widget for each arg
-            ShuffleboardContainerWrapper list = bin.getLayout(
-                annotation.name().equals("NO_NAME") ? method.getName() : annotation.name(),
-                annotation.multiArgLayoutType().equals("listLayout") ? BuiltInLayouts.kList : BuiltInLayouts.kGrid)
-                .withPosition(annotation.columnIndex(), annotation.rowIndex())
-                .withSize(annotation.width(), annotation.height())
-                .withProperties(Map.ofEntries(
-                    entry("numberOfColumns", annotation.numGridColumns()),
-                    entry("numberOfRows", annotation.numGridRows())
-                ));
-            int numParams = method.getParameterCount();
-            // Create persistent list of params that can be shared by all listeners, since the method requires
-            // all arguments every time it is called
-            List<Object> values = new ArrayList<>(numParams);
-            // Populate with default values for each type
-            for (int i = 0; i < numParams; i++) {
-              Parameter parameter = method.getParameters()[i];
-              values.add(setterCaster.get(parameter.getType())
-                  .apply(setterDefaults.get(parameter.getType())));
-            }
-            // Set up the listener method for each arg
-            for (int i = 0; i < numParams; i++) {
-              final int ii = i;
-              Parameter parameter = method.getParameters()[i];
-              // Get annotations on each arg; returns a default annotation if not present
-              Annotation paramAnnotation = getParameterAnnotation(parameter);
-              SetterProcessor process = configSetterHandler.get(paramAnnotation.annotationType());
-              // Process the setter
-              process.processSetter(
-                  (value) -> {
-                    values.set(ii, setterCaster.get(parameter.getType()).apply(value));
-                    try {
-                      method.invoke(loggable, values.toArray());
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                      e.printStackTrace();
-                    }
-                  },
-                  paramAnnotation,
-                  list,
-                  nt,
-                  parameter.getName(),
-                  parameter.getType().equals(Boolean.TYPE) || parameter.getType().equals(Boolean.class));
-            }
-          }
+        handleMultiArgSetter(loggable, bin, nt, method, method.getAnnotationsByType(Config.class));
+      }
+    }
+  }
+
+  private static void handleMethodNameAnnotation(Object loggable,
+                                                 ShuffleboardContainerWrapper bin,
+                                                 NetworkTableInstance nt,
+                                                 Field field,
+                                                 Annotation annotation) {
+    // Early return if wrong annotation type
+    if (!methodHandler.containsKey(annotation.annotationType())) {
+      return;
+    }
+
+    // Get setter corresponding to information in annotation
+    Method method = methodHandler.get(annotation.annotationType()).apply(field, annotation);
+
+    // Early return if methodName wasn't specified
+    if (method == null) {
+      return;
+    }
+
+    method.setAccessible(true);
+
+    // Get object corresponding to field, which method will be called on
+    Object obj = null;
+    try {
+      obj = field.get(loggable);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    // Handle setter if it's single-arg
+    if (method.getReturnType().equals(Void.TYPE) &&
+        method.getParameterTypes().length == 1 &&
+        setterCaster.containsKey(method.getParameterTypes()[0])) {
+      handleSingleArgSetter(obj, bin, nt, method, annotation.getClass(), annotation);
+    }
+    // Handle setter if it's multi-arg
+    else if (method.getReturnType().equals(Void.TYPE) &&
+        method.getParameterTypes().length > 1 &&
+        containsKeys(setterCaster, List.of((Object[]) method.getParameterTypes()))) {
+      handleMultiArgSetter(obj, bin, nt, method, (Config) annotation);
+    }
+  }
+
+  // Switch statement that grabs the appropriate method for each annotation type
+  private static Map<Class<? extends Annotation>, BiFunction<Field, Annotation, Method>> methodHandler
+      = Map.ofEntries(entry(Config.class,
+                            (field, config) -> getMethod(field,
+                                                         ((Config) config)
+                                                             .methodName(),
+                                                         ((Config) config)
+                                                             .methodTypes())
+                      ),
+                      entry(Config.NumberSlider.class,
+                            (field, config) -> getMethod(field,
+                                                         ((Config.NumberSlider) config)
+                                                             .methodName(),
+                                                         ((Config.NumberSlider) config)
+                                                             .methodTypes())
+                      ),
+                      entry(Config.ToggleButton.class,
+                            (field, config) -> getMethod(field,
+                                                         ((Config.ToggleButton) config)
+                                                             .methodName(),
+                                                         ((Config.ToggleButton) config)
+                                                             .methodTypes())
+                      ),
+                      entry(Config.ToggleSwitch.class,
+                            (field, config) -> getMethod(field,
+                                                         ((Config.ToggleSwitch) config)
+                                                             .methodName(),
+                                                         ((Config.ToggleSwitch) config)
+                                                             .methodTypes())
+                      )
+  );
+
+  private static Method getMethod(Field field, String methodName, Class<?>[] methodTypes) {
+    if (methodName != "DEFAULT") {
+      try {
+        return field.getType().getDeclaredMethod(methodName, methodTypes);
+      } catch (Exception e) {
+        e.printStackTrace();
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+
+  private static void handleSingleArgSetter(Object loggable,
+                                            ShuffleboardContainerWrapper bin,
+                                            NetworkTableInstance nt,
+                                            Method method,
+                                            Class type,
+                                            Annotation... annotations) {
+    for (Annotation annotation : annotations) {
+      // Get correct processing method for the given type
+      SetterProcessor process = configSetterHandler.get(annotation.annotationType());
+      if (process != null) {
+        // Process the setter
+        process.processSetter(
+            (value) -> {
+              try {
+                method
+                    .invoke(loggable, setterCaster.get(method.getParameterTypes()[0]).apply(value));
+              } catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+              }
+            },
+            annotation,
+            bin,
+            nt,
+            method.getName(),
+            method.getParameterTypes()[0].equals(Boolean.TYPE) || method.getParameterTypes()[0]
+                .equals(Boolean.class));
+      }
+    }
+  }
+
+  private static void handleMultiArgSetter(Object loggable,
+                                           ShuffleboardContainerWrapper bin,
+                                           NetworkTableInstance nt,
+                                           Method method,
+                                           Config... annotations) {
+    for (Config annotation : annotations) {
+      if (annotation != null) {
+        // Make a layout since we'll have one widget for each arg
+        ShuffleboardContainerWrapper list = bin.getLayout(
+            annotation.name().equals("NO_NAME") ? method.getName() : annotation.name(),
+            annotation.multiArgLayoutType().equals("listLayout") ? BuiltInLayouts.kList :
+                BuiltInLayouts.kGrid)
+                                               .withPosition(annotation.columnIndex(),
+                                                             annotation.rowIndex())
+                                               .withSize(annotation.width(), annotation.height())
+                                               .withProperties(Map.ofEntries(
+                                                   entry("numberOfColumns",
+                                                         annotation.numGridColumns()),
+                                                   entry("numberOfRows", annotation.numGridRows())
+                                               ));
+        int numParams = method.getParameterCount();
+        // Create persistent list of params that can be shared by all listeners, since the method
+        // requires
+        // all arguments every time it is called
+        List<Object> values = new ArrayList<>(numParams);
+        // Populate with default values for each type
+        for (int i = 0; i < numParams; i++) {
+          Parameter parameter = method.getParameters()[i];
+          values.add(setterCaster.get(parameter.getType())
+                                 .apply(setterDefaults.get(parameter.getType())));
+        }
+        // Set up the listener method for each arg
+        for (int i = 0; i < numParams; i++) {
+          final int ii = i;
+          Parameter parameter = method.getParameters()[i];
+          // Get annotations on each arg; returns a default annotation if not present
+          Annotation paramAnnotation = getParameterAnnotation(parameter);
+          SetterProcessor process = configSetterHandler.get(paramAnnotation.annotationType());
+          // Process the setter
+          process.processSetter(
+              (value) -> {
+                values.set(ii, setterCaster.get(parameter.getType()).apply(value));
+                try {
+                  method.invoke(loggable, values.toArray());
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                  e.printStackTrace();
+                }
+              },
+              paramAnnotation,
+              list,
+              nt,
+              parameter.getName(),
+              parameter.getType().equals(Boolean.TYPE) || parameter.getType()
+                                                                   .equals(Boolean.class));
         }
       }
     }
   }
 
   /**
-   * Performs logging for declared fields and methods of the given class based on the present log annotations.
+   * Performs logging for declared fields and methods of the given class based on the present log
+   * annotations.
    *
    * @param loggable          The object to configure
-   * @param loggableClass     The class to configure - necessary because the algorithm recurses on subclasses
+   * @param loggableClass     The class to configure - necessary because the algorithm recurses
+   *                          on subclasses
    * @param bin               The shuffleboard container to place widgets in
-   * @param nt                The networktable instance
-   * @param registeredFields  The list of already-processed fields, to avoid double-processing during recursion
-   * @param registeredMethods The list of already-processed methods, to avoid double-processing during recursion
+   * @param registeredFields  The list of already-processed fields, to avoid double-processing
+   *                          during recursion
+   * @param registeredMethods The list of already-processed methods, to avoid double-processing
+   *                          during recursion
    */
   private static void logFieldsAndMethods(Object loggable,
                                           Class loggableClass,
@@ -948,19 +1153,25 @@ public class Logger {
   }
 
   /**
-   * Configures logging and config for the given Loggable class.  Recurses first on all loggable children, and then on
+   * Configures logging and config for the given Loggable class.  Recurses first on all loggable
+   * children, and then on
    * superclass (if superclass is loggable).
    *
    * @param logType           The type of logging to perform (log or config)
    * @param separate          Whether log and config should be given separate tabs
    * @param loggable          The object to configure logging on
-   * @param loggableClass     The class of the object being configured (necessary due to superclass recursion)
-   * @param loggedFields      A list of all previously-handled Loggable fields, to avoid double-counting during recursion
-   * @param registeredFields  A list of all previously-handled annotated fields, to avoid double-counting during recursion
-   * @param registeredMethods A list of all previously-handled annotated methods, to avoid double-counting during recursion
+   * @param loggableClass     The class of the object being configured (necessary due to
+   *                          superclass recursion)
+   * @param loggedFields      A list of all previously-handled Loggable fields, to avoid
+   *                          double-counting during recursion
+   * @param registeredFields  A list of all previously-handled annotated fields, to avoid
+   *                          double-counting during recursion
+   * @param registeredMethods A list of all previously-handled annotated methods, to avoid
+   *                          double-counting during recursion
    * @param shuffleboard      The shuffleboard instance (wrapped to support NT-only mode)
    * @param nt                The networktable instance
-   * @param parentContainer   The container of this loggable's parent in the graph of loggable objects
+   * @param parentContainer   The container of this loggable's parent in the graph of loggable
+   *                          objects
    * @param ancestors         A list of ancestors, to detect cyclic references of loggables
    */
   private static void logLoggable(LogType logType,
@@ -983,55 +1194,59 @@ public class Logger {
       case LOG:
         // Tab if there is no parent container (i.e. the loggable is in the rootcontainer)
         if (parentContainer == null) {
-          bin = shuffleboard.getTab(separate ? loggable.configureLogName() + ": Log" : loggable.configureLogName());
+          bin = shuffleboard.getTab(
+              separate ? loggable.configureLogName() + ": Log" : loggable.configureLogName());
         } else {
           // Place stuff directly in parent container if layout is skipped
           if (loggable.skipLayout()) {
             bin = parentContainer;
             // Else define a layout in the parent container
           } else {
-            bin = parentContainer.getLayout(loggable.configureLogName(), loggable.configureLayoutType())
+            bin = parentContainer
+                .getLayout(loggable.configureLogName(), loggable.configureLayoutType())
                 .withSize(loggable.configureLayoutSize()[0],
-                    loggable.configureLayoutSize()[1])
+                          loggable.configureLayoutSize()[1])
                 .withPosition(loggable.configureLayoutPosition()[0],
-                    loggable.configureLayoutPosition()[1])
+                              loggable.configureLayoutPosition()[1])
                 .withProperties(loggable.configureLayoutProperties());
           }
         }
 
         // Log fields and methods in the correct container
         logFieldsAndMethods(loggable,
-            loggableClass,
-            bin,
-            registeredFields,
-            registeredMethods);
+                            loggableClass,
+                            bin,
+                            registeredFields,
+                            registeredMethods);
         break;
       case CONFIG:
         // Tab if there is no parent container (i.e. the loggable is in the rootcontainer)
         if (parentContainer == null) {
-          bin = shuffleboard.getTab(separate ? loggable.configureLogName() + ": Config" : loggable.configureLogName());
+          bin = shuffleboard.getTab(
+              separate ? loggable.configureLogName() + ": Config" : loggable.configureLogName());
         } else {
           // Place stuff directly in parent container if layout is skipped
           if (loggable.skipLayout()) {
             bin = parentContainer;
             // Else define a layout in the parent container
           } else {
-            bin = parentContainer.getLayout(loggable.configureLogName(), loggable.configureLayoutType())
+            bin = parentContainer
+                .getLayout(loggable.configureLogName(), loggable.configureLayoutType())
                 .withSize(loggable.configureLayoutSize()[0],
-                    loggable.configureLayoutSize()[1])
+                          loggable.configureLayoutSize()[1])
                 .withPosition(loggable.configureLayoutPosition()[0],
-                    loggable.configureLayoutPosition()[1])
+                              loggable.configureLayoutPosition()[1])
                 .withProperties(loggable.configureLayoutProperties());
           }
         }
 
         // Config fields and methods in the correct container
         configFieldsAndMethods(loggable,
-            loggableClass,
-            bin,
-            nt,
-            registeredFields,
-            registeredMethods);
+                               loggableClass,
+                               bin,
+                               nt,
+                               registeredFields,
+                               registeredMethods);
         break;
       default:
         bin = shuffleboard.getTab("ERROR");
@@ -1045,16 +1260,16 @@ public class Logger {
 
     // Set up call for recursion on Loggable fields with parameters from current Loggable
     Consumer<Loggable> log = (toLog) -> logLoggable(logType,
-        separate,
-        toLog,
-        toLog.getClass(),
-        new HashSet<>(),
-        new HashSet<>(),
-        new HashSet<>(),
-        shuffleboard,
-        nt,
-        bin,
-        new HashSet<>(ancestors));
+                                                    separate,
+                                                    toLog,
+                                                    toLog.getClass(),
+                                                    new HashSet<>(),
+                                                    new HashSet<>(),
+                                                    new HashSet<>(),
+                                                    shuffleboard,
+                                                    nt,
+                                                    bin,
+                                                    new HashSet<>(ancestors));
 
     // Recurse on Loggable fields
     for (Field field : loggableClass.getDeclaredFields()) {
@@ -1143,7 +1358,8 @@ public class Logger {
   }
 
   /**
-   * Checks if a field is in the given list of ancestors, printing a warning if it is as this means there is a cyclic
+   * Checks if a field is in the given list of ancestors, printing a warning if it is as this
+   * means there is a cyclic
    * reference of loggables.
    *
    * @param field     The field to check
@@ -1155,9 +1371,11 @@ public class Logger {
     try {
       boolean b = ancestors.contains(field.get(loggable));
       if (b && cycleWarningsEnabled) {
-        System.out.println("CAUTION: Cyclic reference of Loggables detected!  Recursion terminated after one cycle.");
+        System.out.println(
+            "CAUTION: Cyclic reference of Loggables detected!  Recursion terminated after one "
+                + "cycle.");
         System.out.println(field.getName() + " in " + loggable.getClass().getName() +
-            " is itself an ancestor of " + loggable.getClass().getName());
+                               " is itself an ancestor of " + loggable.getClass().getName());
         System.out.println("Please verify that this is intended.");
       }
       return b;
@@ -1168,7 +1386,8 @@ public class Logger {
   }
 
   /**
-   * Checks if a given field is a Loggable class, or else an array or collection (as these might contain Loggable
+   * Checks if a given field is a Loggable class, or else an array or collection (as these might
+   * contain Loggable
    * elements).  Check is performed on the runtime class.
    *
    * @param field    The field to check
@@ -1228,7 +1447,8 @@ public class Logger {
   }
 
   /**
-   * Returns a "defaulted" config annotation, because Java is gross and doesn't include a built-in way to do this.
+   * Returns a "defaulted" config annotation, because Java is gross and doesn't include a
+   * built-in way to do this.
    *
    * @return A "defaulted" instance of the Config annotation
    */
@@ -1248,7 +1468,8 @@ public class Logger {
   }
 
   /**
-   * Returns a "defaulted" log annotation, because Java is gross and doesn't include a built-in way to do this.
+   * Returns a "defaulted" log annotation, because Java is gross and doesn't include a built-in
+   * way to do this.
    *
    * @return A "defaulted" instance of the Log annotation
    */
@@ -1269,7 +1490,8 @@ public class Logger {
   }
 
   /**
-   * Gets a config annotation from a parameter.  Returns a "defaulted" annotation if none is present.
+   * Gets a config annotation from a parameter.  Returns a "defaulted" annotation if none is
+   * present.
    *
    * @param parameter The parameter to get the annotation from
    * @return The Config annotation; default if none present
@@ -1287,11 +1509,13 @@ public class Logger {
   }
 
   /**
-   * Gets a new supplier from calling the given method name on the output of the provided supplier.  If methodName is
+   * Gets a new supplier from calling the given method name on the output of the provided
+   * supplier.  If methodName is
    * "DEFAULT", the original supplier is provided.
    *
    * @param supplier   The original supplier
-   * @param methodName The name of the method to call on the output of the original supplier; "DEFAULT" if no method
+   * @param methodName The name of the method to call on the output of the original supplier;
+   *                   "DEFAULT" if no method
    *                   should be called
    * @return The updated supplier
    */
@@ -1307,7 +1531,7 @@ public class Logger {
       method = obj.getClass().getMethod(methodName);
     } catch (NoSuchMethodException e) {
       throw new IllegalArgumentException("No method of name " + methodName + " found for object " +
-          obj.getClass().getName() + "!");
+                                             obj.getClass().getName() + "!");
     }
 
     method.setAccessible(true);
