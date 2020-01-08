@@ -118,7 +118,7 @@ public @interface Config {
    * </table>
    */
   @Repeatable(NumberSliders.class)
-  @Target({ElementType.METHOD, ElementType.PARAMETER})
+  @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
   @Retention(RetentionPolicy.RUNTIME)
   @interface NumberSlider {
     /**
@@ -191,7 +191,7 @@ public @interface Config {
     int height() default -1;
   }
 
-  @Target({ElementType.METHOD, ElementType.PARAMETER})
+  @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
   @Retention(RetentionPolicy.RUNTIME)
   @interface NumberSliders {
     NumberSlider[] value();
@@ -206,7 +206,7 @@ public @interface Config {
    * <br>This widget has no custom properties.
    */
   @Repeatable(ToggleButtons.class)
-  @Target({ElementType.METHOD, ElementType.PARAMETER})
+  @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
   @Retention(RetentionPolicy.RUNTIME)
   @interface ToggleButton {
     /**
@@ -264,7 +264,7 @@ public @interface Config {
     int height() default -1;
   }
 
-  @Target({ElementType.METHOD, ElementType.PARAMETER})
+  @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
   @Retention(RetentionPolicy.RUNTIME)
   @interface ToggleButtons {
     ToggleButton[] value();
@@ -279,7 +279,7 @@ public @interface Config {
    * <br>This widget has no custom properties.
    */
   @Repeatable(ToggleSwitches.class)
-  @Target({ElementType.METHOD, ElementType.PARAMETER})
+  @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
   @Retention(RetentionPolicy.RUNTIME)
   @interface ToggleSwitch {
     /**
@@ -337,7 +337,7 @@ public @interface Config {
     int height() default -1;
   }
 
-  @Target({ElementType.METHOD, ElementType.PARAMETER})
+  @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
   @Retention(RetentionPolicy.RUNTIME)
   @interface ToggleSwitches {
     ToggleSwitch[] value();

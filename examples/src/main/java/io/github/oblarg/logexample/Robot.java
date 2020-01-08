@@ -1,108 +1,87 @@
-package io.github.oblarg.logexample;/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
+/*----------------------------------------------------------------------------*/
+/* Copyright (c) 2017-2019 FIRST. All Rights Reserved.                        */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Victor;
-import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.smartdashboard.SendableBuilderImpl;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import io.github.oblarg.logexample.commands.LoggedCommand;
-import io.github.oblarg.logexample.subsystems.LoggedSubsystem;
+package io.github.oblarg.logexample;
+
 import io.github.oblarg.oblog.Logger;
-import io.github.oblarg.oblog.annotations.Config;
-import io.github.oblarg.oblog.annotations.Log;
+
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 /**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the TimedRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the build.gradle file in the
+ * The VM is configured to automatically run this class, and to call the functions corresponding to
+ * each mode, as described in the TimedRobot documentation. If you change the name of this class or
+ * the package after creating this project, you must also update the build.gradle file in the
  * project.
  */
 public class Robot extends TimedRobot {
+  private Command m_autonomousCommand;
 
-  //These fields are loggable, and so Logger will automatically add them as tabs to shuffleboard.  Their own Loggable fields,
-  //in turn, will be added as layouts within those tabs, and their children will become sub-layouts, etc.
-  public static final LoggedSubsystem subsystem = new LoggedSubsystem();
-
-  private LoggedCommand command5Seconds = new LoggedCommand(5);
-
-  private LoggedCommand command10Seconds = new LoggedCommand(10);
-
-  @Log(methodName = "getFoo", tabName = "FooTab")
-  @Log(methodName = "getFoo")
-  private UnloggedComponent methodTest = new UnloggedComponent();
-
-  @Log
-  private static DifferentialDrive drive = new DifferentialDrive(new Victor(1), new Victor(2));
-
-  //This is loggable, but will not be logged due to the exclude annotation.
-  @Log.Exclude
-  private LoggedCommand commandExcluded = new LoggedCommand(11);
-
-  private final SendableChooser<Command> m_chooser = new SendableChooser<>();
+  private RobotContainer m_robotContainer;
 
   /**
-   * This function is run when the robot is first started up and should be
-   * used for any initialization code.
+   * This function is run when the robot is first started up and should be used for any
+   * initialization code.
    */
   @Override
   public void robotInit() {
-    m_chooser.setDefaultOption("5 Seconds", command5Seconds);
-    m_chooser.addOption("10 Seconds", command10Seconds);
-    SmartDashboard.putData("Auto choices", m_chooser);
-
-    //Configures logging.  Passing "this" specifies the runtime instance of Robot.java as object whose loggable fields
-    //will be make up the shuffleboard tabs.
-    //Logger.configureLoggingNTOnly(this, "Robot");
-    Logger.configureLoggingAndConfig(this, false);
-
-    Scheduler.getInstance().add(command5Seconds);
-
-
+    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
+    // autonomous chooser on the dashboard.
+    m_robotContainer = new RobotContainer();
+    Logger.configureLoggingAndConfig(m_robotContainer, false);
   }
 
   /**
-   * This function is called every robot packet, no matter the mode. Use
-   * this for items like diagnostics that you want ran during disabled,
-   * autonomous, teleoperated and test.
+   * This function is called every robot packet, no matter the mode. Use this for items like
+   * diagnostics that you want ran during disabled, autonomous, teleoperated and test.
    *
    * <p>This runs after the mode specific periodic functions, but before
    * LiveWindow and SmartDashboard integrated updating.
    */
   @Override
   public void robotPeriodic() {
-    //Updates all of the NT entries.  Necessary to ensure the values sent to shuffleboard change as they
-    //change in code.
+    // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
+    // commands, running already-scheduled commands, removing finished or interrupted commands,
+    // and running subsystem periodic() methods.  This must be called from the robot's periodic
+    // block in order for anything in the Command-based framework to work.
+    CommandScheduler.getInstance().run();
     Logger.updateEntries();
-    Scheduler.getInstance().run();
   }
 
   /**
-   * This autonomous (along with the chooser code above) shows how to select
-   * between different autonomous modes using the dashboard. The sendable
-   * chooser code works with the Java SmartDashboard. If you prefer the
-   * LabVIEW Dashboard, remove all of the chooser code and uncomment the
-   * getString line to get the auto name from the text box below the Gyro
-   *
-   * <p>You can add additional auto modes by adding additional comparisons to
-   * the switch structure below with additional strings. If using the
-   * SendableChooser make sure to add them to the chooser code above as well.
+   * This function is called once each time the robot enters Disabled mode.
+   */
+  @Override
+  public void disabledInit() {
+  }
+
+  @Override
+  public void disabledPeriodic() {
+  }
+
+  /**
+   * This autonomous runs the autonomous command selected by your {@link RobotContainer} class.
    */
   @Override
   public void autonomousInit() {
-    Command autoCommand = m_chooser.getSelected();
-    System.out.println("Auto selected: " + autoCommand);
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    autoCommand.start();
+    /*
+     * String autoSelected = SmartDashboard.getString("Auto Selector",
+     * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
+     * = new MyAutoCommand(); break; case "Default Auto": default:
+     * autonomousCommand = new ExampleCommand(); break; }
+     */
+
+    // schedule the autonomous command (example)
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.schedule();
+    }
   }
 
   /**
@@ -112,11 +91,29 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
   }
 
+  @Override
+  public void teleopInit() {
+    // This makes sure that the autonomous stops running when
+    // teleop starts running. If you want the autonomous to
+    // continue until interrupted by another command, remove
+    // this line or comment it out.
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.cancel();
+    }
+  }
+
   /**
    * This function is called periodically during operator control.
    */
   @Override
   public void teleopPeriodic() {
+
+  }
+
+  @Override
+  public void testInit() {
+    // Cancels all running commands at the start of test mode.
+    CommandScheduler.getInstance().cancelAll();
   }
 
   /**
