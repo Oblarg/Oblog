@@ -22,6 +22,7 @@ import io.github.oblarg.logexample.Constants.OIConstants;
 import io.github.oblarg.logexample.subsystems.DriveSubsystem;
 import io.github.oblarg.logexample.subsystems.ShooterSubsystem;
 import io.github.oblarg.oblog.annotations.Config;
+import io.github.oblarg.oblog.annotations.Log;
 
 import static edu.wpi.first.wpilibj.XboxController.Button;
 
@@ -37,7 +38,10 @@ public class RobotContainer {
                        methodName = "setMaxOutput",
                        methodTypes = {double.class},
                        defaultValue = 1)
+
+  @Log
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  @Log
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
 
   // A simple autonomous routine that shoots the loaded frisbees
