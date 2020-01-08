@@ -25,3 +25,7 @@ compileJava {
     options.compilerArgs << '-parameters'
 }
 
+compileTestJava {
+    options.compilerArgs << '-parameters'
+}
+

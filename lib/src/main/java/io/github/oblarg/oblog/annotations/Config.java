@@ -32,6 +32,18 @@ public @interface Config {
   String tabName() default "DEFAULT";
 
   /**
+   * @return Optional name of a method to call on the field (or return value of the method) to
+   * obtain the actual setter that will be bound.  Useful if one does not desire to make an
+   * entire object Loggable, but still wants to bind one of its setters.
+   */
+  String methodName() default "DEFAULT";
+
+  /**
+   * @return Parameter types of named method, if method name is provided.
+   */
+  Class<?>[] methodTypes() default {};
+
+  /**
    * @return The default value for this setter if it is a single-argument boolean setter.
    */
   boolean defaultValueBoolean() default false;
@@ -123,6 +135,18 @@ public @interface Config {
     String tabName() default "DEFAULT";
 
     /**
+     * @return Optional name of a method to call on the field (or return value of the method) to
+     * obtain the actual setter that will be bound.  Useful if one does not desire to make an
+     * entire object Loggable, but still wants to bind one of its setters.
+     */
+    String methodName() default "DEFAULT";
+
+    /**
+     * @return Parameter types of named method, if method name is provided.
+     */
+    Class<?>[] methodTypes() default {};
+
+    /**
      * @return The minimum value of the slider.
      */
     double min() default -1;
@@ -199,6 +223,18 @@ public @interface Config {
     String tabName() default "DEFAULT";
 
     /**
+     * @return Optional name of a method to call on the field (or return value of the method) to
+     * obtain the actual setter that will be bound.  Useful if one does not desire to make an
+     * entire object Loggable, but still wants to bind one of its setters.
+     */
+    String methodName() default "DEFAULT";
+
+    /**
+     * @return Parameter types of named method, if method name is provided.
+     */
+    Class<?>[] methodTypes() default {};
+
+    /**
      * @return The default value that the setter will return prior to manipulation on the dashboard.
      */
     boolean defaultValue() default false;
@@ -258,6 +294,18 @@ public @interface Config {
      * currently supported for NT-only mode!
      */
     String tabName() default "DEFAULT";
+
+    /**
+     * @return Optional name of a method to call on the field (or return value of the method) to
+     * obtain the actual setter that will be bound.  Useful if one does not desire to make an
+     * entire object Loggable, but still wants to bind one of its setters.
+     */
+    String methodName() default "DEFAULT";
+
+    /**
+     * @return Parameter types of named method, if method name is provided.
+     */
+    Class<?>[] methodTypes() default {};
 
     /**
      * @return The default value that the setter will return prior to manipulation on the dashboard.
