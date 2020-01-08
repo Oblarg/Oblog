@@ -33,3 +33,4 @@ build
 .metadata/
 .DS_Store
 bash.exe.stackdump
+imgui.ini
