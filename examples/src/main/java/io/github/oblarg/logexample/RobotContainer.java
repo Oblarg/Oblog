@@ -38,9 +38,9 @@ public class RobotContainer {
                        methodName = "setMaxOutput",
                        methodTypes = {double.class},
                        defaultValue = 1)
-
   @Log
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  
   @Log
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
 
