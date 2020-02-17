@@ -6,12 +6,22 @@ import static java.util.Objects.requireNonNull;
 
 public class Util {
   public static void logErrorCheck(Object obj, String title, String containerName) {
-    requireNonNull(obj, "Error!  Attempted to log null value with widget title " + title + " in container "
-        + containerName);
+    requireNonNull(
+        obj,
+        "Error!  Attempted to log null value with widget title "
+            + title
+            + " in container "
+            + containerName);
     if (!isValidLogType(obj)) {
-      throw new IllegalArgumentException("Error!  Attempted to log invalid data type " + title + " in container "
-          + containerName + ".  Data was of type " + obj.getClass().getTypeName() + "; acceptable types are " +
-          "Sendable, Number, Boolean, and String");
+      throw new IllegalArgumentException(
+          "Error!  Attempted to log invalid data type "
+              + title
+              + " in container "
+              + containerName
+              + ".  Data was of type "
+              + obj.getClass().getTypeName()
+              + "; acceptable types are "
+              + "Sendable, Number, Boolean, and String");
     }
   }
 

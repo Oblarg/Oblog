@@ -32,8 +32,11 @@ class NTLayout implements ShuffleboardLayoutWrapper {
     try {
       return new NTSimpleWidget(table.getEntry(title), defaultValue);
     } catch (IllegalArgumentException e) {
-      throw new IllegalArgumentException("Error!  Attempted to log duplicate widget " + title + " in container " +
-          table.getPath());
+      throw new IllegalArgumentException(
+          "Error!  Attempted to log duplicate widget "
+              + title
+              + " in container "
+              + table.getPath());
     }
   }
 
@@ -43,8 +46,11 @@ class NTLayout implements ShuffleboardLayoutWrapper {
     try {
       return new NTComplexWidget(table, title, defaultValue);
     } catch (IllegalArgumentException e) {
-      throw new IllegalArgumentException("Error!  Attempted to log duplicate widget " + title + " in container " +
-          table.getPath());
+      throw new IllegalArgumentException(
+          "Error!  Attempted to log duplicate widget "
+              + title
+              + " in container "
+              + table.getPath());
     }
   }
 

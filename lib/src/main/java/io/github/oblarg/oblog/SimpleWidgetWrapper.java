@@ -5,8 +5,8 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import java.util.Map;
 
 /**
- * A wrapper for WPILib's SimpleWidget; wrapped to allow the Logger to substitute a NT-only implementation
- * if desired.
+ * A wrapper for WPILib's SimpleWidget; wrapped to allow the Logger to substitute a NT-only
+ * implementation if desired.
  */
 public interface SimpleWidgetWrapper {
   NetworkTableEntry getEntry();
