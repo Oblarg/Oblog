@@ -774,7 +774,7 @@ public class Logger {
                    .withWidget(BuiltInWidgets.k3AxisAccelerometer.getWidgetName())
                    .withProperties(
                        Map.of(
-                           "range", params.range(),
+                           "range", params.range().toString(),
                            "showValue", params.showValue(),
                            "precision", params.precision(),
                            "showTickMarks", params.showTicks()))
