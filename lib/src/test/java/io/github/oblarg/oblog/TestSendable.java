@@ -2,7 +2,6 @@ package io.github.oblarg.oblog;
 
 import static org.mockito.Mockito.*;
 
-import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import io.github.oblarg.oblog.annotations.Log;
 

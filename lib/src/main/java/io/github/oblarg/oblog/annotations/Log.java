@@ -3,7 +3,6 @@ package io.github.oblarg.oblog.annotations;
 import io.github.oblarg.oblog.Loggable;
 
 import java.lang.annotation.*;
-import java.util.List;
 
 /**
  * Displays a value as its default widget type on Shuffleboard. Provides no configuration options.
@@ -506,7 +505,7 @@ public @interface Log {
   @Repeatable(PDPs.class)
   @Retention(RetentionPolicy.RUNTIME)
   @Target({ElementType.FIELD, ElementType.METHOD})
-  @interface PDP {
+  @interface PowerDistribution {
     /** @return The name of the value on Shuffleboard; defaults to field or method name. */
     String name() default "NO_NAME";
 
@@ -558,7 +557,7 @@ public @interface Log {
   @Retention(RetentionPolicy.RUNTIME)
   @Target({ElementType.FIELD, ElementType.METHOD})
   @interface PDPs {
-    PDP[] value();
+    PowerDistribution[] value();
   }
 
   /**
@@ -661,7 +660,7 @@ public @interface Log {
   @Repeatable(SpeedControllers.class)
   @Retention(RetentionPolicy.RUNTIME)
   @Target({ElementType.FIELD, ElementType.METHOD})
-  @interface SpeedController {
+  @interface MotorController {
     /** @return The name of the value on Shuffleboard; defaults to field or method name. */
     String name() default "NO_NAME";
 
@@ -713,7 +712,7 @@ public @interface Log {
   @Retention(RetentionPolicy.RUNTIME)
   @Target({ElementType.FIELD, ElementType.METHOD})
   @interface SpeedControllers {
-    SpeedController[] value();
+    MotorController[] value();
   }
 
   /**

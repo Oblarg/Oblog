@@ -1,8 +1,9 @@
 package io.github.oblarg.oblog;
 
-import edu.wpi.cscore.VideoSource;
+import edu.wpi.first.cscore.VideoSource;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.shuffleboard.*;
 
@@ -669,9 +670,9 @@ public class Logger {
                 }
               }),
           entry(
-              Log.PDP.class,
+              Log.PowerDistribution.class,
               (supplier, rawParams, bin, name) -> {
-                Log.PDP params = (Log.PDP) rawParams;
+                Log.PowerDistribution params = (Log.PowerDistribution) rawParams;
                 bin =
                     params.tabName().equals("DEFAULT")
                         ? bin
@@ -680,7 +681,7 @@ public class Logger {
                 bin.add(
                         (params.name().equals("NO_NAME")) ? name : params.name(),
                         (Sendable) supplier.get())
-                    .withWidget(BuiltInWidgets.kPowerDistributionPanel.getWidgetName())
+                    .withWidget(BuiltInWidgets.kPowerDistribution.getWidgetName())
                     .withProperties(
                         Map.of("showVoltageAndCurrentValues", params.showVoltageAndCurrent()))
                     .withPosition(params.columnIndex(), params.rowIndex())
@@ -703,9 +704,9 @@ public class Logger {
                     .withSize(params.width(), params.height());
               }),
           entry(
-              Log.SpeedController.class,
+              Log.MotorController.class,
               (supplier, rawParams, bin, name) -> {
-                Log.SpeedController params = (Log.SpeedController) rawParams;
+                Log.MotorController params = (Log.MotorController) rawParams;
                 bin =
                     params.tabName().equals("DEFAULT")
                         ? bin
@@ -714,7 +715,7 @@ public class Logger {
                 bin.add(
                         (params.name().equals("NO_NAME")) ? name : params.name(),
                         (Sendable) supplier.get())
-                    .withWidget(BuiltInWidgets.kSpeedController.getWidgetName())
+                    .withWidget(BuiltInWidgets.kMotorController.getWidgetName())
                     .withProperties(Map.of("orientation", params.orientation()))
                     .withPosition(params.columnIndex(), params.rowIndex())
                     .withSize(params.width(), params.height());

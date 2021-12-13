@@ -18,10 +18,10 @@ import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Log;
 
 public class ShooterSubsystem extends PIDSubsystem implements Loggable {
-  @Log.SpeedController(name = "Shooter Motor")
+  @Log.MotorController(name = "Shooter Motor")
   private final PWMVictorSPX m_shooterMotor = new PWMVictorSPX(ShooterConstants.kShooterMotorPort);
 
-  @Log.SpeedController(name = "Feeder Motor")
+  @Log.MotorController(name = "Feeder Motor")
   private final PWMVictorSPX m_feederMotor = new PWMVictorSPX(ShooterConstants.kFeederMotorPort);
 
   @Log.Encoder(name = "Shooter Encoder")

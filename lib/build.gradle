@@ -1,25 +1,26 @@
 plugins {
     id 'java'
-    id 'idea'
-    id 'maven'
-    id "edu.wpi.first.GradleRIO" version "2020.1.1"
+    id 'maven-publish'
+    id "edu.wpi.first.GradleRIO" version "2022.1.1-beta-3"
 }
 
+// Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
+// Also defines JUnit 4.
 dependencies {
-    compileOnly wpi.deps.wpilib()
-
-    testImplementation wpi.deps.wpilib()
-    nativeZip wpi.deps.wpilibJni(wpi.platforms.roborio)
-    nativeDesktopZip wpi.deps.wpilibJni(wpi.platforms.desktop)
+    implementation wpi.java.deps.wpilib()
+    implementation wpi.java.vendor.java()
 
     testImplementation 'junit:junit:4.12'
     testImplementation "org.mockito:mockito-core:2.+"
     testImplementation group: 'org.mockito', name: 'mockito-inline', version: '2.8.9'
-
-    // Enable simulation gui support. Must check the box in vscode to enable support
-    // upon debugging
-    simulation wpi.deps.sim.gui(wpi.platforms.desktop, false)
 }
+
+// Simulation configuration (e.g. environment variables).
+wpi.sim.addGui().defaultEnabled = true
+wpi.sim.addDriverstation()
+
+wpi.java.configureExecutableTasks(jar)
+wpi.java.configureTestTasks(test)
 
 compileJava {
     options.compilerArgs << '-parameters'
