@@ -20,12 +20,12 @@ import io.github.oblarg.oblog.annotations.Log;
 
 public class DriveSubsystem extends SubsystemBase implements Loggable {
   // The motors on the left side of the drive.
-  @Log.SpeedController(name = "Left Motors")
+  @Log.MotorController(name = "Left Motors")
   private final SpeedControllerGroup m_leftMotors =
       new SpeedControllerGroup(new PWMVictorSPX(DriveConstants.kLeftMotor1Port),
                                new PWMVictorSPX(DriveConstants.kLeftMotor2Port));
 
-  @Log.SpeedController(name = "Right Motors")
+  @Log.MotorController(name = "Right Motors")
   // The motors on the right side of the drive.
   private final SpeedControllerGroup m_rightMotors =
       new SpeedControllerGroup(new PWMVictorSPX(DriveConstants.kRightMotor1Port),

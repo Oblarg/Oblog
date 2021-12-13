@@ -1,10 +1,6 @@
 package io.github.oblarg.oblog;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.Sendable;
-import io.github.oblarg.oblog.Logger;
-import io.github.oblarg.oblog.ShuffleboardMocks;
-import io.github.oblarg.oblog.TestLoggableBasic;
 import org.junit.Test;
 
 import java.util.ArrayList;
