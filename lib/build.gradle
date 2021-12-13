@@ -15,6 +15,14 @@ dependencies {
     testImplementation group: 'org.mockito', name: 'mockito-inline', version: '2.8.9'
 }
 
+publishing {
+    publications {
+        libraryJar(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
 // Simulation configuration (e.g. environment variables).
 wpi.sim.addGui().defaultEnabled = true
 wpi.sim.addDriverstation()
