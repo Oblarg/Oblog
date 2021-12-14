@@ -158,6 +158,7 @@ public @interface Log {
    *
    * <table>
    * <caption></caption>
+
    * <tr><th>Name</th><th>Type</th><th>Default Value</th><th>Notes</th></tr>
    * <tr><td>Min</td><td>Number</td><td>0</td><td>The minimum value of the dial</td></tr>
    * <tr><td>Max</td><td>Number</td><td>100</td><td>The maximum value of the dial</td></tr>
@@ -245,6 +246,7 @@ public @interface Log {
    *
    * <table>
    * <caption></caption>
+
    * <tr><th>Name</th><th>Type</th><th>Default Value</th><th>Notes</th></tr>
    * <tr><td>Visible time</td><td>Number</td><td>30</td>
    * <td>How long, in seconds, should past data be visible for</td></tr>
@@ -321,6 +323,7 @@ public @interface Log {
    *
    * <table>
    * <caption></caption>
+
    * <tr><th>Name</th><th>Type</th><th>Default Value</th><th>Notes</th></tr>
    * <tr><td>Color when true</td><td>Color</td><td>"green"</td>
    * <td>Can be specified as a string ({@code "#00FF00"}) or a rgba integer ({@code 0x00FF0000})
@@ -404,6 +407,7 @@ public @interface Log {
    *
    * <table>
    * <caption></caption>
+
    * <tr><th>Name</th><th>Type</th><th>Default Value</th><th>Notes</th></tr>
    * <tr><td>Min</td><td>Number</td><td>0</td><td>The minimum value of the bar</td></tr>
    * <tr><td>Max</td><td>Number</td><td>5</td><td>The maximum value of the bar</td></tr>
@@ -485,11 +489,11 @@ public @interface Log {
   }
 
   /**
-   * Displays a {@link edu.wpi.first.wpilibj.PowerDistributionPanel PowerDistributionPanel}. <br>
+   * Displays a {@link edu.wpi.first.wpilibj.PowerDistribution PowerDistributionPanel}. <br>
    * Supported types:
    *
    * <ul>
-   *   <li>{@link edu.wpi.first.wpilibj.PowerDistributionPanel}
+   *   <li>{@link edu.wpi.first.wpilibj.PowerDistribution}
    * </ul>
    *
    * <br>
@@ -628,23 +632,23 @@ public @interface Log {
   }
 
   /**
-   * Displays a {@link edu.wpi.first.wpilibj.SpeedController SpeedController}. The speed controller
+   * Displays a {@link edu.wpi.first.wpilibj.motorcontrol.MotorController MotorController}. The speed controller
    * will be controllable from the dashboard when test mode is enabled, but will otherwise be
    * view-only. <br>
    * Supported types:
    *
    * <ul>
-   *   <li>{@link edu.wpi.first.wpilibj.PWMSpeedController}
-   *   <li>{@link edu.wpi.first.wpilibj.DMC60}
-   *   <li>{@link edu.wpi.first.wpilibj.Jaguar}
-   *   <li>{@link edu.wpi.first.wpilibj.PWMTalonSRX}
-   *   <li>{@link edu.wpi.first.wpilibj.PWMVictorSPX}
-   *   <li>{@link edu.wpi.first.wpilibj.SD540}
-   *   <li>{@link edu.wpi.first.wpilibj.Spark}
-   *   <li>{@link edu.wpi.first.wpilibj.Talon}
-   *   <li>{@link edu.wpi.first.wpilibj.Victor}
-   *   <li>{@link edu.wpi.first.wpilibj.VictorSP}
-   *   <li>{@link edu.wpi.first.wpilibj.SpeedControllerGroup}
+   *   <li>{@link edu.wpi.first.wpilibj.motorcontrol.PWMMotorController}
+   *   <li>{@link edu.wpi.first.wpilibj.motorcontrol.DMC60}
+   *   <li>{@link edu.wpi.first.wpilibj.motorcontrol.Jaguar}
+   *   <li>{@link edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX}
+   *   <li>{@link edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX}
+   *   <li>{@link edu.wpi.first.wpilibj.motorcontrol.SD540}
+   *   <li>{@link edu.wpi.first.wpilibj.motorcontrol.Spark}
+   *   <li>{@link edu.wpi.first.wpilibj.motorcontrol.Talon}
+   *   <li>{@link edu.wpi.first.wpilibj.motorcontrol.Victor}
+   *   <li>{@link edu.wpi.first.wpilibj.motorcontrol.VictorSP}
+   *   <li>{@link edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup}
    * </ul>
    *
    * <br>
@@ -652,12 +656,13 @@ public @interface Log {
    *
    * <table>
    * <caption></caption>
+
    * <tr><th>Name</th><th>Type</th><th>Default Value</th><th>Notes</th></tr>
    * <tr><td>Orientation</td><td>String</td><td>"HORIZONTAL"</td>
    * <td>One of {@code ["HORIZONTAL", "VERTICAL"]}</td></tr>
    * </table>
    */
-  @Repeatable(SpeedControllers.class)
+  @Repeatable(MotorControllers.class)
   @Retention(RetentionPolicy.RUNTIME)
   @Target({ElementType.FIELD, ElementType.METHOD})
   @interface MotorController {
@@ -711,7 +716,7 @@ public @interface Log {
 
   @Retention(RetentionPolicy.RUNTIME)
   @Target({ElementType.FIELD, ElementType.METHOD})
-  @interface SpeedControllers {
+  @interface MotorControllers {
     MotorController[] value();
   }
 
@@ -729,6 +734,7 @@ public @interface Log {
    *
    * <table>
    * <caption></caption>
+
    * <tr><th>Name</th><th>Type</th><th>Default Value</th><th>Notes</th></tr>
    * <tr><td>Min</td><td>Number</td><td>-1</td>
    * <td>The minimum acceleration value to display</td></tr>
@@ -827,6 +833,7 @@ public @interface Log {
    *
    * <table>
    * <caption></caption>
+
    * <tr><th>Name</th><th>Type</th><th>Default Value</th><th>Notes</th></tr>
    * <tr><td>Range</td><td>{@link edu.wpi.first.wpilibj.interfaces.Accelerometer.Range}</td><td>k16G</td><td>The accelerometer range</td></tr>
    * <tr><td>Show value</td><td>Boolean</td><td>true</td>
@@ -920,6 +927,7 @@ public @interface Log {
    *
    * <table>
    * <caption></caption>
+
    * <tr><th>Name</th><th>Type</th><th>Default Value</th><th>Notes</th></tr>
    * <tr><td>Major tick spacing</td><td>Number</td><td>45</td><td>Degrees</td></tr>
    * <tr><td>Starting angle</td><td>Number</td><td>180</td>
@@ -1006,6 +1014,7 @@ public @interface Log {
    *
    * <table>
    * <caption></caption>
+
    * <tr><th>Name</th><th>Type</th><th>Default Value</th><th>Notes</th></tr>
    * <tr><td>Number of wheels</td><td>Number</td><td>4</td><td>Must be a positive even integer
    * </td></tr>
@@ -1092,6 +1101,7 @@ public @interface Log {
    *
    * <table>
    * <caption></caption>
+
    * <tr><th>Name</th><th>Type</th><th>Default Value</th><th>Notes</th></tr>
    * <tr><td>Show velocity vectors</td><td>Boolean</td><td>true</td></tr>
    * </table>

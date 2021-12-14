@@ -8,9 +8,9 @@
 package io.github.oblarg.logexample.subsystems;
 
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.PWMVictorSPX;
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import io.github.oblarg.logexample.Constants.DriveConstants;
@@ -21,14 +21,14 @@ import io.github.oblarg.oblog.annotations.Log;
 public class DriveSubsystem extends SubsystemBase implements Loggable {
   // The motors on the left side of the drive.
   @Log.MotorController(name = "Left Motors")
-  private final SpeedControllerGroup m_leftMotors =
-      new SpeedControllerGroup(new PWMVictorSPX(DriveConstants.kLeftMotor1Port),
+  private final MotorControllerGroup m_leftMotors =
+      new MotorControllerGroup(new PWMVictorSPX(DriveConstants.kLeftMotor1Port),
                                new PWMVictorSPX(DriveConstants.kLeftMotor2Port));
 
   @Log.MotorController(name = "Right Motors")
   // The motors on the right side of the drive.
-  private final SpeedControllerGroup m_rightMotors =
-      new SpeedControllerGroup(new PWMVictorSPX(DriveConstants.kRightMotor1Port),
+  private final MotorControllerGroup m_rightMotors =
+      new MotorControllerGroup(new PWMVictorSPX(DriveConstants.kRightMotor1Port),
                                new PWMVictorSPX(DriveConstants.kRightMotor2Port));
 
   @Log.DifferentialDrive(name = "Drive")
