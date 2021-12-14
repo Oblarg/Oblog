@@ -2,6 +2,10 @@ wrapper {
     gradleVersion = '7.0'
 }
 
+task install {
+
+}
+
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven-publish'
