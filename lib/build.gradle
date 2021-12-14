@@ -17,8 +17,9 @@ dependencies {
 
 publishing {
     publications {
-        libraryJar(MavenPublication) {
-            from components.java
+        create("maven", MavenPublication) {
+            from(components["java"])
+            artifact(sourcesJar)
         }
     }
 }
