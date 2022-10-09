@@ -863,22 +863,6 @@ public class Logger {
                         .withSize(params.width(), params.height())
                         .getEntry(),
                     () -> getFromMethod(supplierFinal, params.methodName()).get().toString());
-              }),
-              entry(
-              Log.Field2d.class,
-              (supplier, rawParams, bin, name) -> {
-                Log.Field2d params = (Log.Field2d) rawParams;
-                bin =
-                    params.tabName().equals("DEFAULT")
-                        ? bin
-                        : new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-                supplier = getFromMethod(supplier, params.methodName());
-                bin.add(
-                        (params.name().equals("NO_NAME")) ? name : params.name(),
-                        (Sendable) supplier.get())
-                    .withWidget(BuiltInWidgets.kField.getWidgetName())
-                    .withPosition(params.columnIndex(), params.rowIndex())
-                    .withSize(params.width(), params.height());
               }));
 
   /** Maps various classes to the correct method for casting to that class. */
