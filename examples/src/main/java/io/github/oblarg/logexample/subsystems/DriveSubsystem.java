@@ -23,7 +23,7 @@ import io.github.oblarg.oblog.annotations.Log;
 
 public class DriveSubsystem extends SubsystemBase implements Loggable {
 
-  @Log(name = "Field")
+  @Log.Field2d(name = "Field")
   Field2d m_field = new Field2d();
 
   // The motors on the left side of the drive.
