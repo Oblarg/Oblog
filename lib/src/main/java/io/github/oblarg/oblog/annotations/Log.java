@@ -1331,9 +1331,7 @@ public @interface Log {
   @Target({ElementType.FIELD})
   @interface Include {}
     /**
-   * Displays a differential drive with a widget that displays the speed of each side of the
-   * drivebase and a vector for the direction and rotation of the drivebase. The widget will be
-   * controllable if the robot is in test mode. <br>
+   * Displays the position of robot on the playing field. <br>
    * Supported types:
    *
    * <ul>
