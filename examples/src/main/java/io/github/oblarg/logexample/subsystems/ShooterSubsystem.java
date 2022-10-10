@@ -11,7 +11,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 
 import io.github.oblarg.logexample.Constants.ShooterConstants;
@@ -34,8 +33,6 @@ public class ShooterSubsystem extends PIDSubsystem implements Loggable {
       new SimpleMotorFeedforward(ShooterConstants.kSVolts,
                                  ShooterConstants.kVVoltSecondsPerRotation);
   
-  @Log.Field2d(name = "Field")
-  private final Field2d robotPose = new Field2d();
   /**
    * The shooter subsystem for the robot.
    */
