@@ -7,10 +7,13 @@
 
 package io.github.oblarg.logexample.subsystems;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import io.github.oblarg.logexample.Constants.DriveConstants;
@@ -19,6 +22,10 @@ import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
 
 public class DriveSubsystem extends SubsystemBase implements Loggable {
+
+  @Log(name = "Field")
+  Field2d m_field = new Field2d();
+
   // The motors on the left side of the drive.
   @Log.MotorController(name = "Left Motors")
   private final MotorControllerGroup m_leftMotors =
@@ -110,5 +117,10 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
    */
   public void setMaxOutput(double maxOutput) {
     m_drive.setMaxOutput(maxOutput);
+  }
+  
+  @Override
+  public void periodic(){
+    m_field.setRobotPose(new Pose2d(0,0,new Rotation2d(0)));
   }
 }

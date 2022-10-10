@@ -1337,20 +1337,10 @@ public @interface Log {
    * Supported types:
    *
    * <ul>
-   *   <li>{@link edu.wpi.first.wpilibj.drive.DifferentialDrive}
+   *   <li>{@link edu.wpi.first.wpilibj.smartdashboard.Field2d}
    * </ul>
    *
    * <br>
-   * Custom properties:
-   *
-   * <table>
-   * <caption></caption>
-   * <tr><th>Name</th><th>Type</th><th>Default Value</th><th>Notes</th></tr>
-   * <tr><td>Number of wheels</td><td>Number</td><td>4</td><td>Must be a positive even integer
-   * </td></tr>
-   * <tr><td>Wheel diameter</td><td>Number</td><td>80</td><td>Pixels</td></tr>
-   * <tr><td>Show velocity vectors</td><td>Boolean</td><td>true</td></tr>
-   * </table>
    */
   @Repeatable(Field2ds.class)
   @Retention(RetentionPolicy.RUNTIME)
