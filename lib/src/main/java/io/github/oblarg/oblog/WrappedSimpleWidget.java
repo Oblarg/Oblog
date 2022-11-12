@@ -1,6 +1,6 @@
 package io.github.oblarg.oblog;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 
 import java.util.Map;
@@ -14,7 +14,7 @@ class WrappedSimpleWidget implements SimpleWidgetWrapper {
   }
 
   @Override
-  public NetworkTableEntry getEntry() {
+  public GenericEntry getEntry() {
     return widget.getEntry();
   }
 

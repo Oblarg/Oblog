@@ -1,6 +1,6 @@
 package io.github.oblarg.oblog;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import org.junit.Test;
 
@@ -16,7 +16,7 @@ public class ArraysAndListsTester {
   public void testArraysAndLists() {
     long startTime = System.currentTimeMillis();
 
-    List<NetworkTableEntry> mockedEntries = new ArrayList<>();
+    List<GenericEntry> mockedEntries = new ArrayList<>();
 
     TestRootContainer rootContainer = new TestRootContainer();
 
@@ -47,7 +47,7 @@ public class ArraysAndListsTester {
 
     Logger.updateEntries();
 
-    for (NetworkTableEntry entry : mockedEntries) {
+    for (GenericEntry entry : mockedEntries) {
       verify(entry).setValue(any());
     }
 

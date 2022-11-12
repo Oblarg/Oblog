@@ -1,20 +1,21 @@
 package io.github.oblarg.oblog;
 
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableEntry;
 
 import java.util.Map;
 
 class NTSimpleWidget implements SimpleWidgetWrapper {
 
-  NetworkTableEntry entry;
+  GenericEntry entry;
 
-  NTSimpleWidget(NetworkTableEntry entry, Object value) {
+  NTSimpleWidget(GenericEntry entry, Object value) {
     this.entry = entry;
     entry.setValue(value);
   }
 
   @Override
-  public NetworkTableEntry getEntry() {
+  public GenericEntry getEntry() {
     return entry;
   }
 

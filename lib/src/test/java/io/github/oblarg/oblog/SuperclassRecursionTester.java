@@ -1,6 +1,6 @@
 package io.github.oblarg.oblog;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.GenericEntry;
 import io.github.oblarg.oblog.annotations.Log;
 import org.junit.Test;
 
@@ -13,7 +13,7 @@ import static org.mockito.Mockito.*;
 public class SuperclassRecursionTester {
   @Test
   public void testSuperclassRecursion() {
-    List<NetworkTableEntry> mockedEntries = new ArrayList<>();
+    List<GenericEntry> mockedEntries = new ArrayList<>();
 
     TestRootContainer rootContainer = new TestRootContainer();
 
@@ -39,7 +39,7 @@ public class SuperclassRecursionTester {
 
     Logger.updateEntries();
 
-    for (NetworkTableEntry entry : mockedEntries) {
+    for (GenericEntry entry : mockedEntries) {
       verify(entry).setValue(any());
     }
   }

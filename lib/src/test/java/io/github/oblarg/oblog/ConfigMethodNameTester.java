@@ -1,6 +1,6 @@
 package io.github.oblarg.oblog;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 
 import io.github.oblarg.oblog.annotations.Config;
@@ -14,7 +14,7 @@ import static org.mockito.Mockito.verify;
 public class ConfigMethodNameTester {
   @Test
   public void testConfigMethodName() {
-    List<NetworkTableEntry> mockedEntries = new ArrayList<>();
+    List<GenericEntry> mockedEntries = new ArrayList<>();
 
     TestRootContainer rootContainer = new TestRootContainer();
 
