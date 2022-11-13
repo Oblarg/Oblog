@@ -32,7 +32,7 @@ public class ShooterSubsystem extends PIDSubsystem implements Loggable {
   private final SimpleMotorFeedforward m_shooterFeedforward =
       new SimpleMotorFeedforward(ShooterConstants.kSVolts,
                                  ShooterConstants.kVVoltSecondsPerRotation);
-
+  
   /**
    * The shooter subsystem for the robot.
    */

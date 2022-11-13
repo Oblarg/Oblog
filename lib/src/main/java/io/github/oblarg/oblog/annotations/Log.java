@@ -1330,4 +1330,68 @@ public @interface Log {
   @Retention(RetentionPolicy.RUNTIME)
   @Target({ElementType.FIELD})
   @interface Include {}
+    /**
+   * Displays the position of robot on the playing field. <br>
+   * Supported types:
+   *
+   * <ul>
+   *   <li>{@link edu.wpi.first.wpilibj.smartdashboard.Field2d}
+   * </ul>
+   *
+   * <br>
+   */
+  @Repeatable(Field2ds.class)
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target({ElementType.FIELD, ElementType.METHOD})
+  @interface Field2d {
+    /** @return The name of the value on Shuffleboard; defaults to field or method name. */
+    String name() default "NO_NAME";
+
+    /**
+     * @return The name of the tab in which to place this widget, if the default inferred tab/layout
+     *     is not desired. Users should be careful to avoid namespace collisions if the default tab
+     *     is not used. Note that Log and config annotations can be repeated to place widgets on
+     *     multiple tabs.
+     */
+    String tabName() default "DEFAULT";
+
+    /**
+     * @return Optional name of a method to call on the field (or return value of the method) to
+     *     obtain the actual value that will be logged. Useful if one does not desire to make an
+     *     entire object Loggable, but still wants to log a value from it.
+     */
+    String methodName() default "DEFAULT";
+
+    /**
+     * @return The row in which this widget should be placed. WARNING: If position/size is specified
+     *     for one widget in an object, it should be specified for all widgets in that object to
+     *     avoid overlaps.
+     */
+    int rowIndex() default -1;
+
+    /**
+     * @return The column in which this widget should be placed. WARNING: If position/size is
+     *     specified for one widget in an object, it should be specified for all widgets in that
+     *     object to avoid overlaps.
+     */
+    int columnIndex() default -1;
+
+    /**
+     * @return The width of this widget. WARNING: If position/size is specified for one widget in an
+     *     object, it should be specified for all widgets in that object to avoid overlaps.
+     */
+    int width() default -1;
+
+    /**
+     * @return The height of this widget. WARNING: If position/size is specified for one widget in
+     *     an object, it should be specified for all widgets in that object to avoid overlaps.
+     */
+    int height() default -1;
+  }
+
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target({ElementType.FIELD, ElementType.METHOD})
+  @interface Field2ds {
+    Field2d[] value();
+  }
 }
