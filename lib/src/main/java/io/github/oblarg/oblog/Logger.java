@@ -1,7 +1,8 @@
 package io.github.oblarg.oblog;
 
 import edu.wpi.first.cscore.VideoSource;
-import edu.wpi.first.networktables.EntryListenerFlags;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.*;
@@ -9,7 +10,7 @@ import edu.wpi.first.wpilibj.shuffleboard.*;
 
 import io.github.oblarg.oblog.annotations.*;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.GenericEntry;
 
 import static java.util.Map.entry;
 
@@ -130,7 +131,7 @@ public class Logger {
    * @param entry The entry to be updated.
    * @param supplier The supplier with which to update the entry.
    */
-  public static void registerEntry(NetworkTableEntry entry, Supplier<Object> supplier) {
+  public static void registerEntry(GenericEntry entry, Supplier<Object> supplier) {
     entrySupplierMap.put(entry, supplier);
   }
 
@@ -258,7 +259,7 @@ public class Logger {
   }
 
   /** A map of the suppliers that are used to update each entry. */
-  private static final Map<NetworkTableEntry, Supplier<Object>> entrySupplierMap = new HashMap<>();
+  private static final Map<GenericEntry, Supplier<Object>> entrySupplierMap = new HashMap<>();
 
   enum LogType {
     LOG,
@@ -304,7 +305,7 @@ public class Logger {
                       params.tabName().equals("DEFAULT")
                           ? bin
                           : new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-                  NetworkTableEntry entry =
+                  GenericEntry entry =
                       bin.add(
                               (params.name().equals("NO_NAME")) ? name : params.name(),
                               params.defaultValueBoolean())
@@ -312,12 +313,12 @@ public class Logger {
                           .withPosition(params.columnIndex(), params.rowIndex())
                           .withSize(params.width(), params.height())
                           .getEntry();
-                  nt.addEntryListener(
-                      entry,
+                  nt.addListener(
+                      entry.getTopic(),
+                      EnumSet.of(NetworkTableEvent.Kind.kValueAll),
                       (entryNotification) ->
                           setterRunner.execute(
-                              () -> setter.accept((boolean) entryNotification.value.getValue())),
-                      EntryListenerFlags.kUpdate);
+                              () -> setter.accept(entryNotification.valueData.value.getValue())));
                   setter.accept(params.defaultValueBoolean());
                 } else {
                   Config params = (Config) rawParams;
@@ -325,7 +326,7 @@ public class Logger {
                       params.tabName().equals("DEFAULT")
                           ? bin
                           : new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-                  NetworkTableEntry entry =
+                  GenericEntry entry =
                       bin.add(
                               (params.name().equals("NO_NAME")) ? name : params.name(),
                               params.defaultValueNumeric())
@@ -333,12 +334,12 @@ public class Logger {
                           .withPosition(params.columnIndex(), params.rowIndex())
                           .withSize(params.width(), params.height())
                           .getEntry();
-                  nt.addEntryListener(
-                      entry,
+                  nt.addListener(
+                      entry.getTopic(),
+                      EnumSet.of(NetworkTableEvent.Kind.kValueAll),
                       (entryNotification) ->
                           setterRunner.execute(
-                              () -> setter.accept((Number) entryNotification.value.getValue())),
-                      EntryListenerFlags.kUpdate);
+                              () -> setter.accept(entryNotification.valueData.value.getValue())));
                   setter.accept(params.defaultValueNumeric());
                 }
               }),
@@ -350,7 +351,7 @@ public class Logger {
                     params.tabName().equals("DEFAULT")
                         ? bin
                         : new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-                NetworkTableEntry entry =
+                GenericEntry entry =
                     bin.add(
                             (params.name().equals("NO_NAME")) ? name : params.name(),
                             params.defaultValue())
@@ -358,12 +359,12 @@ public class Logger {
                         .withPosition(params.columnIndex(), params.rowIndex())
                         .withSize(params.width(), params.height())
                         .getEntry();
-                nt.addEntryListener(
-                    entry,
+                nt.addListener(
+                    entry.getTopic(),
+                    EnumSet.of(NetworkTableEvent.Kind.kValueAll),
                     (entryNotification) ->
                         setterRunner.execute(
-                            () -> setter.accept((boolean) entryNotification.value.getValue())),
-                    EntryListenerFlags.kUpdate);
+                            () -> setter.accept(entryNotification.valueData.value.getValue())));
                 setter.accept(params.defaultValue());
               }),
           entry(
@@ -374,7 +375,7 @@ public class Logger {
                     params.tabName().equals("DEFAULT")
                         ? bin
                         : new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-                NetworkTableEntry entry =
+                GenericEntry entry =
                     bin.add(
                             (params.name().equals("NO_NAME")) ? name : params.name(),
                             params.defaultValue())
@@ -382,12 +383,12 @@ public class Logger {
                         .withPosition(params.columnIndex(), params.rowIndex())
                         .withSize(params.width(), params.height())
                         .getEntry();
-                nt.addEntryListener(
-                    entry,
+                nt.addListener(
+                    entry.getTopic(),
+                    EnumSet.of(NetworkTableEvent.Kind.kValueAll),
                     (entryNotification) ->
                         setterRunner.execute(
-                            () -> setter.accept((boolean) entryNotification.value.getValue())),
-                    EntryListenerFlags.kUpdate);
+                            () -> setter.accept(entryNotification.valueData.value.getValue())));
                 setter.accept(params.defaultValue());
               }),
           entry(
@@ -398,7 +399,7 @@ public class Logger {
                     params.tabName().equals("DEFAULT")
                         ? bin
                         : new WrappedShuffleboardContainer(Shuffleboard.getTab(params.tabName()));
-                NetworkTableEntry entry =
+                GenericEntry entry =
                     bin.add(
                             (params.name().equals("NO_NAME")) ? name : params.name(),
                             params.defaultValue())
@@ -411,12 +412,12 @@ public class Logger {
                         .withPosition(params.columnIndex(), params.rowIndex())
                         .withSize(params.width(), params.height())
                         .getEntry();
-                nt.addEntryListener(
-                    entry,
+                nt.addListener(
+                    entry.getTopic(),
+                    EnumSet.of(NetworkTableEvent.Kind.kValueAll),
                     (entryNotification) ->
                         setterRunner.execute(
-                            () -> setter.accept((Number) entryNotification.value.getValue())),
-                    EntryListenerFlags.kUpdate);
+                            () -> setter.accept(entryNotification.valueData.value.getValue())));
                 setter.accept(params.defaultValue());
               }));
 

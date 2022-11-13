@@ -23,7 +23,7 @@ class NTContainer implements ShuffleboardContainerWrapper {
   public SimpleWidgetWrapper add(String title, Object defaultValue) {
     logErrorCheck(defaultValue, title, table.getPath());
     try {
-      return new NTSimpleWidget(table.getEntry(title), defaultValue);
+      return new NTSimpleWidget(table.getTopic(title).getGenericEntry(), defaultValue);
     } catch (IllegalArgumentException e) {
       throw new IllegalArgumentException(
           "Error!  Attempted to log duplicate widget "

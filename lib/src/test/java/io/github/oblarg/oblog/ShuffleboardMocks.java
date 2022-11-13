@@ -5,6 +5,7 @@ import edu.wpi.first.util.sendable.Sendable;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -12,7 +13,7 @@ import static org.mockito.Mockito.*;
 
 class ShuffleboardMocks {
 
-  List<NetworkTableEntry> mockedEntries;
+  List<GenericEntry> mockedEntries;
 
   private ShuffleboardWrapper mockedShuffleboard = mock(WrappedShuffleboard.class);
   private ShuffleboardContainerWrapper mockedContainer = mock(WrappedShuffleboardContainer.class);
@@ -24,9 +25,9 @@ class ShuffleboardMocks {
 
   private NetworkTableValue mockedNTValue = mock(NetworkTableValue.class);
 
-  private Consumer<EntryNotification> listenerCallback;
+  private Consumer<NetworkTableEvent> listenerCallback;
 
-  ShuffleboardMocks(List<NetworkTableEntry> mockedEntries) {
+  ShuffleboardMocks(List<GenericEntry> mockedEntries) {
     this.mockedEntries = mockedEntries;
     when(mockedShuffleboard.getTab(any())).thenReturn(mockedContainer);
     when(mockedContainer.getLayout(any(), any())).thenReturn(mockedLayout);
@@ -42,21 +43,22 @@ class ShuffleboardMocks {
     when(mockedSimpleWidget.withWidget(any())).thenReturn(mockedSimpleWidget);
     when(mockedSimpleWidget.withPosition(anyInt(), anyInt())).thenReturn(mockedSimpleWidget);
     when(mockedSimpleWidget.withSize(anyInt(), anyInt())).thenReturn(mockedSimpleWidget);
-    when(mockedSimpleWidget.getEntry()).thenReturn(newMockEntry(mockedEntries));
+    when(mockedSimpleWidget.getEntry()).thenAnswer(invocation -> newMockEntry(mockedEntries));
     when(mockedComplexWidget.withProperties(any())).thenReturn(mockedComplexWidget);
     when(mockedComplexWidget.withWidget(any())).thenReturn(mockedComplexWidget);
     when(mockedComplexWidget.withPosition(anyInt(), anyInt())).thenReturn(mockedComplexWidget);
     when(mockedComplexWidget.withSize(anyInt(), anyInt())).thenReturn(mockedComplexWidget);
-    when(mockedNTInstance.addEntryListener(any(NetworkTableEntry.class), any(), eq(EntryListenerFlags.kUpdate))).thenAnswer(
-        new Answer() {
-          public Object answer(InvocationOnMock invocation) {
-            listenerCallback = (Consumer<EntryNotification>) invocation.getArguments()[1];
-            return 0;
-          }
+    when(mockedNTInstance.addListener(any(Topic.class),
+                                      any(),
+                                      any())).thenAnswer(
+        invocation -> {
+          System.out.println("hello");
+          listenerCallback = (Consumer<NetworkTableEvent>) invocation.getArguments()[2];
+          return 0;
         });
   }
 
-  Consumer<EntryNotification> getListenerCallback() {
+  Consumer<NetworkTableEvent> getListenerCallback() {
     return listenerCallback;
   }
 
@@ -85,8 +87,9 @@ class ShuffleboardMocks {
     return mockedNTInstance;
   }
 
-  private static NetworkTableEntry newMockEntry(List<NetworkTableEntry> mockedEntries) {
-    NetworkTableEntry entry = mock(NetworkTableEntry.class);
+  private static GenericEntry newMockEntry(List<GenericEntry> mockedEntries) {
+    GenericEntry entry = mock(GenericEntry.class);
+    when(entry.getTopic()).thenReturn(mock(Topic.class));
     mockedEntries.add(entry);
     return entry;
   }

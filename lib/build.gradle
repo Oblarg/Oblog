@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'maven-publish'
-    id "edu.wpi.first.GradleRIO" version "2022.1.1-beta-3"
+    id "edu.wpi.first.GradleRIO" version "2023.1.1-beta-3"
 }
 
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.

@@ -1,6 +1,6 @@
 package io.github.oblarg.oblog;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.GenericEntry;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ public class SendableTester {
 
   @Test
   public void testSendable() {
-    List<NetworkTableEntry> mockedEntries = new ArrayList<>();
+    List<GenericEntry> mockedEntries = new ArrayList<>();
 
     TestRootContainer rootContainer = new TestRootContainer();
 

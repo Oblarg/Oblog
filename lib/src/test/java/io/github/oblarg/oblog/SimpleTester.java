@@ -1,6 +1,6 @@
 package io.github.oblarg.oblog;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.GenericEntry;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import static org.mockito.Mockito.verify;
 public class SimpleTester {
   @Test
   public void testSimple() {
-    List<NetworkTableEntry> mockedEntries = new ArrayList<>();
+    List<GenericEntry> mockedEntries = new ArrayList<>();
 
     TestRootContainer rootContainer = new TestRootContainer();
 
@@ -32,7 +32,7 @@ public class SimpleTester {
 
     Logger.updateEntries();
 
-    for (NetworkTableEntry entry : mockedEntries) {
+    for (GenericEntry entry : mockedEntries) {
       verify(entry).setValue(any());
     }
   }

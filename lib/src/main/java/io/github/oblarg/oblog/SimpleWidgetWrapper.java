@@ -1,6 +1,6 @@
 package io.github.oblarg.oblog;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.GenericEntry;
 
 import java.util.Map;
 
@@ -9,7 +9,7 @@ import java.util.Map;
  * implementation if desired.
  */
 public interface SimpleWidgetWrapper {
-  NetworkTableEntry getEntry();
+  GenericEntry getEntry();
 
   SimpleWidgetWrapper withProperties(Map<String, Object> properties);
 
